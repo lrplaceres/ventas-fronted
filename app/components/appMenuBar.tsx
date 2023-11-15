@@ -15,12 +15,12 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { useRouter } from 'next/navigation'
-import StorefrontIcon from '@mui/icons-material/Storefront';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import PersonIcon from '@mui/icons-material/Person';
+import { useRouter } from "next/navigation";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import PersonIcon from "@mui/icons-material/Person";
 
 export default function DenseAppBar() {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function DenseAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" component="div">
-            Kiosko
+            SIMPLE_TPV
           </Typography>
         </Toolbar>
       </AppBar>
@@ -75,7 +75,7 @@ export default function DenseAppBar() {
           onKeyDown={toggleDrawer("left", false)}
         >
           <List>
-            <ListItem disablePadding onClick={()=>router.push("/kiosko")}>
+            <ListItem disablePadding onClick={() => router.push("/kiosko")}>
               <ListItemButton>
                 <ListItemIcon>
                   <StorefrontIcon />
@@ -84,7 +84,7 @@ export default function DenseAppBar() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem disablePadding onClick={()=>router.push("/producto")}>
+            <ListItem disablePadding onClick={() => router.push("/producto")}>
               <ListItemButton>
                 <ListItemIcon>
                   <MenuBookIcon />
@@ -93,7 +93,7 @@ export default function DenseAppBar() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem disablePadding onClick={()=>router.push("/inventario")}>
+            <ListItem disablePadding onClick={() => router.push("/inventario")}>
               <ListItemButton>
                 <ListItemIcon>
                   <InventoryIcon />
@@ -102,7 +102,7 @@ export default function DenseAppBar() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem disablePadding onClick={()=>router.push("/venta")}>
+            <ListItem disablePadding onClick={() => router.push("/venta")}>
               <ListItemButton>
                 <ListItemIcon>
                   <AttachMoneyIcon />
@@ -113,7 +113,7 @@ export default function DenseAppBar() {
           </List>
           <Divider />
           <List>
-            <ListItem disablePadding onClick={()=>router.push("/user")}>
+            <ListItem disablePadding onClick={() => router.push("/user")}>
               <ListItemButton>
                 <ListItemIcon>
                   <PersonIcon />
