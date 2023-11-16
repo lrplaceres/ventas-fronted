@@ -1,56 +1,78 @@
-"use client"
+"use client";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
 import { Button, FormControlLabel } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 
 function FormNuevoKiosko() {
   const router = useRouter();
 
   const label = { inputProps: { "aria-label": "Switch demo" } };
 
-  const top100Films = [
-    { label: "The Shawshank Redemption", year: 1994 },
-    { label: "The Godfather", year: 1972 },
-    { label: "The Godfather: Part II", year: 1974 },
-    { label: "The Dark Knight", year: 2008 },
-    { label: "12 Angry Men", year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: "Pulp Fiction", year: 1994 },
-  ];
+  const [kiosko, setKiosko] = useState({
+    nombre: "",
+    representante: "",
+    activo: true,
+    administrador: "",
+  });
+
+  const handleChange = ({ target: { name, value } }) => {
+    setKiosko({ ...kiosko, [name]: value });
+  };
+
+  const handleChangeSlider = ({ target: { name, checked } }) => {
+    setKiosko({ ...kiosko, [name]: checked });
+  };
+  
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    console.log(kiosko);
+  };
 
   return (
     <>
-      <form>
+      <form onSubmit={handleSubmit}>
+
         <Typography variant="h6" color="primary" align="center">
           INSERTAR KIOSKO
         </Typography>
+
         <TextField
           id="nombre"
+          name="nombre"
           label="Nombre"
-          //value={}
-          //onChange={}
+          value={kiosko.nombre}
+          onChange={handleChange}
           fullWidth
           sx={{ mb: ".5rem" }}
         />
 
         <TextField
           id="representante"
+          name="representante"
           label="Representante"
-          //value={}
-          //onChange={}
+          value={kiosko.representante}
+          onChange={handleChange}
           fullWidth
           sx={{ mb: ".5rem" }}
         />
 
-        <FormControlLabel control={<Switch defaultChecked />} label="Activo" sx={{mb:".5rem"}}/>
+        <FormControlLabel
+          control={
+            <Switch defaultChecked name="activo" onChange={handleChangeSlider} />
+          }
+          label="Activo"
+          sx={{ mb: ".5rem" }}
+        />
 
         <TextField
           id="administrador"
+          name="administrador"
           label="Administrador"
-          //value={}
-          //onChange={}
+          value={kiosko.administrador}
+          onChange={handleChange}
           fullWidth
           sx={{ mb: ".5rem" }}
         />
@@ -63,7 +85,7 @@ function FormNuevoKiosko() {
         >
           Cancelar
         </Button>
-        <Button variant="contained" color="success">
+        <Button variant="contained" color="success" type="submit">
           Aceptar
         </Button>
       </form>

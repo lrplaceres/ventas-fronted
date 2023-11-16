@@ -9,33 +9,61 @@ import {
   Select,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import moment from "moment";
 
 function FormNuevoInventario() {
   const router = useRouter();
 
+  const [inventario, setInventario] = useState({
+    producto: "",
+    cantidad: "",
+    um: "unidad",
+    costo: "",
+    fecha: Date(),
+  });
+
+  const handleChange = ({ target: { name, value } }) => {
+    setInventario({ ...inventario, [name]: value });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    console.log(inventario);
+  };
+
   return (
     <>
-      <form>
+      <form onSubmit={handleSubmit}>
         <Typography variant="h6" color="primary" align="center">
           INSERTAR INVENTARIO
         </Typography>
 
         <TextField
           id="producto"
+          name="producto"
           label="Producto"
-          //value={}
-          //onChange={}
+          value={inventario.producto}
+          onChange={handleChange}
           fullWidth
           sx={{ mb: ".5rem" }}
+          required
         />
 
         <TextField
           id="cantidad"
+          name="cantidad"
           label="Cantidad"
-          //value={}
-          //onChange={}
+          value={inventario.cantidad}
+          onChange={handleChange}
           fullWidth
           sx={{ mb: ".5rem" }}
+          type="number"
+          required
         />
 
         <FormControl fullWidth sx={{ mb: ".5rem" }}>
@@ -43,9 +71,11 @@ function FormNuevoInventario() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            //value={"unidad"}
+            name="um"
             label="UM"
-            //onChange={handleChange}
+            value={inventario.um}
+            onChange={handleChange}
+            required
           >
             <MenuItem value={"libra"}>LB</MenuItem>
             <MenuItem value={"kilogramo"}>KG</MenuItem>
@@ -57,22 +87,25 @@ function FormNuevoInventario() {
 
         <TextField
           id="costo"
+          name="costo"
           label="Costo"
-          //value={}
-          //onChange={}
+          value={inventario.costo}
+          onChange={handleChange}
           fullWidth
           sx={{ mb: ".5rem" }}
           type="number"
         />
 
-        <TextField
-          id=""
-          label="Fecha"
-          //value={}
-          //onChange={}
-          fullWidth
-          sx={{ mb: ".5rem" }}
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            onChange={(newvalue) => {
+              setInventario({ ...inventario, "fecha": newvalue });
+            }}
+            format="YYYY-MM-DD"
+            sx={{ mb: ".5rem" }}
+            value={dayjs(moment(inventario.fecha).utc().format("YYYY-MM-DD"))}
+          />
+        </LocalizationProvider>
 
         <Button
           variant="contained"
@@ -82,7 +115,7 @@ function FormNuevoInventario() {
         >
           Cancelar
         </Button>
-        <Button variant="contained" color="success">
+        <Button variant="contained" color="success" type="submit">
           Aceptar
         </Button>
       </form>

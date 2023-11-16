@@ -11,6 +11,7 @@ function login() {
     <>
       <Head>
         <title>SIMPLE_TPV</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <Container
@@ -58,7 +59,7 @@ function login() {
               />
 
               <Button variant="contained" color="success">
-                Acceder {process.env.MI_API_BACKEND}
+                Acceder
               </Button>
             </form>
           </Grid>
