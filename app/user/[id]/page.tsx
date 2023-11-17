@@ -1,8 +1,8 @@
 
 
-function page() {
+function page({ params }: { params: { id: string }}) {
   return (
-    <div>page id</div>
+    <div>{params.id}</div>
   )
 }
 

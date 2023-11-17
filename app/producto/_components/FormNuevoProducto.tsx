@@ -2,6 +2,7 @@
 import { Button } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -10,7 +11,7 @@ function FormNuevoProducto() {
 
   const [producto, setProducto] = useState({
     nombre: "",
-    kiosko_id: ""
+    kiosko_id: 4
   });
 
   const handleChange = ({ target: { name, value } }) => {

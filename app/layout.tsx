@@ -4,7 +4,8 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import Container from "@mui/material/Container";
-import DenseAppBar from "./components/appMenuBar"
+import DenseAppBar from "./components/appMenuBar";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SIMPLE_TPV",
