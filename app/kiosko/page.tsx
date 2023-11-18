@@ -1,23 +1,50 @@
 "use client";
 import { Button } from "@mui/material";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
-import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
-
-const rows: GridRowsProp = [
-  { id: 1, col1: "Hello", col2: "World" },
-  { id: 2, col1: "DataGridPro", col2: "is Awesome" },
-  { id: 3, col1: "MUI", col2: "is Amazing" },
-];
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const columns: GridColDef[] = [
-  { field: "col1", headerName: "Column 1", width: 150 },
-  { field: "col2", headerName: "Column 2", width: 150 },
+  {
+    field: "nombre",
+    headerName: "nombre",
+    width: 150,
+    renderCell: (params) => (
+      <Link href={`/kiosko/${params.row.id}`} className="decoration-none">
+        {params.row.activo ? (
+          params.row.nombre
+        ) : (
+          <del>{params.row.nombre}</del>
+        )}
+      </Link>
+    ),
+  },
+  { field: "representante", headerName: "Representante", width: 150 },
 ];
 
 function page() {
-
   const router = useRouter();
+
+  const [kioskos, setKioskos] = useState([]);
+
+  useEffect(() => {
+    obtenerKioskos();
+  }, []);
+
+  const obtenerKioskos = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/kiosko`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setKioskos(data);
+      });
+  };
 
   return (
     <>
@@ -26,13 +53,13 @@ function page() {
         color="inherit"
         sx={{ mt: ".5rem", mb: ".5rem" }}
         startIcon={<AddBusinessIcon />}
-        onClick={()=>router.push("/kiosko/nuevo")}
+        onClick={() => router.push("/kiosko/nuevo")}
       >
         Insertar Kiosko
       </Button>
 
-      <div style={{ height: 300, width: "100%" }}>
-        <DataGrid rows={rows} columns={columns} />
+      <div style={{ height: 500, width: "100%" }}>
+        <DataGrid rows={kioskos} columns={columns} />
       </div>
     </>
   );

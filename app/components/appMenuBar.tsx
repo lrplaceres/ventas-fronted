@@ -130,7 +130,7 @@ export default function DenseAppBar() {
               onClick={() => router.push("/venta")}
               sx={{
                 backgroundColor:
-                  pathname.split("/")[1] == "kiosko" ? "#bbdefb" : "",
+                  pathname.split("/")[1] == "venta" ? "#bbdefb" : "",
               }}
             >
               <ListItemButton>

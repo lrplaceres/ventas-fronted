@@ -2,7 +2,7 @@
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Card, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
@@ -38,7 +38,6 @@ function FormUsuario() {
         return notificacion("Las contraseñas deben coincidir", "error");
       }
 
-      var url = `${process.env.MI_API_BACKEND}/user`;
       var data = {
         usuario: usuario.usuario,
         password: usuario.password,
@@ -48,7 +47,7 @@ function FormUsuario() {
         activo: usuario.activo,
       };
 
-      fetch(url, {
+      fetch(`${process.env.MI_API_BACKEND}/user`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -146,17 +145,19 @@ function FormUsuario() {
           type="email"
         />
 
-        <Button
-          variant="contained"
-          color="error"
-          sx={{ mr: ".5rem" }}
-          onClick={() => router.push("/user")}
-        >
-          Cancelar
-        </Button>
-        <Button variant="contained" color="success" type="submit">
-          Aceptar
-        </Button>
+        <Card variant="outlined" sx={{ textAlign: "center" }}>
+          <Button
+            variant="contained"
+            color="warning"
+            sx={{ mr: ".5rem" }}
+            onClick={() => router.push("/user")}
+          >
+            Cancelar
+          </Button>
+          <Button variant="contained" color="success" type="submit">
+            Aceptar
+          </Button>
+        </Card>
       </form>
     </>
   );

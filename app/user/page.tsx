@@ -25,14 +25,13 @@ function page() {
 
   const [usuarios, setUsuarios] = useState([]);
 
-  var url = `${process.env.MI_API_BACKEND}/user`;
 
   useEffect(() => {
     obtenerUsuarios();
   }, []);
 
   const obtenerUsuarios = async () => {
-    await fetch(url, {
+    await fetch(`${process.env.MI_API_BACKEND}/user`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +55,7 @@ function page() {
         Insertar Usuario
       </Button>
 
-      <div style={{ height: 300, width: "100%" }}>
+      <div style={{ height: 500, width: "100%" }}>
         <DataGrid rows={usuarios} columns={columns} />
       </div>
     </>
