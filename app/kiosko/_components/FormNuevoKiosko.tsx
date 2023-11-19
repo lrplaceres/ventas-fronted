@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
 import { Button, Card, FormControlLabel } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -12,7 +12,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Autocomplete from "@mui/material/Autocomplete";
-
 
 function FormKiosko() {
   const router = useRouter();
@@ -28,7 +27,9 @@ function FormKiosko() {
     admin_id: "",
   });
 
-  const [propietarios, setPropietarios] = useState([])
+  const [propietarios, setPropietarios] = useState([]);
+
+  const [propietarioEdit, setPropietarioEdit] = useState([]);
 
   const [open, setOpen] = useState(false);
 
@@ -44,8 +45,11 @@ function FormKiosko() {
     obtenerPropietarios();
     if (params.id) {
       obtenerKiosko(params.id);
-    }
-  }, []);
+  }}, []);
+
+  useEffect(() => {
+    setPropietarioEdit(propietarios.filter((v) => v.id == kiosko.admin_id)[0]);
+  }, [propietarios]);
 
   const handleChange = ({ target: { name, value } }) => {
     setKiosko({ ...kiosko, [name]: value });
@@ -73,7 +77,7 @@ function FormKiosko() {
       });
   };
 
-  const obtenerPropietarios = async (id: number) => {
+  const obtenerPropietarios = async () => {
     await fetch(`${process.env.MI_API_BACKEND}/user/propietarios`, {
       method: "GET",
       headers: {
@@ -153,9 +157,9 @@ function FormKiosko() {
     });
   };
 
-  const selectedValues = useMemo(
-    () => propietarios.filter((v) => v.id == kiosko.admin_id),[propietarios]
-  )
+  /*const selectedValues = () => {
+    setPropietarioEdit(propietarios.filter((v) => v.id == kiosko.admin_id)[0]);
+  };*/
 
   return (
     <>
@@ -204,9 +208,10 @@ function FormKiosko() {
           options={propietarios}
           getOptionLabel={(option) => `${option.nombre} ► ${option.usuario}`}
           sx={{ mb: 1 }}
-          value={selectedValues}      
+          value={params.id ? propietarioEdit: propietarios[0]}
           onChange={(event: any, newValue: string | null) => {
             setKiosko({ ...kiosko, admin_id: newValue.id });
+            setPropietarioEdit(newValue);
           }}
           renderInput={(params) => (
             <TextField {...params} label="Propietario" required />
