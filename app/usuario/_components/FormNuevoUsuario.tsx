@@ -57,7 +57,7 @@ function FormUsuario() {
         if (response.ok) {
           response.json().then((data) => {
             notificacion(`Se ha creado el usuario ${data.usuario}`, "success");
-            setTimeout(() => router.push("/user"), 300);
+            setTimeout(() => router.push("/usuario"), 300);
           });
         } else {
           notificacion(`Se ha producido un error ${response.status}`, "error");
@@ -150,7 +150,7 @@ function FormUsuario() {
             variant="contained"
             color="warning"
             sx={{ mr: ".5rem" }}
-            onClick={() => router.push("/user")}
+            onClick={() => router.push("/usuario")}
           >
             Cancelar
           </Button>

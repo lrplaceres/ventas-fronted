@@ -4,16 +4,18 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Image from "next/image";
 import puntoventa from "../../public/punto-de-venta.webp";
-import Head from "next/head";
+import { headers } from "next/headers";
 
-function login() {
+export default async function SignIn() {
+
+  const csrfToken = await fetch(`${process.env.MI_API_FRONTEND}/api/auth/csrf`,{
+    headers: headers(),
+  })
+    .then( res => res.json() )
+    .then( csrfTokenObject => csrfTokenObject?.csrfToken );
+
   return (
     <>
-      <Head>
-        <title>SIMPLE_TPV</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
       <Container
         maxWidth="sm"
         sx={{
@@ -40,25 +42,30 @@ function login() {
           </Grid>
 
           <Grid item xs={6}>
-            <form>
+            <form method="post" action="/api/auth/callback/credentials">
+
+              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+              
               <TextField
-                id="usuario"
+                id="username"
+                name="username"
                 label="Usuario"
-                //onChange={}
                 fullWidth
-                sx={{ mb: ".5rem" }}
+                sx={{ mb: 1 }}
+                required
               />
 
               <TextField
                 id="password"
+                name="password"
                 label="Contraseña"
-                //onChange={}
                 fullWidth
-                sx={{ mb: ".5rem" }}
+                sx={{ mb: 1 }}
                 type="password"
+                required
               />
 
-              <Button variant="contained" color="success">
+              <Button variant="contained" color="success" type="submit">
                 Acceder
               </Button>
             </form>
@@ -69,4 +76,3 @@ function login() {
   );
 }
 
-export default login;

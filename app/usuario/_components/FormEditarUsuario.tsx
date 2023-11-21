@@ -96,7 +96,7 @@ function FormUsuario() {
       }).then(function (response) {
         if (response.ok) {
           notificacion(`Se ha editado el usuario ${usuario.usuario}`, "success");
-          setTimeout(() => router.push("/user"), 300);
+          setTimeout(() => router.push("/usuario"), 300);
         } else {
           notificacion(`Se ha producido un error ${response.status}`, "error");
         }
@@ -121,7 +121,7 @@ function FormUsuario() {
         `El usuario ${usuario.usuario} ha sido eliminado`,
         "success"
       );
-      setTimeout(() => router.push("/user"), 300);
+      setTimeout(() => router.push("/usuario"), 300);
     });
   };
 
@@ -195,7 +195,7 @@ function FormUsuario() {
             variant="contained"
             color="warning"
             sx={{ mr: ".5rem" }}
-            onClick={() => router.push("/user")}
+            onClick={() => router.push("/usuario")}
           >
             Cancelar
           </Button>

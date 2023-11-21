@@ -9,7 +9,7 @@ import Link from "next/link";
 const columns: GridColDef[] = [
   { field: "usuario", headerName: "Usuario", width: 150,
   renderCell: (params) => (
-    <Link href={`/user/${params.row.id}`} className="decoration-none">
+    <Link href={`/usuario/${params.row.id}`} className="decoration-none">
       {params.row.activo ? (
         params.row.usuario
       ) : (
@@ -50,7 +50,7 @@ function page() {
         color="inherit"
         sx={{ mt: ".5rem", mb: ".5rem" }}
         startIcon={<PersonAddAlt1Icon />}
-        onClick={() => router.push("/user/nuevo")}
+        onClick={() => router.push("/usuario/nuevo")}
       >
         Insertar Usuario
       </Button>

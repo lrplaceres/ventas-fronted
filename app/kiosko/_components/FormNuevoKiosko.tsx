@@ -43,8 +43,8 @@ function FormKiosko() {
 
   useEffect(() => {
     obtenerPropietarios();
-    if (params.id) {
-      obtenerKiosko(params.id);
+    if (params?.id) {
+      obtenerKiosko(params?.id);
   }}, []);
 
   useEffect(() => {
@@ -94,7 +94,7 @@ function FormKiosko() {
     e.preventDefault();
 
     try {
-      if (params.id) {
+      if (params?.id) {
         fetch(`${process.env.MI_API_BACKEND}/kiosko/${params.id}`, {
           method: "PUT",
           body: JSON.stringify(kiosko),
@@ -157,9 +157,6 @@ function FormKiosko() {
     });
   };
 
-  /*const selectedValues = () => {
-    setPropietarioEdit(propietarios.filter((v) => v.id == kiosko.admin_id)[0]);
-  };*/
 
   return (
     <>
