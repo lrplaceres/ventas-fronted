@@ -5,6 +5,7 @@ import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const columns: GridColDef[] = [
   { field: "usuario", headerName: "Usuario", width: 150,
@@ -25,6 +26,7 @@ function page() {
 
   const [usuarios, setUsuarios] = useState([]);
 
+  const { data: session, update } = useSession();
 
   useEffect(() => {
     obtenerUsuarios();
@@ -35,6 +37,7 @@ function page() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${session.token_type} ${session.access_token}`,
       },
     })
       .then((response) => response.json())

@@ -6,11 +6,14 @@ import { Card, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { useSession } from "next-auth/react";
 
 function FormUsuario() {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const { data: session, update } = useSession();
 
   const [usuario, setUsuario] = useState({
     usuario: "",
@@ -52,6 +55,7 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `${session.token_type} ${session.access_token}`,
         },
       }).then(function (response) {
         if (response.ok) {

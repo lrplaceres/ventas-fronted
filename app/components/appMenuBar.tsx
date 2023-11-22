@@ -44,10 +44,6 @@ export default function DenseAppBar() {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  /*const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };*/
-
   const handleMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -117,8 +113,13 @@ export default function DenseAppBar() {
                 }}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
+                sx={{ width: 300 }}
               >
-                <MenuItem onClick={handleClose}>Perfil</MenuItem>
+                <MenuItem onClick={() => router.push("/perfil")}>
+                  <PersonIcon />
+                  <Typography textAlign="center">Perfil</Typography>
+                </MenuItem>
+                <Divider />
                 <MenuItem onClick={() => signOut()}>
                   <ExitToAppIcon />
                   <Typography textAlign="center">Salir</Typography>

@@ -12,11 +12,14 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Autocomplete from "@mui/material/Autocomplete";
+import { useSession } from "next-auth/react";
 
 function FormKiosko() {
   const router = useRouter();
 
   const params = useParams();
+
+  const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -69,6 +72,7 @@ function FormKiosko() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${session.token_type} ${session.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -82,6 +86,7 @@ function FormKiosko() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${session.token_type} ${session.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -100,6 +105,7 @@ function FormKiosko() {
           body: JSON.stringify(kiosko),
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `${session.token_type} ${session.access_token}`,
           },
         }).then(function (response) {
           if (response.ok) {
@@ -118,6 +124,7 @@ function FormKiosko() {
           body: JSON.stringify(kiosko),
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `${session.token_type} ${session.access_token}`,
           },
         }).then(function (response) {
           if (response.ok) {
@@ -146,6 +153,7 @@ function FormKiosko() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${session.token_type} ${session.access_token}`,
       },
     }).then(function (response) {
       if (!response.ok) {

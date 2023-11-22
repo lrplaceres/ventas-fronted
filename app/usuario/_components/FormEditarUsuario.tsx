@@ -19,11 +19,14 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { useSession } from "next-auth/react";
 
 function FormUsuario() {
   const router = useRouter();
 
   const params = useParams();
+
+  const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -69,6 +72,7 @@ function FormUsuario() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${session.token_type} ${session.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -92,6 +96,7 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `${session.token_type} ${session.access_token}`,
         },
       }).then(function (response) {
         if (response.ok) {
@@ -111,6 +116,7 @@ function FormUsuario() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${session.token_type} ${session.access_token}`,
       },
     }).then(function (response) {
       if (!response.ok) {

@@ -1,10 +1,11 @@
-"use client";
+"use client"
 import { Button } from "@mui/material";
-import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const columns: GridColDef[] = [
   {
@@ -27,6 +28,8 @@ const columns: GridColDef[] = [
 function page() {
   const router = useRouter();
 
+  const { data: session, update } = useSession();
+
   const [kioskos, setKioskos] = useState([]);
 
   useEffect(() => {
@@ -34,10 +37,12 @@ function page() {
   }, []);
 
   const obtenerKioskos = async () => {
+
     await fetch(`${process.env.MI_API_BACKEND}/kiosko`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${session.token_type} ${session.access_token}`,
       },
     })
       .then((response) => response.json())
