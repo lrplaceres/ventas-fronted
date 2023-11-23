@@ -30,7 +30,7 @@ function FormProducto() {
 
   const [producto, setProducto] = useState({
     nombre: "",
-    negocio_id: 0,
+    negocio_id: "",
   });
 
   const [open, setOpen] = useState(false);

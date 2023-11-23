@@ -43,7 +43,7 @@ function FormNuevaVenta() {
           value={venta.inventario}
           onChange={handleChange}
           fullWidth
-          sx={{ mb: ".5rem" }}
+          sx={{ mb:  1  }}
           required
         />
 
@@ -54,7 +54,7 @@ function FormNuevaVenta() {
           value={venta.cantidad}
           onChange={handleChange}
           fullWidth
-          sx={{ mb: ".5rem" }}
+          sx={{ mb:  1  }}
           type="number"
           required
         />
@@ -65,7 +65,7 @@ function FormNuevaVenta() {
               setVenta({ ...venta, "fecha": newvalue });
             }}
             format="YYYY-MM-DD"
-            sx={{ mb: ".5rem" }}
+            sx={{ mb:  1  }}
             value={dayjs(moment(venta.fecha).utc().format("YYYY-MM-DD"))}
           />
         </LocalizationProvider>
@@ -73,7 +73,7 @@ function FormNuevaVenta() {
         <Button
           variant="contained"
           color="error"
-          sx={{ mr: ".5rem" }}
+          sx={{ mr:  1  }}
           onClick={() => router.push("/venta")}
         >
           Cancelar

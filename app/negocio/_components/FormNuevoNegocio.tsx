@@ -32,7 +32,7 @@ function FormNegocio() {
     nombre: "",
     direccion: "",
     informacion: "",
-    fecha_licencia: Date(),
+    fecha_licencia: new Date(),
     activo: true,
     propietario_id: "",
   });

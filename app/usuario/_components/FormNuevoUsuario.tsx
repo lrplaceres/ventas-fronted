@@ -86,7 +86,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.usuario}
           onChange={handleChange}
-          sx={{ mb: ".5rem" }}
+          sx={{ mb:  1  }}
           required
         />
         <TextField
@@ -96,7 +96,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.password}
           onChange={handleChange}
-          sx={{ mb: ".5rem" }}
+          sx={{ mb:  1  }}
           type="password"
           required
         />
@@ -107,12 +107,12 @@ function FormUsuario() {
           fullWidth
           value={usuario.repite}
           onChange={handleChange}
-          sx={{ mb: ".5rem" }}
+          sx={{ mb:  1  }}
           type="password"
           required
         />
 
-        <FormControl fullWidth sx={{ mb: ".5rem" }}>
+        <FormControl fullWidth sx={{ mb:  1  }}>
           <InputLabel id="demo-simple-select-label">Rol</InputLabel>
           <Select
             name="rol"
@@ -136,7 +136,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.nombre}
           onChange={handleChange}
-          sx={{ mb: ".5rem" }}
+          sx={{ mb:  1  }}
         />
         <TextField
           id="email"
@@ -145,7 +145,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.email}
           onChange={handleChange}
-          sx={{ mb: ".5rem" }}
+          sx={{ mb:  1  }}
           type="email"
         />
 
@@ -153,7 +153,7 @@ function FormUsuario() {
           <Button
             variant="contained"
             color="warning"
-            sx={{ mr: ".5rem" }}
+            sx={{ mr:  1  }}
             onClick={() => router.push("/usuario")}
           >
             Cancelar

@@ -51,7 +51,7 @@ function page() {
       <Button
         variant="contained"
         color="inherit"
-        sx={{ mt: ".5rem", mb: ".5rem" }}
+        sx={{ mt:  1 , mb:  1  }}
         startIcon={<PersonAddAlt1Icon />}
         onClick={() => router.push("/usuario/nuevo")}
       >
