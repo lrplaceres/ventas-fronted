@@ -1,7 +1,7 @@
 "use client";
 import DenseAppBar from "./components/appMenuBar";
 import { useSession } from "next-auth/react";
-import ViewKiokoPropietario from "./kiosko/_components/ViewKiokoPropietario";
+import ViewKiokoPropietario from "./negocio/_components/ViewNegocioPropietario";
 
 export default function Home() {
   const { data: session, update } = useSession();

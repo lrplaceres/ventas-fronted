@@ -15,14 +15,14 @@ function ViewKiokoPropietario() {
 
   const { data: session, update } = useSession();
 
-  const [kioskos, setKioskos] = useState([]);
+  const [negocios, setNegocios] = useState([]);
 
   useEffect(() => {
-    obtenerKioskosPropietario();
+    obtenerNegociosPropietario();
   }, []);
 
-  const obtenerKioskosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/kioskos/${session?.usuario}`, {
+  const obtenerNegociosPropietario = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -31,31 +31,31 @@ function ViewKiokoPropietario() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setKioskos(data);
+        setNegocios(data);
       });
   };
 
   return (
     <>
-      {!kioskos.length ? (
+      {!negocios.length ? (
         <Alert variant="outlined" severity="info">
-          Usted no tiene Kioskos asociados. Contacte al administrador.
+          Usted no tiene Negocios asociados. Contacte al administrador.
         </Alert>
       ) : (
         <>
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
           >
-            {kioskos.map((kiosko, index) => (
+            {negocios.map((negocio, index) => (
               <ListItem key={index.toString()}>
                 <ListItemAvatar>
-                  <Avatar>
+                  <Avatar sx={{bgcolor: "#1976d2"}}>
                     <StorefrontIcon />
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={kiosko.nombre}
-                  secondary={kiosko.representante}
+                  primary={negocio.nombre}
+                  secondary={negocio.informacion}
                 />
               </ListItem>
             ))}

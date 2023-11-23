@@ -144,6 +144,23 @@ export default function DenseAppBar() {
           <List>
             {session?.rol == "propietario" && (
               <>
+              <ListItem
+                  disablePadding
+                  onClick={() => router.push("/punto")}
+                  sx={{
+                    backgroundColor:
+                      pathname.split("/")[1] == "punto" ? "#bbdefb" : "",
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <StorefrontIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Puntos"} />
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/producto")}
@@ -156,7 +173,7 @@ export default function DenseAppBar() {
                     <ListItemIcon>
                       <MenuBookIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Producto"} />
+                    <ListItemText primary={"Productos"} />
                   </ListItemButton>
                 </ListItem>
 
@@ -202,17 +219,17 @@ export default function DenseAppBar() {
               <>
                 <ListItem
                   disablePadding
-                  onClick={() => router.push("/kiosko")}
+                  onClick={() => router.push("/negocio")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "kiosko" ? "#bbdefb" : "",
+                      pathname?.split("/")[1] == "negocio" ? "#bbdefb" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
                       <StorefrontIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Kiosko"} />
+                    <ListItemText primary={"Negocio"} />
                   </ListItemButton>
                 </ListItem>
                 <Divider />

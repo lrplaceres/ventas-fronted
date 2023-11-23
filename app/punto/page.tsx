@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,19 +10,16 @@ import { useSession } from "next-auth/react";
 const columns: GridColDef[] = [
   {
     field: "nombre",
-    headerName: "nombre",
+    headerName: "Nombre",
     width: 150,
     renderCell: (params) => (
-      <Link href={`/kiosko/${params.row.id}`} className="decoration-none">
-        {params.row.activo ? (
-          params.row.nombre
-        ) : (
-          <del>{params.row.nombre}</del>
-        )}
+      <Link href={`/punto/${params.row.id}`} className="decoration-none">
+        {params.row.nombre}
       </Link>
     ),
   },
-  { field: "representante", headerName: "Representante", width: 150 },
+  { field: "direccion", headerName: "Dirección", width: 150 },
+  { field: "negocio_id", headerName: "Negocio", width: 150 },
 ];
 
 function page() {
@@ -30,24 +27,23 @@ function page() {
 
   const { data: session, update } = useSession();
 
-  const [kioskos, setKioskos] = useState([]);
+  const [puntos, setPuntos] = useState([]);
 
   useEffect(() => {
-    obtenerKioskos();
+    obtenerPuntos();
   }, []);
 
-  const obtenerKioskos = async () => {
-
-    await fetch(`${process.env.MI_API_BACKEND}/kiosko`, {
+  const obtenerPuntos = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos/${session.usuario}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session.token_type} ${session.access_token}`,
+        Authorization: `${session.token_type} ${session.access_token}`,
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        setKioskos(data);
+        setPuntos(data);
       });
   };
 
@@ -56,15 +52,19 @@ function page() {
       <Button
         variant="contained"
         color="inherit"
-        sx={{ mt: ".5rem", mb: ".5rem" }}
+        sx={{ mt:1, mb: 1 }}
         startIcon={<AddBusinessIcon />}
-        onClick={() => router.push("/kiosko/nuevo")}
+        onClick={() => router.push("/punto/nuevo")}
       >
-        Insertar Kiosko
+        Insertar Punto
       </Button>
 
       <div style={{ height: 500, width: "100%" }}>
-        <DataGrid rows={kioskos} columns={columns} />
+        <DataGrid
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          rows={puntos}
+          columns={columns}
+        />
       </div>
     </>
   );

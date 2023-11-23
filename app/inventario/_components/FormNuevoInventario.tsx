@@ -92,7 +92,7 @@ function FormNuevoInventario() {
           value={inventario.costo}
           onChange={handleChange}
           fullWidth
-          sx={{ mb: ".5rem" }}
+          sx={{ mb: 1 }}
           type="number"
         />
 
@@ -102,7 +102,7 @@ function FormNuevoInventario() {
               setInventario({ ...inventario, "fecha": newvalue });
             }}
             format="YYYY-MM-DD"
-            sx={{ mb: ".5rem" }}
+            sx={{ mb: 1 }}
             value={dayjs(moment(inventario.fecha).utc().format("YYYY-MM-DD"))}
           />
         </LocalizationProvider>

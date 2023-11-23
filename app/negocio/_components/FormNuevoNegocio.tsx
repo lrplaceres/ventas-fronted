@@ -1,25 +1,25 @@
 "use client";
-import {
-  Button,
-  Card,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useSession } from "next-auth/react";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Switch from "@mui/material/Switch";
+import { Button, Card, FormControlLabel } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useSession } from "next-auth/react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import moment from "moment";
 
-function FormProducto() {
+function FormNegocio() {
   const router = useRouter();
 
   const params = useParams();
@@ -28,10 +28,18 @@ function FormProducto() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [producto, setProducto] = useState({
+  const [negocio, setNegocio] = useState({
     nombre: "",
-    negocio_id: 0,
+    direccion: "",
+    informacion: "",
+    fecha_licencia: Date(),
+    activo: true,
+    propietario_id: "",
   });
+
+  const [propietarios, setPropietarios] = useState([]);
+
+  const [propietarioEdit, setPropietarioEdit] = useState([]);
 
   const [open, setOpen] = useState(false);
 
@@ -43,17 +51,25 @@ function FormProducto() {
     setOpen(false);
   };
 
-  const [negocios, setNegocios] = useState([]);
-
   useEffect(() => {
-    obtenerNegociosPropietario();
-    if (params.id) {
-      obtenerProducto(params.id);
+    obtenerPropietarios();
+    if (params?.id) {
+      obtenerNegocio(params.id);
     }
   }, []);
 
+  useEffect(() => {
+    setPropietarioEdit(
+      propietarios.filter((v) => v.id == negocio.propietario_id)[0]
+    );
+  }, [propietarios]);
+
   const handleChange = ({ target: { name, value } }) => {
-    setProducto({ ...producto, [name]: value });
+    setNegocio({ ...negocio, [name]: value });
+  };
+
+  const handleChangeSlider = ({ target: { name, checked } }) => {
+    setNegocio({ ...negocio, [name]: checked });
   };
 
   const notificacion = (mensaje: string, variant: VariantType) => {
@@ -61,8 +77,8 @@ function FormProducto() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
+  const obtenerNegocio = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -71,21 +87,21 @@ function FormProducto() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setNegocios(data);
+        setNegocio(data);
       });
   };
 
-  const obtenerProducto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+  const obtenerPropietarios = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/user/propietarios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `${session?.token_type} ${session.access_token}`,
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        setProducto(data);
+        setPropietarios(data);
       });
   };
 
@@ -93,23 +109,21 @@ function FormProducto() {
     e.preventDefault();
 
     try {
-      if (params.id) {
-        fetch(`${process.env.MI_API_BACKEND}/producto/${params.id}`, {
+      if (params?.id) {
+        fetch(`${process.env.MI_API_BACKEND}/negocio/${params?.id}`, {
           method: "PUT",
-          body: JSON.stringify(producto),
+          body: JSON.stringify(negocio),
           headers: {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
           },
         }).then(function (response) {
           if (response.ok) {
-            response.json().then((data) => {
-              notificacion(
-                `Se ha editado el Producto ${producto.nombre}`,
-                "success"
-              );
-              setTimeout(() => router.push("/producto"), 300);
-            });
+            notificacion(
+              `Se ha editato el Negocio ${negocio.nombre}`,
+              "success"
+            );
+            setTimeout(() => router.push("/negocio"), 300);
           } else {
             notificacion(
               `Se ha producido un error ${response.status}`,
@@ -118,9 +132,9 @@ function FormProducto() {
           }
         });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/producto`, {
+        fetch(`${process.env.MI_API_BACKEND}/negocio`, {
           method: "POST",
-          body: JSON.stringify(producto),
+          body: JSON.stringify(negocio),
           headers: {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
@@ -129,10 +143,10 @@ function FormProducto() {
           if (response.ok) {
             response.json().then((data) => {
               notificacion(
-                `Se ha creado el Producto ${producto.nombre}`,
+                `Se ha creado el Negocio ${negocio.nombre}`,
                 "success"
               );
-              setTimeout(() => router.push("/producto"), 300);
+              setTimeout(() => router.push("/negocio"), 300);
             });
           } else {
             notificacion(
@@ -147,8 +161,8 @@ function FormProducto() {
     }
   };
 
-  const eliminarProducto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+  const eliminarKiosko = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -159,11 +173,8 @@ function FormProducto() {
         return notificacion("Se ha producido un error", "error");
       }
 
-      notificacion(
-        `El Producto ${producto.nombre} ha sido eliminado`,
-        "success"
-      );
-      setTimeout(() => router.push("/producto"), 300);
+      notificacion(`El Negocio ${negocio.nombre} ha sido eliminado`, "success");
+      setTimeout(() => router.push("/negocio"), 300);
     });
   };
 
@@ -171,45 +182,87 @@ function FormProducto() {
     <>
       <form onSubmit={handleSubmit}>
         <Typography variant="h6" color="primary" align="center">
-          INSERTAR PRODUCTO
+          {params?.id ? "EDITAR" : "INSERTAR"} NEGOCIO
         </Typography>
 
         <TextField
           id="nombre"
           name="nombre"
           label="Nombre"
-          value={producto.nombre}
+          value={negocio.nombre}
           onChange={handleChange}
           fullWidth
           sx={{ mb: 1 }}
           required
         />
 
-        <FormControl fullWidth>
-          <InputLabel>Negocio</InputLabel>
-          <Select
-            id="negocio_id"
-            name="negocio_id"
-            value={producto.negocio_id}
-            label="Negocio"
-            onChange={handleChange}
+        <TextField
+          id="direccion"
+          name="direccion"
+          label="Dirección"
+          value={negocio.direccion}
+          onChange={handleChange}
+          fullWidth
+          sx={{ mb: 1 }}
+          required
+        />
+
+        <TextField
+          id="informacion"
+          name="informacion"
+          label="Información"
+          value={negocio.informacion}
+          onChange={handleChange}
+          fullWidth
+          sx={{ mb: 1 }}
+          required
+        />
+
+        <FormControlLabel
+          control={
+            <Switch
+              name="activo"
+              onChange={handleChangeSlider}
+              checked={negocio.activo}
+            />
+          }
+          label="Activo"
+          sx={{ mb: 1 }}
+        />
+
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={propietarios}
+          getOptionLabel={(option) => `${option.nombre} ► ${option.usuario}`}
+          sx={{ mb: 1 }}
+          value={params.id ? propietarioEdit : propietarios[0]}
+          onChange={(event: any, newValue: string | null) => {
+            setNegocio({ ...negocio, "propietario_id": newValue.id });
+            setPropietarioEdit(newValue);
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Propietario" required />
+          )}
+        />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            onChange={(newvalue) => {
+              setNegocio({ ...negocio, "fecha_licencia": newvalue });
+            }}
+            format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            required
-          >
-            {negocios.map((producto, index) => (
-              <MenuItem key={index.toString()} value={producto.id}>
-                {producto.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            value={dayjs(moment(negocio.fecha_licencia).utc().format("YYYY-MM-DD"))}
+          />
+        </LocalizationProvider>
 
         <Card variant="outlined" sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            color="error"
+            color="warning"
             sx={{ mr: 1 }}
-            onClick={() => router.push("/producto")}
+            onClick={() => router.push("/negocio")}
           >
             Cancelar
           </Button>
@@ -222,7 +275,7 @@ function FormProducto() {
             Aceptar
           </Button>
 
-          {params?.id && (
+          {params.id && (
             <Button variant="contained" color="error" onClick={handleClickOpen}>
               Eliminar
             </Button>
@@ -236,7 +289,7 @@ function FormProducto() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Eliminar producto"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Eliminar kiosko"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
@@ -246,7 +299,7 @@ function FormProducto() {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button
-            onClick={() => eliminarProducto(params?.id)}
+            onClick={() => eliminarKiosko(params.id)}
             autoFocus
             color="error"
           >
@@ -258,15 +311,15 @@ function FormProducto() {
   );
 }
 
-function FormNuevoProducto() {
+function FormNuevoNegocio() {
   return (
     <SnackbarProvider
       maxSnack={3}
       anchorOrigin={{ horizontal: "right", vertical: "top" }}
     >
-      <FormProducto />
+      <FormNegocio />
     </SnackbarProvider>
   );
 }
 
-export default FormNuevoProducto;
+export default FormNuevoNegocio;

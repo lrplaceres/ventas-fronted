@@ -1,4 +1,4 @@
-import FormNuevoKiosko from "../_components/FormNuevoKiosko";
+import FormNuevoKiosko from "../_components/FormNuevoNegocio";
 
 function page() {
   return (

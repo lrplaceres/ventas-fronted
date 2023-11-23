@@ -1,20 +1,25 @@
 "use client";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Switch from "@mui/material/Switch";
-import { Button, Card, FormControlLabel } from "@mui/material";
+import {
+  Button,
+  Card,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { FormEvent, useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Autocomplete from "@mui/material/Autocomplete";
-import { useSession } from "next-auth/react";
 
-function FormKiosko() {
+function FormPunto() {
   const router = useRouter();
 
   const params = useParams();
@@ -22,17 +27,6 @@ function FormKiosko() {
   const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [kiosko, setKiosko] = useState({
-    nombre: "",
-    representante: "",
-    activo: true,
-    admin_id: "",
-  });
-
-  const [propietarios, setPropietarios] = useState([]);
-
-  const [propietarioEdit, setPropietarioEdit] = useState([]);
 
   const [open, setOpen] = useState(false);
 
@@ -44,22 +38,24 @@ function FormKiosko() {
     setOpen(false);
   };
 
-  useEffect(() => {
-    obtenerPropietarios();
-    if (params?.id) {
-      obtenerKiosko(params?.id);
-  }}, []);
+  const [punto, setPunto] = useState({
+    nombre: "",
+    direccion: "",
+    negocio_id: "",
+  });
 
+  const [negocios, setNegocios] = useState([]);
+  
   useEffect(() => {
-    setPropietarioEdit(propietarios.filter((v) => v.id == kiosko.admin_id)[0]);
-  }, [propietarios]);
+    obtenerNegociosPropietario();
+    if (params?.id) {
+      obtenerPunto(params?.id);
+    }
+  }, []);
+
 
   const handleChange = ({ target: { name, value } }) => {
-    setKiosko({ ...kiosko, [name]: value });
-  };
-
-  const handleChangeSlider = ({ target: { name, checked } }) => {
-    setKiosko({ ...kiosko, [name]: checked });
+    setPunto({ ...punto, [name]: value });
   };
 
   const notificacion = (mensaje: string, variant: VariantType) => {
@@ -67,31 +63,31 @@ function FormKiosko() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerKiosko = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/kiosko/${id}`, {
+  const obtenerNegociosPropietario = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session.token_type} ${session.access_token}`,
+        Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        setKiosko(data);
+        setNegocios(data);
       });
   };
 
-  const obtenerPropietarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/user/propietarios`, {
+  const obtenerPunto = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session.token_type} ${session.access_token}`,
+        Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        setPropietarios(data);
+        setPunto(data);
       });
   };
 
@@ -100,17 +96,19 @@ function FormKiosko() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/kiosko/${params.id}`, {
+        fetch(`${process.env.MI_API_BACKEND}/punto/${params?.id}`, {
           method: "PUT",
-          body: JSON.stringify(kiosko),
+          body: JSON.stringify(punto),
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `${session.token_type} ${session.access_token}`,
+            Authorization: `${session?.token_type} ${session?.access_token}`,
           },
         }).then(function (response) {
           if (response.ok) {
-            notificacion(`Se ha editato el Kiosko ${kiosko.nombre}`, "success");
-            setTimeout(() => router.push("/kiosko"), 300);
+            response.json().then((data) => {
+              notificacion(`Se ha editado el Punto ${punto.nombre}`, "success");
+              setTimeout(() => router.push("/punto"), 300);
+            });
           } else {
             notificacion(
               `Se ha producido un error ${response.status}`,
@@ -119,21 +117,18 @@ function FormKiosko() {
           }
         });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/kiosko`, {
+        fetch(`${process.env.MI_API_BACKEND}/punto`, {
           method: "POST",
-          body: JSON.stringify(kiosko),
+          body: JSON.stringify(punto),
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `${session.token_type} ${session.access_token}`,
+            Authorization: `${session?.token_type} ${session?.access_token}`,
           },
         }).then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
-              notificacion(
-                `Se ha creado el Kiosko ${kiosko.nombre}`,
-                "success"
-              );
-              setTimeout(() => router.push("/kiosko"), 300);
+              notificacion(`Se ha creado el Punto ${punto.nombre}`, "success");
+              setTimeout(() => router.push("/punto"), 300);
             });
           } else {
             notificacion(
@@ -148,87 +143,77 @@ function FormKiosko() {
     }
   };
 
-  const eliminarKiosko = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/kiosko/${id}`, {
+  const eliminarPunto = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session.token_type} ${session.access_token}`,
+        Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     }).then(function (response) {
       if (!response.ok) {
         return notificacion("Se ha producido un error", "error");
       }
 
-      notificacion(`El kiosko ${kiosko.nombre} ha sido eliminado`, "success");
-      setTimeout(() => router.push("/kiosko"), 300);
+      notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "success");
+      setTimeout(() => router.push("/punto"), 300);
     });
   };
-
 
   return (
     <>
       <form onSubmit={handleSubmit}>
         <Typography variant="h6" color="primary" align="center">
-          {params.id ? "EDITAR" : "INSERTAR"} KIOSKO
+          {params?.id ? "EDITAR" : "INSERTAR"} PUNTO
         </Typography>
 
         <TextField
           id="nombre"
           name="nombre"
           label="Nombre"
-          value={kiosko.nombre}
+          value={punto.nombre}
           onChange={handleChange}
           fullWidth
-          sx={{ mb: ".5rem" }}
+          sx={{ mb: 1 }}
           required
         />
 
         <TextField
-          id="representante"
-          name="representante"
-          label="Representante"
-          value={kiosko.representante}
+          id="direccion"
+          name="direccion"
+          label="Dirección"
+          value={punto.direccion}
           onChange={handleChange}
           fullWidth
-          sx={{ mb: ".5rem" }}
+          sx={{ mb: 1 }}
           required
         />
 
-        <FormControlLabel
-          control={
-            <Switch
-              name="activo"
-              onChange={handleChangeSlider}
-              checked={kiosko.activo}
-            />
-          }
-          label="Activo"
-          sx={{ mb: ".5rem" }}
-        />
-
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={propietarios}
-          getOptionLabel={(option) => `${option.nombre} ► ${option.usuario}`}
-          sx={{ mb: 1 }}
-          value={params.id ? propietarioEdit: propietarios[0]}
-          onChange={(event: any, newValue: string | null) => {
-            setKiosko({ ...kiosko, admin_id: newValue.id });
-            setPropietarioEdit(newValue);
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Propietario" required />
-          )}
-        />
+        <FormControl fullWidth>
+          <InputLabel>Negocio</InputLabel>
+          <Select
+            id="negocio_id"
+            name="negocio_id"
+            value={punto.negocio_id}
+            label="Negocio"
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            required
+          >
+            {negocios.map((negocio, index) => (
+              <MenuItem key={index.toString()} value={negocio.id}>
+                {negocio.nombre}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <Card variant="outlined" sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
             color="warning"
-            sx={{ mr: ".5rem" }}
-            onClick={() => router.push("/kiosko")}
+            sx={{ mr: 1 }}
+            onClick={() => router.push("/punto")}
           >
             Cancelar
           </Button>
@@ -236,12 +221,12 @@ function FormKiosko() {
             variant="contained"
             color="success"
             type="submit"
-            sx={{ mr: ".5rem" }}
+            sx={{ mr: 1 }}
           >
             Aceptar
           </Button>
 
-          {params.id && (
+          {params?.id && (
             <Button variant="contained" color="error" onClick={handleClickOpen}>
               Eliminar
             </Button>
@@ -255,7 +240,7 @@ function FormKiosko() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Eliminar kiosko"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Eliminar punto"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
@@ -265,7 +250,7 @@ function FormKiosko() {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button
-            onClick={() => eliminarKiosko(params.id)}
+            onClick={() => eliminarPunto(params?.id)}
             autoFocus
             color="error"
           >
@@ -277,15 +262,15 @@ function FormKiosko() {
   );
 }
 
-function FormNuevoKiosko() {
+function FormNuevoPunto() {
   return (
     <SnackbarProvider
       maxSnack={3}
       anchorOrigin={{ horizontal: "right", vertical: "top" }}
     >
-      <FormKiosko />
+      <FormPunto />
     </SnackbarProvider>
   );
 }
 
-export default FormNuevoKiosko;
+export default FormNuevoPunto;
