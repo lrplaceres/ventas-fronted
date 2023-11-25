@@ -29,7 +29,7 @@ function FormUsuario() {
     setUsuario({ ...usuario, [name]: value });
   };
 
-  const notificacion = (mensaje: string, variant: VariantType) => {
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
@@ -55,7 +55,7 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `${session.token_type} ${session.access_token}`,
+          "Authorization": `${session?.token_type} ${session?.access_token}`,
         },
       }).then(function (response) {
         if (response.ok) {
@@ -64,11 +64,14 @@ function FormUsuario() {
             setTimeout(() => router.push("/usuario"), 300);
           });
         } else {
-          notificacion(`Se ha producido un error ${response.status}`, "error");
+          notificacion(`Se ha producido un error ${response.status}`);
         }
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
     } catch (error) {
-      return notificacion(error, "error");
+      return notificacion(error);
     }
   };
 

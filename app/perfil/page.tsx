@@ -3,8 +3,9 @@ import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { useSession } from "next-auth/react";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
-function perfil() {
+function Perfil() {
 
   const { data: session, update } = useSession();
 
@@ -15,9 +16,16 @@ function perfil() {
     rol: "",
   });
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     obtenerUsuario();
   }, []);
+
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(mensaje, { variant });
+  };
 
   const obtenerUsuario = async () => {
     await fetch(`${process.env.MI_API_BACKEND}/users/me`, {
@@ -30,6 +38,9 @@ function perfil() {
       .then((response) => response.json())
       .then((data) => {
         setUsuario(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
   };
 
@@ -86,4 +97,16 @@ function perfil() {
   );
 }
 
-export default perfil;
+function PagePerfil() {
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ horizontal: "right", vertical: "top" }}
+    >
+      <Perfil/>
+    </SnackbarProvider>
+  );
+}
+
+export default PagePerfil;
+

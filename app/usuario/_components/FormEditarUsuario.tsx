@@ -49,8 +49,8 @@ function FormUsuario() {
   };
   
   useEffect(() => {
-    if (params.id) {
-      obtenerUsuario(params.id);
+    if (params?.id) {
+      obtenerUsuario(params?.id);
     }
   }, []);
 
@@ -62,7 +62,7 @@ function FormUsuario() {
     setUsuario({ ...usuario, [name]: checked });
   };
 
-  const notificacion = (mensaje: string, variant: VariantType) => {
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
@@ -78,6 +78,9 @@ function FormUsuario() {
       .then((response) => response.json())
       .then((data) => {
         setUsuario(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
   };
 
@@ -103,11 +106,14 @@ function FormUsuario() {
           notificacion(`Se ha editado el usuario ${usuario.usuario}`, "success");
           setTimeout(() => router.push("/usuario"), 300);
         } else {
-          notificacion(`Se ha producido un error ${response.status}`, "error");
+          notificacion(`Se ha producido un error ${response.status}`);
         }
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
     } catch (error) {
-      return notificacion(error, "error");
+      return notificacion(error);
     }
   };
 
@@ -128,6 +134,9 @@ function FormUsuario() {
         "success"
       );
       setTimeout(() => router.push("/usuario"), 300);
+    })
+    .catch(function (error) {
+      notificacion("Se ha producido un error")
     });
   };
 
@@ -143,7 +152,7 @@ function FormUsuario() {
           label="Usuario"
           value={usuario.usuario}
           fullWidth
-          sx={{ mb: "0.5rem" }}
+          sx={{ mb: 1 }}
           disabled
         />
 
@@ -214,7 +223,7 @@ function FormUsuario() {
             Aceptar
           </Button>
 
-          {params.id && (
+          {params?.id && (
             <Button variant="contained" color="error" onClick={handleClickOpen}>
               Eliminar
             </Button>
@@ -238,7 +247,7 @@ function FormUsuario() {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button
-            onClick={() => eliminarUsuario(params.id)}
+            onClick={() => eliminarUsuario(params?.id)}
             autoFocus
             color="error"
           >

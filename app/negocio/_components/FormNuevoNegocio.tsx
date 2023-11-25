@@ -72,7 +72,7 @@ function FormNegocio() {
     setNegocio({ ...negocio, [name]: checked });
   };
 
-  const notificacion = (mensaje: string, variant: VariantType) => {
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
@@ -88,6 +88,9 @@ function FormNegocio() {
       .then((response) => response.json())
       .then((data) => {
         setNegocio(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
   };
 
@@ -96,12 +99,15 @@ function FormNegocio() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session.access_token}`,
+        Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
       .then((data) => {
         setPropietarios(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
   };
 
@@ -126,10 +132,12 @@ function FormNegocio() {
             setTimeout(() => router.push("/negocio"), 300);
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error")
         });
       } else {
         fetch(`${process.env.MI_API_BACKEND}/negocio`, {
@@ -150,14 +158,16 @@ function FormNegocio() {
             });
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error")
         });
       }
     } catch (error) {
-      return notificacion(error, "error");
+      return notificacion(error);
     }
   };
 
@@ -170,7 +180,7 @@ function FormNegocio() {
       },
     }).then(function (response) {
       if (!response.ok) {
-        return notificacion("Se ha producido un error", "error");
+        return notificacion("Se ha producido un error");
       }
 
       notificacion(`El Negocio ${negocio.nombre} ha sido eliminado`, "success");

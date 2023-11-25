@@ -47,8 +47,8 @@ function FormProducto() {
 
   useEffect(() => {
     obtenerNegociosPropietario();
-    if (params.id) {
-      obtenerProducto(params.id);
+    if (params?.id) {
+      obtenerProducto(params?.id);
     }
   }, []);
 
@@ -56,7 +56,7 @@ function FormProducto() {
     setProducto({ ...producto, [name]: value });
   };
 
-  const notificacion = (mensaje: string, variant: VariantType) => {
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
@@ -72,6 +72,9 @@ function FormProducto() {
       .then((response) => response.json())
       .then((data) => {
         setNegocios(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -86,6 +89,9 @@ function FormProducto() {
       .then((response) => response.json())
       .then((data) => {
         setProducto(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -93,7 +99,7 @@ function FormProducto() {
     e.preventDefault();
 
     try {
-      if (params.id) {
+      if (params?.id) {
         fetch(`${process.env.MI_API_BACKEND}/producto/${params.id}`, {
           method: "PUT",
           body: JSON.stringify(producto),
@@ -112,10 +118,12 @@ function FormProducto() {
             });
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
         });
       } else {
         fetch(`${process.env.MI_API_BACKEND}/producto`, {
@@ -136,14 +144,16 @@ function FormProducto() {
             });
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error")
         });
       }
     } catch (error) {
-      return notificacion(error, "error");
+      return notificacion(error);
     }
   };
 
@@ -156,7 +166,7 @@ function FormProducto() {
       },
     }).then(function (response) {
       if (!response.ok) {
-        return notificacion("Se ha producido un error", "error");
+        return notificacion("Se ha producido un error");
       }
 
       notificacion(
@@ -164,6 +174,9 @@ function FormProducto() {
         "success"
       );
       setTimeout(() => router.push("/producto"), 300);
+    })
+    .catch(function (error) {
+      notificacion("Se ha producido un error")
     });
   };
 

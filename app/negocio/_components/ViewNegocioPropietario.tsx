@@ -9,6 +9,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import { Alert } from "@mui/material";
 import StorefrontIcon from "@mui/icons-material/Storefront";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
 function ViewKiokoPropietario() {
   const router = useRouter();
@@ -17,9 +18,16 @@ function ViewKiokoPropietario() {
 
   const [negocios, setNegocios] = useState([]);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     obtenerNegociosPropietario();
   }, []);
+
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(mensaje, { variant });
+  };
 
   const obtenerNegociosPropietario = async () => {
     await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
@@ -32,6 +40,9 @@ function ViewKiokoPropietario() {
       .then((response) => response.json())
       .then((data) => {
         setNegocios(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -66,4 +77,16 @@ function ViewKiokoPropietario() {
   );
 }
 
-export default ViewKiokoPropietario;
+
+function Pagepropietario() {
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ horizontal: "right", vertical: "top" }}
+    >
+      <ViewKiokoPropietario />
+    </SnackbarProvider>
+  );
+}
+
+export default Pagepropietario;

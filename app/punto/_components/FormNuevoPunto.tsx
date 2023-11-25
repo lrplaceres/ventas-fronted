@@ -58,7 +58,7 @@ function FormPunto() {
     setPunto({ ...punto, [name]: value });
   };
 
-  const notificacion = (mensaje: string, variant: VariantType) => {
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
@@ -74,6 +74,9 @@ function FormPunto() {
       .then((response) => response.json())
       .then((data) => {
         setNegocios(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -88,6 +91,9 @@ function FormPunto() {
       .then((response) => response.json())
       .then((data) => {
         setPunto(data);
+      })
+      .catch(function (error) {
+        signOut();
       });
   };
 
@@ -111,10 +117,11 @@ function FormPunto() {
             });
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
+        }).catch(function (error) {
+          notificacion("Se ha producido un error");
         });
       } else {
         fetch(`${process.env.MI_API_BACKEND}/punto`, {
@@ -132,14 +139,15 @@ function FormPunto() {
             });
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
-        });
+        }).catch(function (error) {
+          notificacion("Se ha producido un error")
+        });;
       }
     } catch (error) {
-      return notificacion(error, "error");
+      return notificacion(error);
     }
   };
 
@@ -152,11 +160,14 @@ function FormPunto() {
       },
     }).then(function (response) {
       if (!response.ok) {
-        return notificacion("Se ha producido un error", "error");
+        return notificacion("Se ha producido un error");
       }
 
       notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "success");
       setTimeout(() => router.push("/punto"), 300);
+    })
+    .catch(function (error) {
+      notificacion("Se ha producido un error")
     });
   };
 

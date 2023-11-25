@@ -19,7 +19,7 @@ export default async function SignIn() {
       <Container
         maxWidth="sm"
         sx={{
-          minHeight: "95vh",
+          minHeight: "90vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

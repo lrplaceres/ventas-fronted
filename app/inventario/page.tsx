@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
 const columns: GridColDef[] = [
   {
@@ -22,16 +23,23 @@ const columns: GridColDef[] = [
   { field: "negocio_id", headerName: "Negocio", width: 150 },
 ];
 
-function page() {
+function Page() {
   const router = useRouter();
 
   const { data: session, update } = useSession();
 
   const [inventarios, setInventarios] = useState([]);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     obtenerInventarios();
   }, []);
+
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(mensaje, { variant });
+  };
 
   const obtenerInventarios = async () => {
     await fetch(`${process.env.MI_API_BACKEND}/inventarios/${session?.usuario}`, {
@@ -44,6 +52,9 @@ function page() {
       .then((response) => response.json())
       .then((data) => {
         setInventarios(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -70,4 +81,16 @@ function page() {
   );
 }
 
-export default page;
+
+function PageInventario() {
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ horizontal: "right", vertical: "top" }}
+    >
+      <Page />
+    </SnackbarProvider>
+  );
+}
+
+export default PageInventario;

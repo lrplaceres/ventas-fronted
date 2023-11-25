@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
 const columns: GridColDef[] = [
   {
@@ -22,28 +23,38 @@ const columns: GridColDef[] = [
   { field: "negocio_id", headerName: "Negocio", width: 150 },
 ];
 
-function page() {
+function Page() {
   const router = useRouter();
 
   const { data: session, update } = useSession();
 
   const [puntos, setPuntos] = useState([]);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     obtenerPuntos();
   }, []);
 
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(mensaje, { variant });
+  };
+
   const obtenerPuntos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos/${session.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos/${session?.usuario}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session.token_type} ${session.access_token}`,
+        Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
       .then((data) => {
         setPuntos(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -70,4 +81,16 @@ function page() {
   );
 }
 
-export default page;
+
+function PagePunto() {
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ horizontal: "right", vertical: "top" }}
+    >
+      <Page />
+    </SnackbarProvider>
+  );
+}
+
+export default PagePunto;

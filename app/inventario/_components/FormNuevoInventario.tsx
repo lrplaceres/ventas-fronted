@@ -75,7 +75,7 @@ function FormInventario() {
     setInventario({ ...inventario, [name]: value });
   };
 
-  const notificacion = (mensaje: string, variant: VariantType) => {
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
@@ -91,6 +91,9 @@ function FormInventario() {
       .then((response) => response.json())
       .then((data) => {
         setProductos(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
   };
 
@@ -105,6 +108,9 @@ function FormInventario() {
       .then((response) => response.json())
       .then((data) => {
         setNegocios(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
   };
 
@@ -119,6 +125,9 @@ function FormInventario() {
       .then((response) => response.json())
       .then((data) => {
         setInventario(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error")
       });
   };
 
@@ -142,10 +151,12 @@ function FormInventario() {
             });
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error")
         });
       } else {
         fetch(`${process.env.MI_API_BACKEND}/inventario`, {
@@ -163,14 +174,16 @@ function FormInventario() {
             });
           } else {
             notificacion(
-              `Se ha producido un error ${response.status}`,
-              "error"
+              `Se ha producido un error ${response.status}`
             );
           }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error")
         });
       }
     } catch (error) {
-      return notificacion(error, "error");
+      return notificacion(error);
     }
   };
 
@@ -183,11 +196,14 @@ function FormInventario() {
       },
     }).then(function (response) {
       if (!response.ok) {
-        return notificacion("Se ha producido un error", "error");
+        return notificacion("Se ha producido un error");
       }
 
       notificacion(`El Inventario ha sido eliminado`, "success");
       setTimeout(() => router.push("/inventario"), 300);
+    })
+    .catch(function (error) {
+      notificacion("Se ha producido un error")
     });
   };
 
