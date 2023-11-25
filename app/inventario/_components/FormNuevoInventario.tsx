@@ -81,7 +81,7 @@ function FormInventario() {
   };
 
   const obtenerProductos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/productos/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/productos`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -98,7 +98,7 @@ function FormInventario() {
   };
 
   const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

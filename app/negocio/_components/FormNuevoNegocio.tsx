@@ -299,7 +299,7 @@ function FormNegocio() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Eliminar kiosko"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Eliminar negocio"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}

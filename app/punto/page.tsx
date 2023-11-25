@@ -42,7 +42,7 @@ function Page() {
   };
 
   const obtenerPuntos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

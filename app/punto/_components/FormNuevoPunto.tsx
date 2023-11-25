@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, notFound } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
@@ -45,14 +45,13 @@ function FormPunto() {
   });
 
   const [negocios, setNegocios] = useState([]);
-  
+
   useEffect(() => {
     obtenerNegociosPropietario();
     if (params?.id) {
       obtenerPunto(params?.id);
     }
   }, []);
-
 
   const handleChange = ({ target: { name, value } }) => {
     setPunto({ ...punto, [name]: value });
@@ -64,7 +63,7 @@ function FormPunto() {
   };
 
   const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -88,12 +87,18 @@ function FormPunto() {
         Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setPunto(data);
+      .then(function (response) {
+        if (response.ok) {
+          var result = response.json();
+          result.then((data) => {
+            setPunto(data);
+          });
+        } else {
+          notificacion("Revise los datos asignados");
+        }
       })
       .catch(function (error) {
-        signOut();
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -109,20 +114,23 @@ function FormPunto() {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
           },
-        }).then(function (response) {
-          if (response.ok) {
-            response.json().then((data) => {
-              notificacion(`Se ha editado el Punto ${punto.nombre}`, "success");
-              setTimeout(() => router.push("/punto"), 300);
-            });
-          } else {
-            notificacion(
-              `Se ha producido un error ${response.status}`
-            );
-          }
-        }).catch(function (error) {
-          notificacion("Se ha producido un error");
-        });
+        })
+          .then(function (response) {
+            if (response.ok) {
+              response.json().then((data) => {
+                notificacion(
+                  `Se ha editado el Punto ${punto.nombre}`,
+                  "success"
+                );
+                setTimeout(() => router.push("/punto"), 300);
+              });
+            } else {
+              notificacion(`Se ha producido un error ${response.status}`);
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
       } else {
         fetch(`${process.env.MI_API_BACKEND}/punto`, {
           method: "POST",
@@ -131,20 +139,23 @@ function FormPunto() {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
           },
-        }).then(function (response) {
-          if (response.ok) {
-            response.json().then((data) => {
-              notificacion(`Se ha creado el Punto ${punto.nombre}`, "success");
-              setTimeout(() => router.push("/punto"), 300);
-            });
-          } else {
-            notificacion(
-              `Se ha producido un error ${response.status}`
-            );
-          }
-        }).catch(function (error) {
-          notificacion("Se ha producido un error")
-        });;
+        })
+          .then(function (response) {
+            if (response.ok) {
+              response.json().then((data) => {
+                notificacion(
+                  `Se ha creado el Punto ${punto.nombre}`,
+                  "success"
+                );
+                setTimeout(() => router.push("/punto"), 300);
+              });
+            } else {
+              notificacion(`Se ha producido un error ${response.status}`);
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
       }
     } catch (error) {
       return notificacion(error);
@@ -158,17 +169,18 @@ function FormPunto() {
         "Content-Type": "application/json",
         Authorization: `${session?.token_type} ${session?.access_token}`,
       },
-    }).then(function (response) {
-      if (!response.ok) {
-        return notificacion("Se ha producido un error");
-      }
-
-      notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "success");
-      setTimeout(() => router.push("/punto"), 300);
     })
-    .catch(function (error) {
-      notificacion("Se ha producido un error")
-    });
+      .then(function (response) {
+        if (!response.ok) {
+          return notificacion("Se ha producido un error");
+        }
+
+        notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "success");
+        setTimeout(() => router.push("/punto"), 300);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
   };
 
   return (

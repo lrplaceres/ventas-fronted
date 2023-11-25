@@ -58,7 +58,6 @@ export const authConfig = {
       // Persist the OAuth access_token to the token right after signin
       if (user) {
         token.rol = user.rol;
-        token.usuario = user.usuario;
         token.access_token = user.access_token;
         token.token_type = user.token_type;
       }
@@ -67,7 +66,6 @@ export const authConfig = {
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
       session.rol = token.rol;
-      session.usuario = token.usuario;
       session.access_token = token.access_token;
       session.token_type = token.token_type;
       return session;

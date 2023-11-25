@@ -42,7 +42,7 @@ function Page() {
   };
 
   const obtenerInventarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventarios/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

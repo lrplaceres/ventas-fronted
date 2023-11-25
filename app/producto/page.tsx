@@ -41,7 +41,7 @@ function Page() {
   };
 
   const obtenerProductos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/productos/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/productos`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -62,7 +62,7 @@ function FormProducto() {
   };
 
   const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -220,7 +220,7 @@ function FormProducto() {
         <Card variant="outlined" sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            color="error"
+            color="warning"
             sx={{ mr: 1 }}
             onClick={() => router.push("/producto")}
           >

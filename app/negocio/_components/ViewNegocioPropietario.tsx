@@ -30,7 +30,7 @@ function ViewKiokoPropietario() {
   };
 
   const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios/${session?.usuario}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
