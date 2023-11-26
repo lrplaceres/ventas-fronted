@@ -72,7 +72,7 @@ function FormUsuario() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session.token_type} ${session.access_token}`,
+        "Authorization": `${session?.token_type} ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -94,19 +94,21 @@ function FormUsuario() {
         activo: usuario.activo,
       };
 
-      fetch(`${process.env.MI_API_BACKEND}/user/${params.id}`, {
+      fetch(`${process.env.MI_API_BACKEND}/user/${params?.id}`, {
         method: "PUT",
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `${session.token_type} ${session.access_token}`,
+          "Authorization": `${session?.token_type} ${session?.access_token}`,
         },
       }).then(function (response) {
         if (response.ok) {
           notificacion(`Se ha editado el usuario ${usuario.usuario}`, "success");
           setTimeout(() => router.push("/usuario"), 300);
         } else {
-          notificacion(`Se ha producido un error ${response.status}`);
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
         }
       })
       .catch(function (error) {
@@ -122,11 +124,11 @@ function FormUsuario() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session.token_type} ${session.access_token}`,
+        "Authorization": `${session?.token_type} ${session?.access_token}`,
       },
     }).then(function (response) {
       if (!response.ok) {
-        return notificacion("Se ha producido un error", "error");
+        return notificacion("Se ha producido un error");
       }
 
       notificacion(

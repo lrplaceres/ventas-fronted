@@ -18,8 +18,14 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import moment from "moment";
+import Autocomplete from "@mui/material/Autocomplete";
 
-function FormProducto() {
+function FormDistribucion() {
   const router = useRouter();
 
   const params = useParams();
@@ -27,11 +33,6 @@ function FormProducto() {
   const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [producto, setProducto] = useState({
-    nombre: "",
-    negocio_id: "",
-  });
 
   const [open, setOpen] = useState(false);
 
@@ -43,17 +44,35 @@ function FormProducto() {
     setOpen(false);
   };
 
-  const [negocios, setNegocios] = useState([]);
+  const [distribucion, setDistribucion] = useState({
+    inventario_id: "",
+    cantidad: "",
+    fecha: new Date(),
+    punto_id: "",
+  });
+
+  const [inventarios, setInventarios] = useState([]);
+
+  const [puntos, setPuntos] = useState([]);
+
+  const [inventarioEdit, setInventarioEdit] = useState([]);
 
   useEffect(() => {
-    obtenerNegociosPropietario();
+    obtenerPuntos();
+    obtenerInventarios();
     if (params?.id) {
-      obtenerProducto(params?.id);
+      obtenerDistribucion(params?.id);
     }
   }, []);
 
+  useEffect(() => {
+    setInventarioEdit(
+      inventarios.filter((v) => v.id == distribucion.inventario_id)[0]
+    );
+  }, [inventarios]);
+
   const handleChange = ({ target: { name, value } }) => {
-    setProducto({ ...producto, [name]: value });
+    setDistribucion({ ...distribucion, [name]: value });
   };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -61,8 +80,8 @@ function FormProducto() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+  const obtenerInventarios = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -71,15 +90,15 @@ function FormProducto() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setNegocios(data);
+        setInventarios(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
       });
   };
 
-  const obtenerProducto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+  const obtenerPuntos = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -88,7 +107,24 @@ function FormProducto() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setProducto(data);
+        setPuntos(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
+
+  const obtenerDistribucion = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDistribucion(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -100,9 +136,9 @@ function FormProducto() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/producto/${params.id}`, {
+        fetch(`${process.env.MI_API_BACKEND}/distribucion/${params?.id}`, {
           method: "PUT",
-          body: JSON.stringify(producto),
+          body: JSON.stringify(distribucion),
           headers: {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
@@ -111,11 +147,8 @@ function FormProducto() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(
-                  `Se ha editado el Producto ${producto.nombre}`,
-                  "success"
-                );
-                setTimeout(() => router.push("/producto"), 300);
+                notificacion(`Se ha editado la distribución`, "success");
+                setTimeout(() => router.push("/distribucion"), 300);
               });
             } else {
               response.json().then((data) => {
@@ -127,9 +160,9 @@ function FormProducto() {
             notificacion("Se ha producido un error");
           });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/producto`, {
+        fetch(`${process.env.MI_API_BACKEND}/distribucion`, {
           method: "POST",
-          body: JSON.stringify(producto),
+          body: JSON.stringify(distribucion),
           headers: {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
@@ -138,11 +171,8 @@ function FormProducto() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(
-                  `Se ha creado el Producto ${producto.nombre}`,
-                  "success"
-                );
-                setTimeout(() => router.push("/producto"), 300);
+                notificacion(`Se ha creado el distribución`, "success");
+                setTimeout(() => router.push("/distribucion"), 300);
               });
             } else {
               response.json().then((data) => {
@@ -159,8 +189,8 @@ function FormProducto() {
     }
   };
 
-  const eliminarProducto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+  const eliminarDistribucion = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -172,11 +202,8 @@ function FormProducto() {
           return notificacion("Se ha producido un error");
         }
 
-        notificacion(
-          `El Producto ${producto.nombre} ha sido eliminado`,
-          "success"
-        );
-        setTimeout(() => router.push("/producto"), 300);
+        notificacion(`La distribución se ha sido eliminado`, "success");
+        setTimeout(() => router.push("/distribucion"), 300);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -187,45 +214,73 @@ function FormProducto() {
     <>
       <form onSubmit={handleSubmit}>
         <Typography variant="h6" color="primary" align="center">
-          INSERTAR PRODUCTO
+          {params?.id ? "EDITAR" : "INSERTAR"} DISTRIBUCIÓN
         </Typography>
 
-        <TextField
-          id="nombre"
-          name="nombre"
-          label="Nombre"
-          value={producto.nombre}
-          onChange={handleChange}
-          fullWidth
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={inventarios}
+          getOptionLabel={(option) => `${option.nombre}`}
           sx={{ mb: 1 }}
-          required
+          value={params?.id ? inventarioEdit : inventarios[0]}
+          onChange={(event: any, newValue: string | null) => {
+            setDistribucion({ ...distribucion, inventario_id: newValue.id });
+            setInventarioEdit(newValue);
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Inventario" required />
+          )}
         />
 
-        <FormControl fullWidth>
-          <InputLabel>Negocio</InputLabel>
+        <FormControl fullWidth sx={{ mb: 1 }}>
+          <InputLabel id="demo-simple-select-label">Punto</InputLabel>
           <Select
-            id="negocio_id"
-            name="negocio_id"
-            value={producto.negocio_id}
-            label="Negocio"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            name="punto_id"
+            label="Punto"
+            value={distribucion.punto_id}
             onChange={handleChange}
-            sx={{ mb: 1 }}
             required
           >
-            {negocios.map((producto, index) => (
-              <MenuItem key={index.toString()} value={producto.id}>
-                {producto.nombre}
+            {puntos.map((punto, index) => (
+              <MenuItem key={index.toString()} value={punto.id}>
+                {punto.nombre}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
+
+        <TextField
+          id="cantidad"
+          name="cantidad"
+          label="Cantidad"
+          value={distribucion.cantidad}
+          onChange={handleChange}
+          fullWidth
+          sx={{ mb: 1 }}
+          type="number"
+          required
+        />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            onChange={(newvalue) => {
+              setDistribucion({ ...distribucion, fecha: newvalue });
+            }}
+            format="YYYY-MM-DD"
+            sx={{ mb: 1 }}
+            value={dayjs(moment(distribucion.fecha).utc().format("YYYY-MM-DD"))}
+          />
+        </LocalizationProvider>
 
         <Card variant="outlined" sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
-            onClick={() => router.push("/producto")}
+            onClick={() => router.push("/distribucion")}
           >
             Cancelar
           </Button>
@@ -252,7 +307,9 @@ function FormProducto() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Eliminar producto"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {"Eliminar distribución"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
@@ -262,7 +319,7 @@ function FormProducto() {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button
-            onClick={() => eliminarProducto(params?.id)}
+            onClick={() => eliminarDistribucion(params?.id)}
             autoFocus
             color="error"
           >
@@ -274,15 +331,15 @@ function FormProducto() {
   );
 }
 
-function FormNuevoProducto() {
+function FormNuevaDistribucion() {
   return (
     <SnackbarProvider
       maxSnack={3}
       anchorOrigin={{ horizontal: "right", vertical: "top" }}
     >
-      <FormProducto />
+      <FormDistribucion />
     </SnackbarProvider>
   );
 }
 
-export default FormNuevoProducto;
+export default FormNuevaDistribucion;

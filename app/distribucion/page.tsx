@@ -1,5 +1,5 @@
 "use client";
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -10,20 +10,19 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
 const columns: GridColDef[] = [
   {
-    field: "nombre",
-    headerName: "Nombre",
+    field: "producto_id",
+    headerName: "Producto",
     width: 150,
     renderCell: (params) => (
-      <Link href={`/inventario/${params.row.id}`} className="decoration-none">
-        {params.row.nombre}
+      <Link href={`/distribucion/${params.row.id}`} className="decoration-none">
+        {params.row.producto_id}
       </Link>
     ),
   },
   { field: "cantidad", headerName: "Cantidad", width: 80 },
-  { field: "negocio_id", headerName: "Negocio", width: 120 },
-  { field: "costo", headerName: "$ Costo", width: 90 },
-  { field: "precio_venta", headerName: "$ Venta", width: 90 },
   { field: "fecha", headerName: "Fecha", width: 100 },
+  { field: "punto_id", headerName: "Punto", width: 90 },
+  { field: "negocio_id", headerName: "Negocio", width: 100 },
 ];
 
 function Page() {
@@ -31,12 +30,12 @@ function Page() {
 
   const { data: session, update } = useSession();
 
-  const [inventarios, setInventarios] = useState([]);
+  const [distribucion, setDistribucion] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    obtenerInventarios();
+    obtenerDistribucion();
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -44,8 +43,8 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerInventarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
+  const obtenerDistribucion = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/distribuciones`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -54,7 +53,7 @@ function Page() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setInventarios(data);
+        setDistribucion(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -67,16 +66,16 @@ function Page() {
         variant="contained"
         color="inherit"
         sx={{ mt:  1 , mb:  1  }}
-        startIcon={<LibraryAddIcon />}
-        onClick={() => router.push("/inventario/nuevo")}
+        startIcon={<LocalShippingIcon />}
+        onClick={() => router.push("/distribucion/nuevo")}
       >
-        Insertar Inventario
+        Insertar distribución
       </Button>
 
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={inventarios}
+          rows={distribucion}
           columns={columns}
         />
       </div>
@@ -85,7 +84,7 @@ function Page() {
 }
 
 
-function PageInventario() {
+function PageDistribucion() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -96,4 +95,4 @@ function PageInventario() {
   );
 }
 
-export default PageInventario;
+export default PageDistribucion;

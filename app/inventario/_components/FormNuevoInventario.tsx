@@ -49,6 +49,7 @@ function FormInventario() {
     cantidad: "",
     um: "unidad",
     costo: "",
+    precio_venta: "",
     fecha: new Date(),
     negocio_id: "",
   });
@@ -93,7 +94,7 @@ function FormInventario() {
         setProductos(data);
       })
       .catch(function (error) {
-        notificacion("Se ha producido un error")
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -110,7 +111,7 @@ function FormInventario() {
         setNegocios(data);
       })
       .catch(function (error) {
-        notificacion("Se ha producido un error")
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -127,7 +128,7 @@ function FormInventario() {
         setInventario(data);
       })
       .catch(function (error) {
-        notificacion("Se ha producido un error")
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -143,21 +144,22 @@ function FormInventario() {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
           },
-        }).then(function (response) {
-          if (response.ok) {
-            response.json().then((data) => {
-              notificacion(`Se ha editado el Inventario`, "success");
-              setTimeout(() => router.push("/inventario"), 300);
-            });
-          } else {
-            notificacion(
-              `Se ha producido un error ${response.status}`
-            );
-          }
         })
-        .catch(function (error) {
-          notificacion("Se ha producido un error")
-        });
+          .then(function (response) {
+            if (response.ok) {
+              response.json().then((data) => {
+                notificacion(`Se ha editado el Inventario`, "success");
+                setTimeout(() => router.push("/inventario"), 300);
+              });
+            } else {
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
       } else {
         fetch(`${process.env.MI_API_BACKEND}/inventario`, {
           method: "POST",
@@ -166,21 +168,22 @@ function FormInventario() {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
           },
-        }).then(function (response) {
-          if (response.ok) {
-            response.json().then((data) => {
-              notificacion(`Se ha creado el Inventario`, "success");
-              setTimeout(() => router.push("/inventario"), 300);
-            });
-          } else {
-            notificacion(
-              `Se ha producido un error ${response.status}`
-            );
-          }
         })
-        .catch(function (error) {
-          notificacion("Se ha producido un error")
-        });
+          .then(function (response) {
+            if (response.ok) {
+              response.json().then((data) => {
+                notificacion(`Se ha creado el Inventario`, "success");
+                setTimeout(() => router.push("/inventario"), 300);
+              });
+            } else {
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
       }
     } catch (error) {
       return notificacion(error);
@@ -194,17 +197,18 @@ function FormInventario() {
         "Content-Type": "application/json",
         Authorization: `${session?.token_type} ${session?.access_token}`,
       },
-    }).then(function (response) {
-      if (!response.ok) {
-        return notificacion("Se ha producido un error");
-      }
-
-      notificacion(`El Inventario ha sido eliminado`, "success");
-      setTimeout(() => router.push("/inventario"), 300);
     })
-    .catch(function (error) {
-      notificacion("Se ha producido un error")
-    });
+      .then(function (response) {
+        if (!response.ok) {
+          return notificacion("Se ha producido un error");
+        }
+
+        notificacion(`El Inventario ha sido eliminado`, "success");
+        setTimeout(() => router.push("/inventario"), 300);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
   };
 
   return (
@@ -222,7 +226,7 @@ function FormInventario() {
           sx={{ mb: 1 }}
           value={params?.id ? productoEdit : productos[0]}
           onChange={(event: any, newValue: string | null) => {
-            setInventario({ ...inventario, "producto_id": newValue.id });
+            setInventario({ ...inventario, producto_id: newValue.id });
             setProductoEdit(newValue);
           }}
           renderInput={(params) => (
@@ -266,6 +270,17 @@ function FormInventario() {
           name="costo"
           label="Costo"
           value={inventario.costo}
+          onChange={handleChange}
+          fullWidth
+          sx={{ mb: 1 }}
+          type="number"
+        />
+
+        <TextField
+          id="precio_venta"
+          name="precio_venta"
+          label="Precio de Venta"
+          value={inventario.precio_venta}
           onChange={handleChange}
           fullWidth
           sx={{ mb: 1 }}

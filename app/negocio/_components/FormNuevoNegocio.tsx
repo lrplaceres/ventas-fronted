@@ -90,7 +90,7 @@ function FormNegocio() {
         setNegocio(data);
       })
       .catch(function (error) {
-        notificacion("Se ha producido un error")
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -107,7 +107,7 @@ function FormNegocio() {
         setPropietarios(data);
       })
       .catch(function (error) {
-        notificacion("Se ha producido un error")
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -123,22 +123,23 @@ function FormNegocio() {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
           },
-        }).then(function (response) {
-          if (response.ok) {
-            notificacion(
-              `Se ha editato el Negocio ${negocio.nombre}`,
-              "success"
-            );
-            setTimeout(() => router.push("/negocio"), 300);
-          } else {
-            notificacion(
-              `Se ha producido un error ${response.status}`
-            );
-          }
         })
-        .catch(function (error) {
-          notificacion("Se ha producido un error")
-        });
+          .then(function (response) {
+            if (response.ok) {
+              notificacion(
+                `Se ha editato el Negocio ${negocio.nombre}`,
+                "success"
+              );
+              setTimeout(() => router.push("/negocio"), 300);
+            } else {
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
       } else {
         fetch(`${process.env.MI_API_BACKEND}/negocio`, {
           method: "POST",
@@ -147,24 +148,25 @@ function FormNegocio() {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
           },
-        }).then(function (response) {
-          if (response.ok) {
-            response.json().then((data) => {
-              notificacion(
-                `Se ha creado el Negocio ${negocio.nombre}`,
-                "success"
-              );
-              setTimeout(() => router.push("/negocio"), 300);
-            });
-          } else {
-            notificacion(
-              `Se ha producido un error ${response.status}`
-            );
-          }
         })
-        .catch(function (error) {
-          notificacion("Se ha producido un error")
-        });
+          .then(function (response) {
+            if (response.ok) {
+              response.json().then((data) => {
+                notificacion(
+                  `Se ha creado el Negocio ${negocio.nombre}`,
+                  "success"
+                );
+                setTimeout(() => router.push("/negocio"), 300);
+              });
+            } else {
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
       }
     } catch (error) {
       return notificacion(error);
@@ -215,6 +217,8 @@ function FormNegocio() {
           fullWidth
           sx={{ mb: 1 }}
           required
+          multiline
+          maxRows={2}
         />
 
         <TextField
@@ -226,6 +230,8 @@ function FormNegocio() {
           fullWidth
           sx={{ mb: 1 }}
           required
+          multiline
+          maxRows={3}
         />
 
         <FormControlLabel
@@ -248,7 +254,7 @@ function FormNegocio() {
           sx={{ mb: 1 }}
           value={params.id ? propietarioEdit : propietarios[0]}
           onChange={(event: any, newValue: string | null) => {
-            setNegocio({ ...negocio, "propietario_id": newValue.id });
+            setNegocio({ ...negocio, propietario_id: newValue.id });
             setPropietarioEdit(newValue);
           }}
           renderInput={(params) => (
@@ -259,11 +265,13 @@ function FormNegocio() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             onChange={(newvalue) => {
-              setNegocio({ ...negocio, "fecha_licencia": newvalue });
+              setNegocio({ ...negocio, fecha_licencia: newvalue });
             }}
             format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            value={dayjs(moment(negocio.fecha_licencia).utc().format("YYYY-MM-DD"))}
+            value={dayjs(
+              moment(negocio.fecha_licencia).utc().format("YYYY-MM-DD")
+            )}
           />
         </LocalizationProvider>
 

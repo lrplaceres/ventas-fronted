@@ -26,6 +26,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { AccountCircle } from "@mui/icons-material";
 import { signOut, useSession } from "next-auth/react";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
 export default function DenseAppBar() {
   const { data: session, update } = useSession();
@@ -149,7 +150,7 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/punto")}
                   sx={{
                     backgroundColor:
-                      pathname.split("/")[1] == "punto" ? "#bbdefb" : "",
+                      pathname?.split("/")[1] == "punto" ? "#bbdefb" : "",
                   }}
                 >
                   <ListItemButton>
@@ -159,6 +160,7 @@ export default function DenseAppBar() {
                     <ListItemText primary={"Puntos"} />
                   </ListItemButton>
                 </ListItem>
+
                 <Divider />
 
                 <ListItem
@@ -166,7 +168,7 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/producto")}
                   sx={{
                     backgroundColor:
-                      pathname.split("/")[1] == "producto" ? "#bbdefb" : "",
+                      pathname?.split("/")[1] == "producto" ? "#bbdefb" : "",
                   }}
                 >
                   <ListItemButton>
@@ -178,12 +180,13 @@ export default function DenseAppBar() {
                 </ListItem>
 
                 <Divider />
+
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/inventario")}
                   sx={{
                     backgroundColor:
-                      pathname.split("/")[1] == "inventario" ? "#bbdefb" : "",
+                      pathname?.split("/")[1] == "inventario" ? "#bbdefb" : "",
                   }}
                 >
                   <ListItemButton>
@@ -198,10 +201,28 @@ export default function DenseAppBar() {
 
                 <ListItem
                   disablePadding
+                  onClick={() => router.push("/distribucion")}
+                  sx={{
+                    backgroundColor:
+                      pathname?.split("/")[1] == "distribucion" ? "#bbdefb" : "",
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <LocalShippingIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Distribución"} />
+                  </ListItemButton>
+                </ListItem>
+
+                <Divider />
+
+                <ListItem
+                  disablePadding
                   onClick={() => router.push("/venta")}
                   sx={{
                     backgroundColor:
-                      pathname.split("/")[1] == "venta" ? "#bbdefb" : "",
+                      pathname?.split("/")[1] == "venta" ? "#bbdefb" : "",
                   }}
                 >
                   <ListItemButton>
@@ -239,7 +260,7 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/usuario")}
                   sx={{
                     backgroundColor:
-                      pathname.split("/")[1] == "usuario" ? "#bbdefb" : "",
+                      pathname?.split("/")[1] == "usuario" ? "#bbdefb" : "",
                   }}
                 >
                   <ListItemButton>

@@ -64,7 +64,9 @@ function FormUsuario() {
             setTimeout(() => router.push("/usuario"), 300);
           });
         } else {
-          notificacion(`Se ha producido un error ${response.status}`);
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
         }
       })
       .catch(function (error) {

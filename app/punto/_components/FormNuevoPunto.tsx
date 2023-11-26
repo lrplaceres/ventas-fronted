@@ -125,7 +125,9 @@ function FormPunto() {
                 setTimeout(() => router.push("/punto"), 300);
               });
             } else {
-              notificacion(`Se ha producido un error ${response.status}`);
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
             }
           })
           .catch(function (error) {
@@ -150,7 +152,9 @@ function FormPunto() {
                 setTimeout(() => router.push("/punto"), 300);
               });
             } else {
-              notificacion(`Se ha producido un error ${response.status}`);
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
             }
           })
           .catch(function (error) {
