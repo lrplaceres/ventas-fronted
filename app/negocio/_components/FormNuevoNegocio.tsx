@@ -181,12 +181,17 @@ function FormNegocio() {
         Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     }).then(function (response) {
-      if (!response.ok) {
-        return notificacion("Se ha producido un error");
+      if (response.ok) {
+        notificacion(
+          `El Negocio ${negocio.nombre} ha sido eliminado`,
+          "success"
+        );
+        setTimeout(() => router.push("/negocio"), 300);
+      } else {
+        response.json().then((data) => {
+          notificacion(`${data.detail}`);
+        });
       }
-
-      notificacion(`El Negocio ${negocio.nombre} ha sido eliminado`, "success");
-      setTimeout(() => router.push("/negocio"), 300);
     });
   };
 

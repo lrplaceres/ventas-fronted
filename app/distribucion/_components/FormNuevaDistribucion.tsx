@@ -10,14 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -28,21 +23,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 function FormDistribucion() {
   const router = useRouter();
 
-  const params = useParams();
-
   const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const [distribucion, setDistribucion] = useState({
     inventario_id: "",
@@ -55,21 +38,12 @@ function FormDistribucion() {
 
   const [puntos, setPuntos] = useState([]);
 
-  const [inventarioEdit, setInventarioEdit] = useState([]);
+  const [maximacantidad, setMaximaCantidad] = useState(0);
 
   useEffect(() => {
     obtenerPuntos();
     obtenerInventarios();
-    if (params?.id) {
-      obtenerDistribucion(params?.id);
-    }
   }, []);
-
-  useEffect(() => {
-    setInventarioEdit(
-      inventarios.filter((v) => v.id == distribucion.inventario_id)[0]
-    );
-  }, [inventarios]);
 
   const handleChange = ({ target: { name, value } }) => {
     setDistribucion({ ...distribucion, [name]: value });
@@ -81,7 +55,7 @@ function FormDistribucion() {
   };
 
   const obtenerInventarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
+    await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -114,119 +88,60 @@ function FormDistribucion() {
       });
   };
 
-  const obtenerDistribucion = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDistribucion(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/distribucion/${params?.id}`, {
-          method: "PUT",
-          body: JSON.stringify(distribucion),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
+      fetch(`${process.env.MI_API_BACKEND}/distribucion`, {
+        method: "POST",
+        body: JSON.stringify(distribucion),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then(function (response) {
+          if (response.ok) {
+            response.json().then((data) => {
+              notificacion(`Se ha creado el distribución`, "success");
+              setTimeout(() => router.push("/distribucion"), 300);
+            });
+          } else {
+            response.json().then((data) => {
+              notificacion(`${data.detail}`);
+            });
+          }
         })
-          .then(function (response) {
-            if (response.ok) {
-              response.json().then((data) => {
-                notificacion(`Se ha editado la distribución`, "success");
-                setTimeout(() => router.push("/distribucion"), 300);
-              });
-            } else {
-              response.json().then((data) => {
-                notificacion(`${data.detail}`);
-              });
-            }
-          })
-          .catch(function (error) {
-            notificacion("Se ha producido un error");
-          });
-      } else {
-        fetch(`${process.env.MI_API_BACKEND}/distribucion`, {
-          method: "POST",
-          body: JSON.stringify(distribucion),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
-        })
-          .then(function (response) {
-            if (response.ok) {
-              response.json().then((data) => {
-                notificacion(`Se ha creado el distribución`, "success");
-                setTimeout(() => router.push("/distribucion"), 300);
-              });
-            } else {
-              response.json().then((data) => {
-                notificacion(`${data.detail}`);
-              });
-            }
-          })
-          .catch(function (error) {
-            notificacion("Se ha producido un error");
-          });
-      }
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
     } catch (error) {
       return notificacion(error);
     }
-  };
-
-  const eliminarDistribucion = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then(function (response) {
-        if (!response.ok) {
-          return notificacion("Se ha producido un error");
-        }
-
-        notificacion(`La distribución se ha sido eliminado`, "success");
-        setTimeout(() => router.push("/distribucion"), 300);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
   };
 
   return (
     <>
       <form onSubmit={handleSubmit}>
         <Typography variant="h6" color="primary" align="center">
-          {params?.id ? "EDITAR" : "INSERTAR"} DISTRIBUCIÓN
+          INSERTAR DISTRIBUCIÓN
         </Typography>
 
         <Autocomplete
           disablePortal
           id="combo-box-demo"
           options={inventarios}
-          getOptionLabel={(option) => `${option.nombre}`}
+          getOptionLabel={(option) =>
+            `${option.nombre} ► $${option.costo} ► \ud83d\udcc5${option.fecha}`
+          }
           sx={{ mb: 1 }}
-          value={params?.id ? inventarioEdit : inventarios[0]}
           onChange={(event: any, newValue: string | null) => {
-            setDistribucion({ ...distribucion, inventario_id: newValue.id });
-            setInventarioEdit(newValue);
+            setDistribucion({ ...distribucion, inventario_id: newValue?.id });            
+            if (!!newValue) {
+              setMaximaCantidad(newValue.cantidad - newValue.distribuido);
+            } else {
+              setMaximaCantidad(0);
+            }
           }}
           renderInput={(params) => (
             <TextField {...params} label="Inventario" required />
@@ -262,6 +177,12 @@ function FormDistribucion() {
           sx={{ mb: 1 }}
           type="number"
           required
+          inputProps={{
+            min: 1,
+            max: maximacantidad,
+          }}
+          helperText={`Cantidad disponible ${maximacantidad}`}
+          disabled={!maximacantidad}
         />
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -292,41 +213,8 @@ function FormDistribucion() {
           >
             Aceptar
           </Button>
-
-          {params?.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen}>
-              Eliminar
-            </Button>
-          )}
         </Card>
       </form>
-
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Eliminar distribución"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-            relacionados.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={() => eliminarDistribucion(params?.id)}
-            autoFocus
-            color="error"
-          >
-            Estoy de acuerdo
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 }

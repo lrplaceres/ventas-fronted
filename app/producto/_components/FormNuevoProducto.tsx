@@ -168,15 +168,17 @@ function FormProducto() {
       },
     })
       .then(function (response) {
-        if (!response.ok) {
-          return notificacion("Se ha producido un error");
+        if (response.ok) {
+          notificacion(
+            `El Producto ${producto.nombre} ha sido eliminado`,
+            "success"
+          );
+          setTimeout(() => router.push("/producto"), 300);
+        } else {
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
         }
-
-        notificacion(
-          `El Producto ${producto.nombre} ha sido eliminado`,
-          "success"
-        );
-        setTimeout(() => router.push("/producto"), 300);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");

@@ -6,8 +6,7 @@ import Typography from "@mui/material/Typography";
 
 export default function LinearIndeterminate() {
   return (
-    <>
-      <DenseAppBar />
+    <>      
       <Box
         sx={{
           width: "100%",

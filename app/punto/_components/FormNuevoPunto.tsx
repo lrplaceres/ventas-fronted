@@ -175,12 +175,14 @@ function FormPunto() {
       },
     })
       .then(function (response) {
-        if (!response.ok) {
-          return notificacion("Se ha producido un error");
+        if (response.ok) {
+          notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "success");
+          setTimeout(() => router.push("/punto"), 300);
+        } else {
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
         }
-
-        notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "success");
-        setTimeout(() => router.push("/punto"), 300);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");

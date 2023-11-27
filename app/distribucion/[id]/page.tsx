@@ -1,9 +1,9 @@
-import FormNuevaDistribucion from "../_components/FormNuevaDistribucion";
+import FormEditarDistribucion from "../_components/FormEditDistribucion";
 
 function page() {
   return (
     <>
-      <FormNuevaDistribucion />
+      <FormEditarDistribucion />
     </>
   );
 }

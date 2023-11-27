@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 import moment from "moment";
 import Autocomplete from "@mui/material/Autocomplete";
 
-function FormInventario() {
+function FormDistribucion() {
   const router = useRouter();
 
   const params = useParams();
@@ -44,36 +44,38 @@ function FormInventario() {
     setOpen(false);
   };
 
-  const [inventario, setInventario] = useState({
-    producto_id: "",
+  const [distribucion, setDistribucion] = useState({
+    inventario_id: "",
     cantidad: "",
-    um: "unidad",
-    costo: "",
-    precio_venta: "",
     fecha: new Date(),
-    negocio_id: "",
+    punto_id: "",
   });
 
-  const [negocios, setNegocios] = useState([]);
+  const [disponible, setDisponible] = useState({
+    cantidad_distribuida: "",
+    cantidad_inventario: "",
+  });
 
-  const [productos, setProductos] = useState([]);
+  const [inventarios, setInventarios] = useState([]);
 
-  const [productoEdit, setProductoEdit] = useState([]);
+  const [puntos, setPuntos] = useState([]);
+
+  const [inventarioEdit, setInventarioEdit] = useState([]);
 
   useEffect(() => {
-    obtenerNegociosPropietario();
-    obtenerProductos();
-    if (params?.id) {
-      obtenerInventario(params?.id);
-    }
+    obtenerPuntos();
+    obtenerInventarios();
+    obtenerDistribucion(params?.id);
   }, []);
 
   useEffect(() => {
-    setProductoEdit(productos.filter((v) => v.id == inventario.producto_id)[0]);
-  }, [productos]);
+    setInventarioEdit(
+      inventarios.filter((v) => v.id == distribucion.inventario_id)[0]
+    );
+  }, [inventarios]);
 
   const handleChange = ({ target: { name, value } }) => {
-    setInventario({ ...inventario, [name]: value });
+    setDistribucion({ ...distribucion, [name]: value });
   };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -81,8 +83,8 @@ function FormInventario() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerProductos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/productos`, {
+  const obtenerInventarios = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -91,15 +93,15 @@ function FormInventario() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setProductos(data);
+        setInventarios(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
       });
   };
 
-  const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+  const obtenerPuntos = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -108,15 +110,15 @@ function FormInventario() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setNegocios(data);
+        setPuntos(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
       });
   };
 
-  const obtenerInventario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
+  const obtenerDistribucion = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -125,7 +127,7 @@ function FormInventario() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setInventario(data);
+        setDistribucion(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -137,9 +139,9 @@ function FormInventario() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/inventario/${params?.id}`, {
+        fetch(`${process.env.MI_API_BACKEND}/distribucion/${params?.id}`, {
           method: "PUT",
-          body: JSON.stringify(inventario),
+          body: JSON.stringify(distribucion),
           headers: {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
@@ -148,8 +150,8 @@ function FormInventario() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(`Se ha editado el Inventario`, "success");
-                setTimeout(() => router.push("/inventario"), 300);
+                notificacion(`Se ha editado la distribución`, "success");
+                setTimeout(() => router.push("/distribucion"), 300);
               });
             } else {
               response.json().then((data) => {
@@ -161,9 +163,9 @@ function FormInventario() {
             notificacion("Se ha producido un error");
           });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/inventario`, {
+        fetch(`${process.env.MI_API_BACKEND}/distribucion`, {
           method: "POST",
-          body: JSON.stringify(inventario),
+          body: JSON.stringify(distribucion),
           headers: {
             "Content-Type": "application/json",
             Authorization: `${session?.token_type} ${session?.access_token}`,
@@ -172,8 +174,8 @@ function FormInventario() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(`Se ha creado el Inventario`, "success");
-                setTimeout(() => router.push("/inventario"), 300);
+                notificacion(`Se ha creado el distribución`, "success");
+                setTimeout(() => router.push("/distribucion"), 300);
               });
             } else {
               response.json().then((data) => {
@@ -190,8 +192,8 @@ function FormInventario() {
     }
   };
 
-  const eliminarInventario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
+  const eliminarDistribucion = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -200,8 +202,8 @@ function FormInventario() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`El Inventario ha sido eliminado`, "success");
-          setTimeout(() => router.push("/inventario"), 300);
+          notificacion(`La distribución se ha sido eliminado`, "success");
+          setTimeout(() => router.push("/distribucion"), 300);
         } else {
           response.json().then((data) => {
             notificacion(`${data.detail}`);
@@ -217,114 +219,78 @@ function FormInventario() {
     <>
       <form onSubmit={handleSubmit}>
         <Typography variant="h6" color="primary" align="center">
-          {params?.id ? "EDITAR" : "INSERTAR"} INVENTARIO
+          {params?.id ? "EDITAR" : "INSERTAR"} DISTRIBUCIÓN
         </Typography>
 
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={productos}
+          options={inventarios}
           getOptionLabel={(option) => `${option.nombre}`}
           sx={{ mb: 1 }}
-          value={params?.id ? productoEdit : productos[0]}
+          value={params?.id ? inventarioEdit : inventarios[0]}
           onChange={(event: any, newValue: string | null) => {
-            setInventario({ ...inventario, producto_id: newValue.id });
-            setProductoEdit(newValue);
+            setDistribucion({ ...distribucion, inventario_id: newValue?.id });
+            setInventarioEdit(newValue);
+            if (!!newValue) {
+              obtenerDisponible(newValue?.id);
+            }
           }}
           renderInput={(params) => (
-            <TextField {...params} label="Producto" required />
+            <TextField {...params} label="Inventario" required />
           )}
+          disabled
         />
+
+        <FormControl fullWidth sx={{ mb: 1 }}>
+          <InputLabel id="demo-simple-select-label">Punto</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            name="punto_id"
+            label="Punto"
+            value={distribucion.punto_id}
+            onChange={handleChange}
+            required
+          >
+            {puntos.map((punto, index) => (
+              <MenuItem key={index.toString()} value={punto.id}>
+                {punto.nombre}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <TextField
           id="cantidad"
           name="cantidad"
           label="Cantidad"
-          value={inventario.cantidad}
+          value={distribucion.cantidad}
           onChange={handleChange}
           fullWidth
           sx={{ mb: 1 }}
           type="number"
           required
-        />
-
-        <FormControl fullWidth sx={{ mb: 1 }}>
-          <InputLabel id="demo-simple-select-label">UM</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            name="um"
-            label="UM"
-            value={inventario.um}
-            onChange={handleChange}
-            required
-          >
-            <MenuItem value={"libra"}>LB</MenuItem>
-            <MenuItem value={"kilogramo"}>KG</MenuItem>
-            <MenuItem value={"unidad"}>Unidad</MenuItem>
-            <MenuItem value={"quintal"}>Quintal</MenuItem>
-            <MenuItem value={"caja"}>Caja</MenuItem>
-          </Select>
-        </FormControl>
-
-        <TextField
-          id="costo"
-          name="costo"
-          label="Costo"
-          value={inventario.costo}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-        />
-
-        <TextField
-          id="precio_venta"
-          name="precio_venta"
-          label="Precio de Venta"
-          value={inventario.precio_venta}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
+          helperText={`Cantidad Inventario: ${disponible.cantidad_inventario} Cantidad distribuída: ${disponible.cantidad_distribuida}`}
         />
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             onChange={(newvalue) => {
-              setInventario({ ...inventario, fecha: newvalue });
+              setDistribucion({ ...distribucion, fecha: newvalue });
             }}
             format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            value={dayjs(moment(inventario.fecha).utc().format("YYYY-MM-DD"))}
+            value={dayjs(moment(distribucion.fecha).utc().format("YYYY-MM-DD"))}
           />
         </LocalizationProvider>
-
-        <FormControl fullWidth>
-          <InputLabel>Negocio</InputLabel>
-          <Select
-            id="negocio_id"
-            name="negocio_id"
-            value={inventario.negocio_id}
-            label="Negocio"
-            onChange={handleChange}
-            sx={{ mb: 1 }}
-            required
-          >
-            {negocios.map((negocio, index) => (
-              <MenuItem key={index.toString()} value={negocio.id}>
-                {negocio.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
 
         <Card variant="outlined" sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
-            onClick={() => router.push("/inventario")}
+            onClick={() => router.push("/distribucion")}
           >
             Cancelar
           </Button>
@@ -352,7 +318,7 @@ function FormInventario() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Eliminar inventario"}
+          {"Eliminar distribución"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
@@ -363,7 +329,7 @@ function FormInventario() {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button
-            onClick={() => eliminarInventario(params?.id)}
+            onClick={() => eliminarDistribucion(params?.id)}
             autoFocus
             color="error"
           >
@@ -375,15 +341,15 @@ function FormInventario() {
   );
 }
 
-function FormNuevoInventario() {
+function FormEditarDistribucion() {
   return (
     <SnackbarProvider
       maxSnack={3}
       anchorOrigin={{ horizontal: "right", vertical: "top" }}
     >
-      <FormInventario />
+      <FormDistribucion />
     </SnackbarProvider>
   );
 }
 
-export default FormNuevoInventario;
+export default FormEditarDistribucion;

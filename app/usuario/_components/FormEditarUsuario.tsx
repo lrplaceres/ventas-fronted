@@ -47,7 +47,7 @@ function FormUsuario() {
   const handleClose = () => {
     setOpen(false);
   };
-  
+
   useEffect(() => {
     if (params?.id) {
       obtenerUsuario(params?.id);
@@ -72,7 +72,7 @@ function FormUsuario() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session?.token_type} ${session?.access_token}`,
+        Authorization: `${session?.token_type} ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -80,7 +80,7 @@ function FormUsuario() {
         setUsuario(data);
       })
       .catch(function (error) {
-        notificacion("Se ha producido un error")
+        notificacion("Se ha producido un error");
       });
   };
 
@@ -99,21 +99,25 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `${session?.token_type} ${session?.access_token}`,
+          Authorization: `${session?.token_type} ${session?.access_token}`,
         },
-      }).then(function (response) {
-        if (response.ok) {
-          notificacion(`Se ha editado el usuario ${usuario.usuario}`, "success");
-          setTimeout(() => router.push("/usuario"), 300);
-        } else {
-          response.json().then((data) => {
-            notificacion(`${data.detail}`);
-          });
-        }
       })
-      .catch(function (error) {
-        notificacion("Se ha producido un error")
-      });
+        .then(function (response) {
+          if (response.ok) {
+            notificacion(
+              `Se ha editado el usuario ${usuario.usuario}`,
+              "success"
+            );
+            setTimeout(() => router.push("/usuario"), 300);
+          } else {
+            response.json().then((data) => {
+              notificacion(`${data.detail}`);
+            });
+          }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
     } catch (error) {
       return notificacion(error);
     }
@@ -124,22 +128,25 @@ function FormUsuario() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${session?.token_type} ${session?.access_token}`,
+        Authorization: `${session?.token_type} ${session?.access_token}`,
       },
-    }).then(function (response) {
-      if (!response.ok) {
-        return notificacion("Se ha producido un error");
-      }
-
-      notificacion(
-        `El usuario ${usuario.usuario} ha sido eliminado`,
-        "success"
-      );
-      setTimeout(() => router.push("/usuario"), 300);
     })
-    .catch(function (error) {
-      notificacion("Se ha producido un error")
-    });
+      .then(function (response) {
+        if (response.ok) {
+          notificacion(
+            `El usuario ${usuario.usuario} ha sido eliminado`,
+            "success"
+          );
+          setTimeout(() => router.push("/usuario"), 300);
+        } else {
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
+        }
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
   };
 
   return (
@@ -167,10 +174,10 @@ function FormUsuario() {
             />
           }
           label="Activo"
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
         />
 
-        <FormControl fullWidth sx={{ mb:  1  }}>
+        <FormControl fullWidth sx={{ mb: 1 }}>
           <InputLabel id="demo-simple-select-label">Rol</InputLabel>
           <Select
             name="rol"
@@ -194,7 +201,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.nombre}
           onChange={handleChange}
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
         />
         <TextField
           id="email"
@@ -203,7 +210,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.email}
           onChange={handleChange}
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
           type="email"
         />
 
@@ -211,7 +218,7 @@ function FormUsuario() {
           <Button
             variant="contained"
             color="warning"
-            sx={{ mr:  1  }}
+            sx={{ mr: 1 }}
             onClick={() => router.push("/usuario")}
           >
             Cancelar
@@ -220,7 +227,7 @@ function FormUsuario() {
             variant="contained"
             color="success"
             type="submit"
-            sx={{ mr:  1  }}
+            sx={{ mr: 1 }}
           >
             Aceptar
           </Button>
