@@ -1,5 +1,5 @@
 "use client";
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -8,21 +8,60 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+const currencyFormatterCount = new Intl.NumberFormat("en-US");
+
 const columns: GridColDef[] = [
   {
     field: "nombre",
     headerName: "Nombre",
-    width: 150,
+    width: 140,
     renderCell: (params) => (
       <Link href={`/inventario/${params.row.id}`} className="decoration-none">
-        {params.row.nombre}
+        {params.value}
       </Link>
     ),
   },
-  { field: "cantidad", headerName: "Cantidad", width: 80 },
+  {
+    field: "cantidad",
+    headerName: "Cantidad",
+    width: 90,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatterCount.format(value);
+    },
+  },
   { field: "negocio_id", headerName: "Negocio", width: 120 },
-  { field: "costo", headerName: "$ Costo", width: 90 },
-  { field: "precio_venta", headerName: "$ Venta", width: 90 },
+  {
+    field: "costo",
+    headerName: "$ Costo",
+    width: 90,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatter.format(value);
+    },
+  },
+  {
+    field: "precio_venta",
+    headerName: "$ Venta",
+    width: 90,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatter.format(value);
+    },
+  },
   { field: "fecha", headerName: "Fecha", width: 100 },
 ];
 
@@ -66,7 +105,7 @@ function Page() {
       <Button
         variant="contained"
         color="inherit"
-        sx={{ mt:  1 , mb:  1  }}
+        sx={{ mt: 1, mb: 1 }}
         startIcon={<LibraryAddIcon />}
         onClick={() => router.push("/inventario/nuevo")}
       >
@@ -78,12 +117,12 @@ function Page() {
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={inventarios}
           columns={columns}
+          checkboxSelection
         />
       </div>
     </>
   );
 }
-
 
 function PageInventario() {
   return (

@@ -15,11 +15,11 @@ const columns: GridColDef[] = [
     width: 150,
     renderCell: (params) => (
       <Link href={`/producto/${params.row.id}`} className="decoration-none">
-        {params.row.nombre}
+        {params.value}
       </Link>
     ),
   },
-  { field: "negocio_id", headerName: "Negocio", width: 150 },
+  { field: "negocio_nombre", headerName: "Negocio", width: 150 },
 ];
 
 function Page() {
@@ -74,6 +74,7 @@ function Page() {
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={productos}
           columns={columns}
+          checkboxSelection
         />
       </div>
     </>

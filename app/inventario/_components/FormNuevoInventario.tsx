@@ -228,8 +228,16 @@ function FormInventario() {
           sx={{ mb: 1 }}
           value={params?.id ? productoEdit : productos[0]}
           onChange={(event: any, newValue: string | null) => {
-            setInventario({ ...inventario, producto_id: newValue.id });
-            setProductoEdit(newValue);
+            if (!!newValue) {
+              setInventario({ ...inventario, producto_id: newValue.id });
+              setInventario({ ...inventario, negocio_id: newValue.negocio_id });
+              setProductoEdit(newValue);
+              
+            }else{              
+              setInventario({ ...inventario, producto_id: "" });
+              setInventario({ ...inventario, negocio_id: "" });
+              setProductoEdit([]);
+            }
           }}
           renderInput={(params) => (
             <TextField {...params} label="Producto" required />
@@ -310,6 +318,8 @@ function FormInventario() {
             onChange={handleChange}
             sx={{ mb: 1 }}
             required
+            inputProps={{ readOnly: true }}
+            
           >
             {negocios.map((negocio, index) => (
               <MenuItem key={index.toString()} value={negocio.id}>

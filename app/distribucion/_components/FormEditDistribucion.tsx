@@ -63,7 +63,6 @@ function FormDistribucion() {
   const [inventarioEdit, setInventarioEdit] = useState([]);
 
   useEffect(() => {
-    obtenerPuntos();
     obtenerInventarios();
     obtenerDistribucion(params?.id);
   }, []);
@@ -100,8 +99,8 @@ function FormDistribucion() {
       });
   };
 
-  const obtenerPuntos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
+  const obtenerPuntosNegocio = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos-negocio/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -127,7 +126,8 @@ function FormDistribucion() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setDistribucion(data);
+        setDistribucion(data); 
+        obtenerPuntosNegocio(data.negocio_id);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -138,7 +138,7 @@ function FormDistribucion() {
     e.preventDefault();
 
     try {
-      if (params?.id) {
+      
         fetch(`${process.env.MI_API_BACKEND}/distribucion/${params?.id}`, {
           method: "PUT",
           body: JSON.stringify(distribucion),
@@ -162,31 +162,7 @@ function FormDistribucion() {
           .catch(function (error) {
             notificacion("Se ha producido un error");
           });
-      } else {
-        fetch(`${process.env.MI_API_BACKEND}/distribucion`, {
-          method: "POST",
-          body: JSON.stringify(distribucion),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
-        })
-          .then(function (response) {
-            if (response.ok) {
-              response.json().then((data) => {
-                notificacion(`Se ha creado el distribución`, "success");
-                setTimeout(() => router.push("/distribucion"), 300);
-              });
-            } else {
-              response.json().then((data) => {
-                notificacion(`${data.detail}`);
-              });
-            }
-          })
-          .catch(function (error) {
-            notificacion("Se ha producido un error");
-          });
-      }
+     
     } catch (error) {
       return notificacion(error);
     }
@@ -228,14 +204,7 @@ function FormDistribucion() {
           options={inventarios}
           getOptionLabel={(option) => `${option.nombre}`}
           sx={{ mb: 1 }}
-          value={params?.id ? inventarioEdit : inventarios[0]}
-          onChange={(event: any, newValue: string | null) => {
-            setDistribucion({ ...distribucion, inventario_id: newValue?.id });
-            setInventarioEdit(newValue);
-            if (!!newValue) {
-              obtenerDisponible(newValue?.id);
-            }
-          }}
+          value={params?.id ? inventarioEdit : inventarios[0]}          
           renderInput={(params) => (
             <TextField {...params} label="Inventario" required />
           )}

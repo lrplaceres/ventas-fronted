@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,11 +15,7 @@ const columns: GridColDef[] = [
     width: 150,
     renderCell: (params) => (
       <Link href={`/usuario/${params.row.id}`} className="decoration-none">
-        {params.row.activo ? (
-          params.row.usuario
-        ) : (
-          <del>{params.row.usuario}</del>
-        )}
+        {params.row.activo ? params.value : <del>{params.value}</del>}
       </Link>
     ),
   },
@@ -74,7 +70,12 @@ function Page() {
       </Button>
 
       <div style={{ height: 500, width: "100%" }}>
-        <DataGrid rows={usuarios} columns={columns} />
+        <DataGrid
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          rows={usuarios}
+          columns={columns}
+          checkboxSelection
+        />
       </div>
     </>
   );

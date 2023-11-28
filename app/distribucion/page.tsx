@@ -1,5 +1,5 @@
 "use client";
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,12 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+const currencyFormatterCount = new Intl.NumberFormat("en-US");
+
 const columns: GridColDef[] = [
   {
     field: "producto_id",
@@ -15,11 +21,34 @@ const columns: GridColDef[] = [
     width: 150,
     renderCell: (params) => (
       <Link href={`/distribucion/${params.row.id}`} className="decoration-none">
-        {params.row.producto_id}
+        {params.value}
       </Link>
     ),
   },
-  { field: "cantidad", headerName: "Cantidad", width: 80 },
+  {
+    field: "costo",
+    headerName: "Costo",
+    width: 80,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatter.format(value);
+    },
+  },
+  {
+    field: "cantidad",
+    headerName: "Cantidad",
+    width: 80,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatterCount.format(value);
+    },
+  },
   { field: "fecha", headerName: "Fecha", width: 100 },
   { field: "punto_id", headerName: "Punto", width: 90 },
   { field: "negocio_id", headerName: "Negocio", width: 100 },
@@ -65,7 +94,7 @@ function Page() {
       <Button
         variant="contained"
         color="inherit"
-        sx={{ mt:  1 , mb:  1  }}
+        sx={{ mt: 1, mb: 1 }}
         startIcon={<LocalShippingIcon />}
         onClick={() => router.push("/distribucion/nuevo")}
       >
@@ -77,12 +106,12 @@ function Page() {
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={distribucion}
           columns={columns}
+          checkboxSelection
         />
       </div>
     </>
   );
 }
-
 
 function PageDistribucion() {
   return (

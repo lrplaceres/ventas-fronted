@@ -23,7 +23,7 @@ export default async function RootLayout({
       <Providers session={session}>
         <html lang="es">
           <body>
-            <Container maxWidth="md">              
+            <Container maxWidth="sm">              
               {children}
             </Container>
           </body>

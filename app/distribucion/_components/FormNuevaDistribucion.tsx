@@ -41,7 +41,6 @@ function FormDistribucion() {
   const [maximacantidad, setMaximaCantidad] = useState(0);
 
   useEffect(() => {
-    obtenerPuntos();
     obtenerInventarios();
   }, []);
 
@@ -71,8 +70,8 @@ function FormDistribucion() {
       });
   };
 
-  const obtenerPuntos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
+  const obtenerPuntosNegocio = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos-negocio/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -136,11 +135,15 @@ function FormDistribucion() {
           }
           sx={{ mb: 1 }}
           onChange={(event: any, newValue: string | null) => {
-            setDistribucion({ ...distribucion, inventario_id: newValue?.id });            
             if (!!newValue) {
+              setDistribucion({ ...distribucion, inventario_id: newValue?.id });
               setMaximaCantidad(newValue.cantidad - newValue.distribuido);
+              obtenerPuntosNegocio(newValue.negocio_id);
             } else {
+              setDistribucion({ ...distribucion, inventario_id: "" });
               setMaximaCantidad(0);
+              setDistribucion({ ...distribucion, punto_id: "" });
+              setPuntos([]);
             }
           }}
           renderInput={(params) => (
@@ -158,6 +161,7 @@ function FormDistribucion() {
             value={distribucion.punto_id}
             onChange={handleChange}
             required
+            inputProps={{ readOnly: puntos.length ? false : true }}
           >
             {puntos.map((punto, index) => (
               <MenuItem key={index.toString()} value={punto.id}>

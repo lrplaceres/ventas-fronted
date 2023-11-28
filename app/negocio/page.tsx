@@ -15,7 +15,7 @@ const columns: GridColDef[] = [
     width: 150,
     renderCell: (params) => (
       <Link href={`/negocio/${params.row.id}`} className="decoration-none">
-        {params.row.activo ? params.row.nombre : <del>{params.row.nombre}</del>}
+        {params.row.activo ? params.value : <del>{params.value}</del>}
       </Link>
     ),
   },
@@ -75,6 +75,7 @@ function Page() {
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={negocios}
           columns={columns}
+          checkboxSelection
         />
       </div>
     </>
