@@ -233,13 +233,9 @@ function FormInventario() {
           value={params?.id ? productoEdit : productos[0]}
           onChange={(event: any, newValue: string | null) => {
             if (!!newValue) {
-              //TODO: arreglar, con cambia producto_id
-              setInventario({ ...inventario, producto_id: newValue.id });
-              setInventario({ ...inventario, negocio_id: newValue.negocio_id });
-              setProductoEdit(newValue);
-            } else {
-              setInventario({ ...inventario, producto_id: "" });
-              setInventario({ ...inventario, negocio_id: "" });
+              setInventario({ ...inventario, "producto_id": newValue.id, "negocio_id": newValue.negocio_id  });
+             } else {
+              setInventario({ ...inventario, "producto_id": "", "negocio_id": "" });
               setProductoEdit([]);
             }
           }}
