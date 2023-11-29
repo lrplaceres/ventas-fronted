@@ -229,11 +229,12 @@ function FormPunto() {
             sx={{ mb: 1 }}
             required
           >
-            {negocios.map((negocio, index) => (
-              <MenuItem key={index.toString()} value={negocio.id}>
-                {negocio.nombre}
-              </MenuItem>
-            ))}
+            {negocios.length &&
+              negocios.map((negocio, index) => (
+                <MenuItem key={index.toString()} value={negocio.id}>
+                  {negocio.nombre}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 

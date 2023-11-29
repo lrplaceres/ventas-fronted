@@ -214,11 +214,12 @@ function FormProducto() {
             sx={{ mb: 1 }}
             required
           >
-            {negocios.map((producto, index) => (
-              <MenuItem key={index.toString()} value={producto.id}>
-                {producto.nombre}
-              </MenuItem>
-            ))}
+            {negocios.length &&
+              negocios.map((producto, index) => (
+                <MenuItem key={index.toString()} value={producto.id}>
+                  {producto.nombre}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 

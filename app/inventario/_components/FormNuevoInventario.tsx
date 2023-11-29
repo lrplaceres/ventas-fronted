@@ -69,7 +69,11 @@ function FormInventario() {
   }, []);
 
   useEffect(() => {
-    setProductoEdit(productos.filter((v) => v.id == inventario.producto_id)[0]);
+    if (productos.length) {
+      setProductoEdit(
+        productos.filter((v) => v.id == inventario.producto_id)[0]
+      );
+    }
   }, [productos]);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -229,11 +233,11 @@ function FormInventario() {
           value={params?.id ? productoEdit : productos[0]}
           onChange={(event: any, newValue: string | null) => {
             if (!!newValue) {
+              //TODO: arreglar, con cambia producto_id
               setInventario({ ...inventario, producto_id: newValue.id });
               setInventario({ ...inventario, negocio_id: newValue.negocio_id });
               setProductoEdit(newValue);
-              
-            }else{              
+            } else {
               setInventario({ ...inventario, producto_id: "" });
               setInventario({ ...inventario, negocio_id: "" });
               setProductoEdit([]);
@@ -242,6 +246,7 @@ function FormInventario() {
           renderInput={(params) => (
             <TextField {...params} label="Producto" required />
           )}
+          disabled={productos.length ? false : true}
         />
 
         <TextField
@@ -319,13 +324,13 @@ function FormInventario() {
             sx={{ mb: 1 }}
             required
             inputProps={{ readOnly: true }}
-            
           >
-            {negocios.map((negocio, index) => (
-              <MenuItem key={index.toString()} value={negocio.id}>
-                {negocio.nombre}
-              </MenuItem>
-            ))}
+            {negocios.length &&
+              negocios.map((negocio, index) => (
+                <MenuItem key={index.toString()} value={negocio.id}>
+                  {negocio.nombre}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 

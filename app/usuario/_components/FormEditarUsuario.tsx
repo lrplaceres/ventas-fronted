@@ -246,7 +246,7 @@ function FormUsuario() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Eliminar usuario"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title" textAlign="center">{"Eliminar usuario"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}

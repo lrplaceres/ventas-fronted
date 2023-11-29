@@ -1,6 +1,11 @@
 "use client";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  esES,
+  GridRowSelectionModel,
+} from "@mui/x-data-grid";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -30,7 +35,12 @@ function Page() {
 
   const [puntos, setPuntos] = useState([]);
 
+  const [seleccionados, setSeleccionados] = useState([]);
+
   const { enqueueSnackbar } = useSnackbar();
+
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>([]);
 
   useEffect(() => {
     obtenerPuntos();
@@ -63,7 +73,7 @@ function Page() {
       <Button
         variant="contained"
         color="inherit"
-        sx={{ mt:1, mb: 1 }}
+        sx={{ mt: 1, mb: 1 }}
         startIcon={<AddBusinessIcon />}
         onClick={() => router.push("/punto/nuevo")}
       >
@@ -76,12 +86,17 @@ function Page() {
           rows={puntos}
           columns={columns}
           checkboxSelection
+          onRowSelectionModelChange={(ids) => {
+            const selectedRowsData = ids.map((id) =>
+              puntos.find((row) => row.id === id)
+            );
+            console.log(selectedRowsData);
+          }}
         />
       </div>
     </>
   );
 }
-
 
 function PagePunto() {
   return (

@@ -23,6 +23,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PersonIcon from "@mui/icons-material/Person";
+import PeopleIcon from '@mui/icons-material/People';
 import { AccountCircle } from "@mui/icons-material";
 import { signOut, useSession } from "next-auth/react";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -86,7 +87,7 @@ export default function DenseAppBar() {
             sx={{ flexGrow: 1, cursor: "pointer" }}
             onClick={() => router.push("/")}
           >
-            $1MPLE_TPV
+            SIMPLE_TPV
           </Typography>
           {session && (
             <div>
@@ -161,8 +162,6 @@ export default function DenseAppBar() {
                   </ListItemButton>
                 </ListItem>
 
-                <Divider />
-
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/producto")}
@@ -178,8 +177,6 @@ export default function DenseAppBar() {
                     <ListItemText primary={"Productos"} />
                   </ListItemButton>
                 </ListItem>
-
-                <Divider />
 
                 <ListItem
                   disablePadding
@@ -197,8 +194,6 @@ export default function DenseAppBar() {
                   </ListItemButton>
                 </ListItem>
 
-                <Divider />
-
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/distribucion")}
@@ -215,8 +210,6 @@ export default function DenseAppBar() {
                   </ListItemButton>
                 </ListItem>
 
-                <Divider />
-
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/venta")}
@@ -232,7 +225,22 @@ export default function DenseAppBar() {
                     <ListItemText primary={"Venta"} />
                   </ListItemButton>
                 </ListItem>
-                <Divider />
+                                
+                <ListItem
+                  disablePadding
+                  onClick={() => router.push("/dependiente")}
+                  sx={{
+                    backgroundColor:
+                      pathname?.split("/")[1] == "dependiente" ? "#bbdefb" : "",
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <PeopleIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Dependientes"} />
+                  </ListItemButton>
+                </ListItem>
               </>
             )}
 
@@ -253,6 +261,7 @@ export default function DenseAppBar() {
                     <ListItemText primary={"Negocio"} />
                   </ListItemButton>
                 </ListItem>
+
                 <Divider />
 
                 <ListItem

@@ -49,11 +49,8 @@ function FormDistribucion() {
     cantidad: "",
     fecha: new Date(),
     punto_id: "",
-  });
-
-  const [disponible, setDisponible] = useState({
-    cantidad_distribuida: "",
     cantidad_inventario: "",
+    cantidad_distribuida: "",
   });
 
   const [inventarios, setInventarios] = useState([]);
@@ -240,7 +237,7 @@ function FormDistribucion() {
           sx={{ mb: 1 }}
           type="number"
           required
-          helperText={`Cantidad Inventario: ${disponible.cantidad_inventario} Cantidad distribuída: ${disponible.cantidad_distribuida}`}
+          helperText={`Cantidad Inventario: ${distribucion.cantidad_inventario} Cantidad distribuída: ${distribucion.cantidad_distribuida}`}
         />
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>

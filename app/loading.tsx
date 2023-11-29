@@ -18,7 +18,7 @@ export default function LinearIndeterminate() {
         }}
       >
         <Typography variant="h6" color="primary">
-          $1MPLE_TPV
+          SIMPLE_TPV
           <LinearProgress color="primary" />
         </Typography>
       </Box>
