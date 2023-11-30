@@ -1,7 +1,7 @@
 "use client";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridColumnVisibilityModel, esES } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,7 +18,7 @@ const columns: GridColDef[] = [
   {
     field: "producto_id",
     headerName: "Producto",
-    width: 150,
+    width: 120,
     renderCell: (params) => (
       <Link href={`/distribucion/${params.row.id}`} className="decoration-none">
         {params.value}
@@ -26,20 +26,8 @@ const columns: GridColDef[] = [
     ),
   },
   {
-    field: "costo",
-    headerName: "Costo",
-    width: 80,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  {
     field: "cantidad",
-    headerName: "Cantidad",
+    headerName: "Cant",
     width: 80,
     type: "number",
     valueFormatter: ({ value }) => {
@@ -49,8 +37,20 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "fecha", headerName: "Fecha", width: 100 },
   { field: "punto_id", headerName: "Punto", width: 90 },
+  {
+    field: "costo",
+    headerName: "Costo",
+    width: 90,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatter.format(value);
+    },
+  },
+  { field: "fecha", headerName: "Fecha", width: 100 },
   { field: "negocio_id", headerName: "Negocio", width: 100 },
 ];
 
@@ -62,6 +62,11 @@ function Page() {
   const [distribucion, setDistribucion] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const [columnVisibilityModel, setColumnVisibilityModel] =
+    useState<GridColumnVisibilityModel>({
+      negocio_id: false,
+    });
 
   useEffect(() => {
     obtenerDistribucion();
@@ -107,6 +112,10 @@ function Page() {
           rows={distribucion}
           columns={columns}
           checkboxSelection
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={(newModel) =>
+            setColumnVisibilityModel(newModel)
+          }
         />
       </div>
     </>

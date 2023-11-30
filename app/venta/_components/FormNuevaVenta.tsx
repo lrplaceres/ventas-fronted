@@ -28,19 +28,139 @@ import Autocomplete from "@mui/material/Autocomplete";
 function FormVenta() {
   const router = useRouter();
 
+  const params = useParams();
+
+  const { data: session, update } = useSession();
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const [venta, setVenta] = useState({
-    inventario: "",
+    distribucion_id: "",
     cantidad: "",
-    fecha: Date(),
+    precio: "",
+    fecha: new Date(),
+    punto_id: "",
   });
+
+  const [puntos, setPuntos] = useState([]);
+
+  const [distribuciones, setDistribuciones] = useState([]);
+
+  const [distribucionEdit, setDistribucionEdit] = useState([]);
+
+  const [maximacantidad, setMaximaCantidad] = useState(0);
+
+  const [um, setUm] = useState("");
+
+  useEffect(() => {
+    obtenerDistribuciones();
+  }, []);
 
   const handleChange = ({ target: { name, value } }) => {
     setVenta({ ...venta, [name]: value });
   };
 
+  const notificacion = (mensaje: string, variant: VariantType = "error") => {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(mensaje, { variant });
+  };
+
+  const obtenerDistribuciones = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDistribuciones(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
+
+  const obtenerPuntosNegocio = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/puntos-negocio/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setPuntos(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log(venta);
+   
+    try {
+      if (params?.id) {
+        fetch(`${process.env.MI_API_BACKEND}/venta/${params?.id}`, {
+          method: "PUT",
+          body: JSON.stringify(venta),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        })
+          .then(function (response) {
+            if (response.ok) {
+              response.json().then((data) => {
+                notificacion(
+                  `Se ha editado la venta`,
+                  "success"
+                );
+                setTimeout(() => router.push("/venta"), 300);
+              });
+            } else {
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
+      } else {
+        fetch(`${process.env.MI_API_BACKEND}/venta`, {
+          method: "POST",
+          body: JSON.stringify(venta),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        })
+          .then(function (response) {
+            if (response.ok) {
+              response.json().then((data) => {
+                notificacion(
+                  `Se ha insertado la venta`,
+                  "success"
+                );
+                setTimeout(() => router.push("/venta"), 300);
+              });
+            } else {
+              response.json().then((data) => {
+                notificacion(`${data.detail}`);
+              });
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
+      }
+    } catch (error) {
+      return notificacion(error);
+    }
   };
 
   return (
@@ -50,15 +170,42 @@ function FormVenta() {
           INSERTAR VENTA
         </Typography>
 
-        <TextField
-          id="inventario"
-          name="inventario"
-          label="Producto"
-          value={venta.inventario}
-          onChange={handleChange}
-          fullWidth
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={distribuciones}
+          getOptionLabel={(option) =>
+            `${option.nombre_producto} ► ${option.nombre_punto} ► \ud83d\udcc5${option.fecha}`
+          }
           sx={{ mb: 1 }}
-          required
+          value={params?.id ? distribucionEdit : distribuciones[0]}
+          onChange={(event: any, newValue: string | null) => {
+            if (!!newValue) {
+              setVenta({
+                ...venta,
+                "distribucion_id": newValue.id,
+                "punto_id": newValue.punto_id,
+                "precio": newValue.precio_venta,
+              });
+              setDistribucionEdit(newValue);
+              setMaximaCantidad(newValue.cantidad - newValue.cantidad_vendida);
+              setUm(newValue.um)
+            } else {
+              setVenta({
+                ...venta,
+                distribucion_id: "",
+                punto_id: "",
+                precio: "",
+              });
+              setDistribucionEdit([]);
+              setMaximaCantidad(0)
+              setUm("")
+            }
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Producto" required />
+          )}
+          disabled={distribuciones.length ? false : true}
         />
 
         <TextField
@@ -71,13 +218,19 @@ function FormVenta() {
           sx={{ mb: 1 }}
           type="number"
           required
+          inputProps={{
+            min: 1,
+            max: maximacantidad,
+          }}
+          helperText={`Cantidad disponible: ${maximacantidad} UM: ${um}`}
+          disabled={maximacantidad ? false : true}
         />
 
         <TextField
           id="precio"
           name="precio"
           label="Precio"
-          value={venta.cantidad}
+          value={venta.precio}
           onChange={handleChange}
           fullWidth
           sx={{ mb: 1 }}
@@ -96,33 +249,12 @@ function FormVenta() {
           />
         </LocalizationProvider>
 
-        <FormControl fullWidth sx={{ mb: 1 }}>
-          <InputLabel id="demo-simple-select-label">Punto</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            name="punto_id"
-            label="Punto"
-            //value={distribucion.punto_id}
-            onChange={handleChange}
-            required
-            //inputProps={{ readOnly: puntos.length ? false : true }}
-          >
-            
-              <MenuItem>
-                #1
-              </MenuItem>
-           
-          </Select>
-        </FormControl>
-
-
         <Card variant="outlined" sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
-            onClick={() => router.push("/punto")}
+            onClick={() => router.push("/venta")}
           >
             Cancelar
           </Button>

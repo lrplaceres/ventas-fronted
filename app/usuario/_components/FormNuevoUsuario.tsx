@@ -128,7 +128,6 @@ function FormUsuario() {
             onChange={handleChange}
             required
           >
-            <MenuItem value={"dependiente"}>Dependiente</MenuItem>
             <MenuItem value={"propietario"}>Propietario</MenuItem>
             <MenuItem value={"superadmin"}>Superadmin</MenuItem>
           </Select>

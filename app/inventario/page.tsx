@@ -1,7 +1,7 @@
 "use client";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridColumnVisibilityModel, esES } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,7 +18,7 @@ const columns: GridColDef[] = [
   {
     field: "nombre",
     headerName: "Nombre",
-    width: 140,
+    width: 120,
     renderCell: (params) => (
       <Link href={`/inventario/${params.row.id}`} className="decoration-none">
         {params.value}
@@ -27,8 +27,8 @@ const columns: GridColDef[] = [
   },
   {
     field: "cantidad",
-    headerName: "Cantidad",
-    width: 90,
+    headerName: "Cant",
+    width: 60,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -37,11 +37,11 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "negocio_id", headerName: "Negocio", width: 120 },
+  { field: "negocio_id", headerName: "Negocio", width: 100 },
   {
     field: "costo",
     headerName: "$ Costo",
-    width: 90,
+    width: 100,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -73,6 +73,12 @@ function Page() {
   const [inventarios, setInventarios] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const [columnVisibilityModel, setColumnVisibilityModel] =
+    useState<GridColumnVisibilityModel>({
+      fecha: false,
+      dependiente: false,
+    });
 
   useEffect(() => {
     obtenerInventarios();
@@ -118,6 +124,10 @@ function Page() {
           rows={inventarios}
           columns={columns}
           checkboxSelection
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={(newModel) =>
+            setColumnVisibilityModel(newModel)
+          }
         />
       </div>
     </>

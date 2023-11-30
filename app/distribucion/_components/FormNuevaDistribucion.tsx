@@ -186,7 +186,7 @@ function FormDistribucion() {
             max: maximacantidad,
           }}
           helperText={`Cantidad disponible ${maximacantidad}`}
-          disabled={!maximacantidad}
+          disabled={maximacantidad ? false : true}
         />
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
