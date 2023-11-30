@@ -34,6 +34,16 @@ function FormVenta() {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const [venta, setVenta] = useState({
     distribucion_id: "",
     cantidad: "",
@@ -46,13 +56,18 @@ function FormVenta() {
 
   const [distribucionEdit, setDistribucionEdit] = useState([]);
 
-  const [maximacantidad, setMaximaCantidad] = useState(0);
-
-  const [um, setUm] = useState("");
-
   useEffect(() => {
     obtenerDistribuciones();
+    if (params?.id) {
+      obtenerVenta(params?.id);
+    }
   }, []);
+
+  useEffect(() => {
+    setDistribucionEdit(
+      distribuciones.filter((v) => v.id == venta.distribucion_id)[0]
+    );
+  }, [distribuciones]);
 
   const handleChange = ({ target: { name, value } }) => {
     setVenta({ ...venta, [name]: value });
@@ -80,12 +95,29 @@ function FormVenta() {
       });
   };
 
+  const obtenerVenta = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setVenta(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/venta`, {
-        method: "POST",
+      fetch(`${process.env.MI_API_BACKEND}/venta/${params?.id}`, {
+        method: "PUT",
         body: JSON.stringify(venta),
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +127,7 @@ function FormVenta() {
         .then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
-              notificacion(`Se ha insertado la venta`, "success");
+              notificacion(`Se ha editado la venta`, "success");
               setTimeout(() => router.push("/venta"), 300);
             });
           } else {
@@ -110,6 +142,29 @@ function FormVenta() {
     } catch (error) {
       return notificacion(error);
     }
+  };
+
+  const eliminarVenta = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then(function (response) {
+        if (response.ok) {
+          notificacion(`La venta se ha sido eliminado`, "success");
+          setTimeout(() => router.push("/venta"), 300);
+        } else {
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
+        }
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
   };
 
   return (
@@ -136,9 +191,6 @@ function FormVenta() {
                 punto_id: newValue.punto_id,
                 precio: newValue.precio_venta,
               });
-              setDistribucionEdit(newValue);
-              setMaximaCantidad(newValue.cantidad - newValue.cantidad_vendida);
-              setUm(newValue.um);
             } else {
               setVenta({
                 ...venta,
@@ -147,15 +199,15 @@ function FormVenta() {
                 precio: "",
                 cantidad: "",
               });
-              setDistribucionEdit([]);
-              setMaximaCantidad(0);
-              setUm("");
             }
           }}
           renderInput={(params) => (
             <TextField {...params} label="Producto" required />
           )}
-          disabled={distribuciones.length ? false : true}
+          disabled={
+            (distribuciones.length ? false : true) ||
+            (params?.id ? true : false)
+          }
         />
 
         <TextField
@@ -168,11 +220,6 @@ function FormVenta() {
           sx={{ mb: 1 }}
           type="number"
           required
-          inputProps={{
-            max: maximacantidad,
-          }}
-          helperText={`Cantidad disponible: ${maximacantidad} UM: ${um}`}
-          disabled={venta.distribucion_id ? false : true}
         />
 
         <TextField
@@ -215,13 +262,44 @@ function FormVenta() {
           >
             Aceptar
           </Button>
+
+          {params?.id && (
+            <Button variant="contained" color="error" onClick={handleClickOpen}>
+              Eliminar
+            </Button>
+          )}
         </Card>
       </form>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Eliminar venta"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+            relacionados.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button
+            onClick={() => eliminarVenta(params?.id)}
+            autoFocus
+            color="error"
+          >
+            Estoy de acuerdo
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
 
-function FormNuevaVenta() {
+function FormEditarVenta() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -232,4 +310,4 @@ function FormNuevaVenta() {
   );
 }
 
-export default FormNuevaVenta;
+export default FormEditarVenta;
