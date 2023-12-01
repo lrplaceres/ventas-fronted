@@ -1,14 +1,5 @@
 "use client";
-import {
-  Button,
-  Card,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
@@ -24,6 +15,9 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import moment from "moment";
 import Autocomplete from "@mui/material/Autocomplete";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormVenta() {
   const router = useRouter();
@@ -205,7 +199,7 @@ function FormVenta() {
             <TextField {...params} label="Producto" required />
           )}
           disabled={
-            (distribuciones.length ? false : true) ||
+            (distribuciones.length > 0 ? false : true) ||
             (params?.id ? true : false)
           }
         />
@@ -236,6 +230,7 @@ function FormVenta() {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            label="Fecha"
             onChange={(newvalue) => {
               setVenta({ ...venta, fecha: newvalue });
             }}
@@ -245,12 +240,13 @@ function FormVenta() {
           />
         </LocalizationProvider>
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center", mb: 4 }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
             onClick={() => router.push("/venta")}
+            startIcon={<CancelIcon />}
           >
             Cancelar
           </Button>
@@ -259,16 +255,19 @@ function FormVenta() {
             color="success"
             type="submit"
             sx={{ mr: 1 }}
+            startIcon={<DoneIcon />}
           >
             Aceptar
           </Button>
+        </Box>
 
+        <Box sx={{ textAlign: "center" }}>
           {params?.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen}>
+            <Button variant="contained" color="error" onClick={handleClickOpen} startIcon={<DeleteForeverIcon />}>
               Eliminar
             </Button>
           )}
-        </Card>
+        </Box>
       </form>
 
       <Dialog

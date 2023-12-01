@@ -1,7 +1,7 @@
 "use client";
 import {
+  Box,
   Button,
-  Card,
   FormControl,
   InputLabel,
   MenuItem,
@@ -19,6 +19,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import moment from "moment";
 import Autocomplete from "@mui/material/Autocomplete";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
 
 function FormDistribucion() {
   const router = useRouter();
@@ -191,6 +193,7 @@ function FormDistribucion() {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            label="Fecha"
             onChange={(newvalue) => {
               setDistribucion({ ...distribucion, fecha: newvalue });
             }}
@@ -200,12 +203,13 @@ function FormDistribucion() {
           />
         </LocalizationProvider>
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
             onClick={() => router.push("/distribucion")}
+            startIcon={<CancelIcon />}
           >
             Cancelar
           </Button>
@@ -214,10 +218,11 @@ function FormDistribucion() {
             color="success"
             type="submit"
             sx={{ mr: 1 }}
+            startIcon={<DoneIcon />}
           >
             Aceptar
           </Button>
-        </Card>
+        </Box>
       </form>
     </>
   );

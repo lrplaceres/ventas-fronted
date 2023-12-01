@@ -1,7 +1,7 @@
 "use client";
 import {
+  Box,
   Button,
-  Card,
   FormControl,
   InputLabel,
   MenuItem,
@@ -24,6 +24,9 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import moment from "moment";
 import Autocomplete from "@mui/material/Autocomplete";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormDistribucion() {
   const router = useRouter();
@@ -123,7 +126,7 @@ function FormDistribucion() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setDistribucion(data); 
+        setDistribucion(data);
         obtenerPuntosNegocio(data.negocio_id);
       })
       .catch(function (error) {
@@ -135,31 +138,29 @@ function FormDistribucion() {
     e.preventDefault();
 
     try {
-      
-        fetch(`${process.env.MI_API_BACKEND}/distribucion/${params?.id}`, {
-          method: "PUT",
-          body: JSON.stringify(distribucion),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
+      fetch(`${process.env.MI_API_BACKEND}/distribucion/${params?.id}`, {
+        method: "PUT",
+        body: JSON.stringify(distribucion),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then(function (response) {
+          if (response.ok) {
+            response.json().then((data) => {
+              notificacion(`Se ha editado la distribución`, "success");
+              setTimeout(() => router.push("/distribucion"), 300);
+            });
+          } else {
+            response.json().then((data) => {
+              notificacion(`${data.detail}`);
+            });
+          }
         })
-          .then(function (response) {
-            if (response.ok) {
-              response.json().then((data) => {
-                notificacion(`Se ha editado la distribución`, "success");
-                setTimeout(() => router.push("/distribucion"), 300);
-              });
-            } else {
-              response.json().then((data) => {
-                notificacion(`${data.detail}`);
-              });
-            }
-          })
-          .catch(function (error) {
-            notificacion("Se ha producido un error");
-          });
-     
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
     } catch (error) {
       return notificacion(error);
     }
@@ -201,7 +202,7 @@ function FormDistribucion() {
           options={inventarios}
           getOptionLabel={(option) => `${option.nombre}`}
           sx={{ mb: 1 }}
-          value={params?.id ? inventarioEdit : inventarios[0]}          
+          value={params?.id ? inventarioEdit : inventarios[0]}
           renderInput={(params) => (
             <TextField {...params} label="Inventario" required />
           )}
@@ -242,6 +243,7 @@ function FormDistribucion() {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            label="Fecha"
             onChange={(newvalue) => {
               setDistribucion({ ...distribucion, fecha: newvalue });
             }}
@@ -251,12 +253,13 @@ function FormDistribucion() {
           />
         </LocalizationProvider>
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center", mb: 4 }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
             onClick={() => router.push("/distribucion")}
+            startIcon={<CancelIcon />}
           >
             Cancelar
           </Button>
@@ -265,16 +268,19 @@ function FormDistribucion() {
             color="success"
             type="submit"
             sx={{ mr: 1 }}
+            startIcon={<DoneIcon />}
           >
             Aceptar
           </Button>
+        </Box>
 
+        <Box sx={{ textAlign: "center" }}>
           {params?.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen}>
+            <Button variant="contained" color="error" onClick={handleClickOpen} startIcon={<DeleteForeverIcon />}>
               Eliminar
             </Button>
           )}
-        </Card>
+        </Box>
       </form>
 
       <Dialog

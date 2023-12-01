@@ -1,29 +1,17 @@
 "use client";
-import {
-  Button,
-  Card,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import moment from "moment";
 import Autocomplete from "@mui/material/Autocomplete";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
 
 function FormVenta() {
   const router = useRouter();
@@ -155,7 +143,7 @@ function FormVenta() {
           renderInput={(params) => (
             <TextField {...params} label="Producto" required />
           )}
-          disabled={distribuciones.length ? false : true}
+          disabled={distribuciones.length > 0 ? false : true}
         />
 
         <TextField
@@ -189,6 +177,7 @@ function FormVenta() {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            label="Fecha"
             onChange={(newvalue) => {
               setVenta({ ...venta, fecha: newvalue });
             }}
@@ -198,12 +187,13 @@ function FormVenta() {
           />
         </LocalizationProvider>
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
             onClick={() => router.push("/venta")}
+            startIcon={<CancelIcon />}
           >
             Cancelar
           </Button>
@@ -212,10 +202,11 @@ function FormVenta() {
             color="success"
             type="submit"
             sx={{ mr: 1 }}
+            startIcon={<DoneIcon />}
           >
             Aceptar
           </Button>
-        </Card>
+        </Box>
       </form>
     </>
   );

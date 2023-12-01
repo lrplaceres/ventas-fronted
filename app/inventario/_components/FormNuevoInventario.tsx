@@ -1,5 +1,6 @@
 "use client";
 import {
+  Box,
   Button,
   Card,
   FormControl,
@@ -24,6 +25,9 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import moment from "moment";
 import Autocomplete from "@mui/material/Autocomplete";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormInventario() {
   const router = useRouter();
@@ -69,7 +73,7 @@ function FormInventario() {
   }, []);
 
   useEffect(() => {
-    if (productos.length) {
+    if (productos.length > 0) {
       setProductoEdit(
         productos.filter((v) => v.id == inventario.producto_id)[0]
       );
@@ -233,16 +237,20 @@ function FormInventario() {
           value={params?.id ? productoEdit : productos[0]}
           onChange={(event: any, newValue: string | null) => {
             if (!!newValue) {
-              setInventario({ ...inventario, "producto_id": newValue.id, "negocio_id": newValue.negocio_id  });
-             } else {
-              setInventario({ ...inventario, "producto_id": "", "negocio_id": "" });
+              setInventario({
+                ...inventario,
+                producto_id: newValue.id,
+                negocio_id: newValue.negocio_id,
+              });
+            } else {
+              setInventario({ ...inventario, producto_id: "", negocio_id: "" });
               setProductoEdit([]);
             }
           }}
           renderInput={(params) => (
             <TextField {...params} label="Producto" required />
           )}
-          disabled={productos.length ? false : true}
+          disabled={productos.length > 0 ? false : true}
         />
 
         <TextField
@@ -300,6 +308,7 @@ function FormInventario() {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            label="Fecha"
             onChange={(newvalue) => {
               setInventario({ ...inventario, fecha: newvalue });
             }}
@@ -321,7 +330,7 @@ function FormInventario() {
             required
             inputProps={{ readOnly: true }}
           >
-            {negocios.length &&
+            {negocios.length > 0 &&
               negocios.map((negocio, index) => (
                 <MenuItem key={index.toString()} value={negocio.id}>
                   {negocio.nombre}
@@ -330,12 +339,13 @@ function FormInventario() {
           </Select>
         </FormControl>
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center", mb: 4 }}>
           <Button
             variant="contained"
             color="warning"
             sx={{ mr: 1 }}
             onClick={() => router.push("/inventario")}
+            startIcon={<CancelIcon />}
           >
             Cancelar
           </Button>
@@ -344,16 +354,24 @@ function FormInventario() {
             color="success"
             type="submit"
             sx={{ mr: 1 }}
+            startIcon={<DoneIcon />}
           >
             Aceptar
           </Button>
+        </Box>
 
+        <Box sx={{ textAlign: "center" }}>
           {params?.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleClickOpen}
+              startIcon={<DeleteForeverIcon />}
+            >
               Eliminar
             </Button>
           )}
-        </Card>
+        </Box>
       </form>
 
       <Dialog

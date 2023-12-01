@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridColumnGroupingModel, esES } from "@mui/x-data-grid";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -21,6 +21,14 @@ const columns: GridColDef[] = [
   },
   { field: "direccion", headerName: "Dirección", width: 150 },
   { field: "informacion", headerName: "Información", width: 150 },
+];
+
+const columnGroupingModel: GridColumnGroupingModel = [
+  {
+    groupId: 'Listado de negocios',
+    description: '',
+    children: [{ field: 'nombre' },{ field: 'direccion' },{ field: 'informacion' }],
+  }
 ];
 
 function Page() {
@@ -76,6 +84,8 @@ function Page() {
           rows={negocios}
           columns={columns}
           checkboxSelection
+          experimentalFeatures={{ columnGrouping: true }}
+          columnGroupingModel={columnGroupingModel}
         />
       </div>
     </>

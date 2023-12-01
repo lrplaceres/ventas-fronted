@@ -1,7 +1,7 @@
 "use client";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, GridColumnVisibilityModel, esES } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridColumnGroupingModel, GridColumnVisibilityModel, esES } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -52,6 +52,14 @@ const columns: GridColDef[] = [
   },
   { field: "fecha", headerName: "Fecha", width: 100 },
   { field: "negocio_id", headerName: "Negocio", width: 100 },
+];
+
+const columnGroupingModel: GridColumnGroupingModel = [
+  {
+    groupId: 'Listado de distribuciones',
+    description: '',
+    children: [{ field: 'producto_id' },{ field: 'cantidad' },{ field: 'punto_id' },{ field: 'costo' },{ field: 'fecha' }],
+  }
 ];
 
 function Page() {
@@ -116,6 +124,8 @@ function Page() {
           onColumnVisibilityModelChange={(newModel) =>
             setColumnVisibilityModel(newModel)
           }
+          experimentalFeatures={{ columnGrouping: true }}
+          columnGroupingModel={columnGroupingModel}
         />
       </div>
     </>

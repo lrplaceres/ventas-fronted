@@ -5,6 +5,7 @@ import {
   GridColDef,
   esES,
   GridRowSelectionModel,
+  GridColumnGroupingModel,
 } from "@mui/x-data-grid";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
@@ -26,6 +27,14 @@ const columns: GridColDef[] = [
   },
   { field: "direccion", headerName: "Dirección", width: 150 },
   { field: "negocio_id", headerName: "Negocio", width: 150 },
+];
+
+const columnGroupingModel: GridColumnGroupingModel = [
+  {
+    groupId: 'Listado de Puntos',
+    description: '',
+    children: [{ field: 'nombre' },{ field: 'direccion' },{ field: 'negocio_id' }],
+  }
 ];
 
 function Page() {
@@ -81,11 +90,14 @@ function Page() {
       </Button>
 
       <div style={{ height: 500, width: "100%" }}>
+
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={puntos}
           columns={columns}
           checkboxSelection
+          experimentalFeatures={{ columnGrouping: true }}
+          columnGroupingModel={columnGroupingModel}
           onRowSelectionModelChange={(ids) => {
             const selectedRowsData = ids.map((id) =>
               puntos.find((row) => row.id === id)

@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import { useRouter, usePathname } from "next/navigation";
 import StorefrontIcon from "@mui/icons-material/Storefront";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PersonIcon from "@mui/icons-material/Person";
@@ -28,6 +27,7 @@ import { AccountCircle } from "@mui/icons-material";
 import { signOut, useSession } from "next-auth/react";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 export default function DenseAppBar() {
   const { data: session, update } = useSession();
@@ -220,7 +220,7 @@ export default function DenseAppBar() {
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <AttachMoneyIcon />
+                      <ShoppingCartIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Venta"} />
                   </ListItemButton>

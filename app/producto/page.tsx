@@ -22,6 +22,14 @@ const columns: GridColDef[] = [
   { field: "negocio_nombre", headerName: "Negocio", width: 150 },
 ];
 
+const columnGroupingModel: GridColumnGroupingModel = [
+  {
+    groupId: 'Listado de Productos',
+    description: '',
+    children: [{ field: 'nombre' },{ field: 'negocio_nombre' }],
+  }
+];
+
 function Page() {
   const router = useRouter();
 
@@ -75,6 +83,8 @@ function Page() {
           rows={productos}
           columns={columns}
           checkboxSelection
+          experimentalFeatures={{ columnGrouping: true }}
+          columnGroupingModel={columnGroupingModel}
         />
       </div>
     </>

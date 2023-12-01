@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridColumnGroupingModel, esES } from "@mui/x-data-grid";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,6 +20,14 @@ const columns: GridColDef[] = [
     ),
   },
   { field: "rol", headerName: "Rol", width: 150 },
+];
+
+const columnGroupingModel: GridColumnGroupingModel = [
+  {
+    groupId: 'Listado de usuarios',
+    description: '',
+    children: [{ field: 'usuario' },{ field: 'rol' }],
+  }
 ];
 
 function Page() {
@@ -70,11 +78,14 @@ function Page() {
       </Button>
 
       <div style={{ height: 500, width: "100%" }}>
+
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={usuarios}
           columns={columns}
           checkboxSelection
+          experimentalFeatures={{ columnGrouping: true }}
+          columnGroupingModel={columnGroupingModel}
         />
       </div>
     </>

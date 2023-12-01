@@ -269,6 +269,7 @@ function FormNegocio() {
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            label="Fecha licencia"
             onChange={(newvalue) => {
               setNegocio({ ...negocio, fecha_licencia: newvalue });
             }}

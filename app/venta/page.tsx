@@ -4,10 +4,10 @@ import {
   DataGrid,
   GridColDef,
   esES,
-  GridRowSelectionModel,
   GridColumnVisibilityModel,
+  GridColumnGroupingModel,
 } from "@mui/x-data-grid";
-import AddShoppingCartIcon from "@mui/icons-material/AddBusiness";
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -70,6 +70,14 @@ const columns: GridColDef[] = [
   },
   { field: "fecha", headerName: "Fecha", width: 120 },
   { field: "dependiente", headerName: "Dependiente", width: 150 },
+];
+
+const columnGroupingModel: GridColumnGroupingModel = [
+  {
+    groupId: 'Listado de distribuciones',
+    description: '',
+    children: [{ field: 'nombre_producto' },{ field: 'cantidad' },{ field: 'nombre_punto' },{ field: 'precio' },{ field: 'monto' }],
+  }
 ];
 
 function Page() {
@@ -135,6 +143,8 @@ function Page() {
           onColumnVisibilityModelChange={(newModel) =>
             setColumnVisibilityModel(newModel)
           }
+          experimentalFeatures={{ columnGrouping: true }}
+          columnGroupingModel={columnGroupingModel}
         />
       </div>
     </>

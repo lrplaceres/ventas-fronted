@@ -48,7 +48,7 @@ function ViewKiokoPropietario() {
 
   return (
     <>
-      {!negocios.length ? (
+      {negocios.length == 0 ? (
         <Alert variant="outlined" severity="info">
           Usted no tiene Negocios asociados. Contacte al administrador.
         </Alert>

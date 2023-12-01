@@ -1,7 +1,7 @@
 "use client";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, GridColumnVisibilityModel, esES } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridColumnGroupingModel, GridColumnVisibilityModel, esES } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -63,6 +63,14 @@ const columns: GridColDef[] = [
     },
   },
   { field: "fecha", headerName: "Fecha", width: 100 },
+];
+
+const columnGroupingModel: GridColumnGroupingModel = [
+  {
+    groupId: 'Listado de Inventarios',
+    description: '',
+    children: [{ field: 'nombre' },{ field: 'cantidad' },{ field: 'negocio_id' },{ field: 'costo' },{ field: 'precio_venta' }],
+  }
 ];
 
 function Page() {
@@ -128,6 +136,8 @@ function Page() {
           onColumnVisibilityModelChange={(newModel) =>
             setColumnVisibilityModel(newModel)
           }
+          experimentalFeatures={{ columnGrouping: true }}
+          columnGroupingModel={columnGroupingModel}
         />
       </div>
     </>
