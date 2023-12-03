@@ -31,10 +31,14 @@ const columns: GridColDef[] = [
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: 'Listado de Puntos',
-    description: '',
-    children: [{ field: 'nombre' },{ field: 'direccion' },{ field: 'negocio_id' }],
-  }
+    groupId: "Listado de Puntos",
+    description: "",
+    children: [
+      { field: "nombre" },
+      { field: "direccion" },
+      { field: "negocio_id" },
+    ],
+  },
 ];
 
 function Page() {
@@ -90,7 +94,6 @@ function Page() {
       </Button>
 
       <div style={{ height: 500, width: "100%" }}>
-
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={puntos}
@@ -103,6 +106,13 @@ function Page() {
               puntos.find((row) => row.id === id)
             );
             console.log(selectedRowsData);
+          }}
+          sx={{
+            border: 1,
+            borderColor: "primary.main",
+            "& .MuiDataGrid-cell:hover": {
+              color: "primary.main",
+            },
           }}
         />
       </div>

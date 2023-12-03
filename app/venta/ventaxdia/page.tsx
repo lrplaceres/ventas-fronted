@@ -1,36 +1,25 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import VistasMenu from "../_components/VistasMenuVenta";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import moment from "moment";
+import "dayjs/locale/es";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import {
   DataGrid,
-  GridColDef,
   esES,
-  GridColumnVisibilityModel,
+  GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
-import BotonInsertar from "./_components/BotonInsertar";
-import VistasMenuVenta from "./_components/VistasMenuVenta";
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 const columns: GridColDef[] = [
-  {
-    field: "nombre_producto",
-    headerName: "Nombre",
-    width: 120,
-    renderCell: (params) => (
-      <Link href={`/venta/${params.row.id}`} className="decoration-none">
-        {params.value}
-      </Link>
-    ),
-  },
+  { field: "nombre_producto", headerName: "Producto", width: 150 },
   {
     field: "cantidad",
     headerName: "Cant",
@@ -44,75 +33,39 @@ const columns: GridColDef[] = [
     },
   },
   { field: "nombre_punto", headerName: "Punto", width: 100 },
-  {
-    field: "precio",
-    headerName: "Precio",
-    width: 90,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  {
-    field: "monto",
-    headerName: "Monto",
-    width: 110,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  { field: "fecha", headerName: "Fecha", width: 120 },
-  { field: "dependiente", headerName: "Dependiente", width: 150 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: "Listado de ventas",
+    groupId: "Listado de ventas por fecha",
     description: "",
     children: [
       { field: "nombre_producto" },
-      { field: "cantidad" },
       { field: "nombre_punto" },
-      { field: "precio" },
-      { field: "monto" },
+      { field: "cantidad" },
     ],
   },
 ];
 
 function Page() {
-  const router = useRouter();
-
   const { data: session, update } = useSession();
 
   const [ventas, setVentas] = useState([]);
+ 
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [columnVisibilityModel, setColumnVisibilityModel] =
-    useState<GridColumnVisibilityModel>({
-      monto: false,
-      fecha: false,
-      dependiente: false,
-    });
-
-  useEffect(() => {
-    obtenerVentas();
-  }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerVentas = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/ventas`, {
+  useEffect(() => {
+    obtenerVentas(moment(new Date()).format("YYYY-MM-DD"));
+  }, []);
+
+  const obtenerVentas = async (fecha: Date) => {
+    await fetch(`${process.env.MI_API_BACKEND}/ventas-dia/${fecha}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -130,11 +83,22 @@ function Page() {
 
   return (
     <>
-    <div style={{display: "flex"}}>
-      <BotonInsertar />
+      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
+        <div style={{ flexGrow: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            <DatePicker
+              label="Fecha"
+              onChange={(newvalue) => {
+                obtenerVentas(newvalue?.format("YYYY-MM-DD"));
+              }}
+              format="YYYY-MM-DD"
+              defaultValue={dayjs(new Date())}
+            />
+          </LocalizationProvider>
+        </div>
 
-      <VistasMenuVenta />
-    </div>
+        <VistasMenu />
+      </div>
 
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid
@@ -142,10 +106,6 @@ function Page() {
           rows={ventas}
           columns={columns}
           checkboxSelection
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) =>
-            setColumnVisibilityModel(newModel)
-          }
           experimentalFeatures={{ columnGrouping: true }}
           columnGroupingModel={columnGroupingModel}
           sx={{
@@ -161,7 +121,7 @@ function Page() {
   );
 }
 
-function PageVenta() {
+function PageVentaXDia() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -172,4 +132,4 @@ function PageVenta() {
   );
 }
 
-export default PageVenta;
+export default PageVentaXDia;

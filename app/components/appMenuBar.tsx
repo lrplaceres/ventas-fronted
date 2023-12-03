@@ -22,12 +22,14 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PersonIcon from "@mui/icons-material/Person";
-import PeopleIcon from '@mui/icons-material/People';
+import PeopleIcon from "@mui/icons-material/People";
 import { AccountCircle } from "@mui/icons-material";
 import { signOut, useSession } from "next-auth/react";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function DenseAppBar() {
   const { data: session, update } = useSession();
@@ -42,9 +44,9 @@ export default function DenseAppBar() {
     left: false,
   });
 
-  const [auth, setAuth] = useState(true);
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const open = Boolean(anchorEl);
 
   const handleMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -102,29 +104,52 @@ export default function DenseAppBar() {
                 <AccountCircle />
               </IconButton>
               <Menu
-                id="menu-appbar"
                 anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorEl)}
+                id="account-menu"
+                open={open}
                 onClose={handleClose}
-                sx={{ width: 300 }}
+                onClick={handleClose}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
                 <MenuItem onClick={() => router.push("/perfil")}>
-                  <PersonIcon />
-                  <Typography textAlign="center">Perfil</Typography>
+                  <ListItemIcon>
+                    <PersonIcon fontSize="small" />
+                  </ListItemIcon>
+                  Perfil
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={() => signOut()}>
-                  <ExitToAppIcon />
-                  <Typography textAlign="center">Salir</Typography>
+                  <ListItemIcon>
+                    <ExitToAppIcon fontSize="small" />
+                  </ListItemIcon>
+                  Salir
                 </MenuItem>
               </Menu>
             </div>
@@ -146,7 +171,7 @@ export default function DenseAppBar() {
           <List>
             {session?.rol == "propietario" && (
               <>
-              <ListItem
+                <ListItem
                   disablePadding
                   onClick={() => router.push("/punto")}
                   sx={{
@@ -199,7 +224,9 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/distribucion")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "distribucion" ? "#bbdefb" : "",
+                      pathname?.split("/")[1] == "distribucion"
+                        ? "#bbdefb"
+                        : "",
                   }}
                 >
                   <ListItemButton>
@@ -225,7 +252,7 @@ export default function DenseAppBar() {
                     <ListItemText primary={"Venta"} />
                   </ListItemButton>
                 </ListItem>
-                                
+
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/dependiente")}

@@ -86,6 +86,13 @@ function Page() {
           checkboxSelection
           experimentalFeatures={{ columnGrouping: true }}
           columnGroupingModel={columnGroupingModel}
+          sx={{
+            border: 1,
+            borderColor: "primary.main",
+            "& .MuiDataGrid-cell:hover": {
+              color: "primary.main",
+            },
+          }}
         />
       </div>
     </>

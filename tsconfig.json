@@ -23,6 +23,6 @@
       "auth": ["./auth"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/auth/[...nextauth].js", "pages/auth/signin.js", "app/login/template.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/auth/[...nextauth].js", "pages/auth/signin.js", "app/login/template.tsx", "app/venta/ventaxdia"],
   "exclude": ["node_modules"]
 }
