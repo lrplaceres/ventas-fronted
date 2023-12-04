@@ -14,8 +14,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Menu,
-  MenuItem,
 } from "@mui/material";
 import { useRouter, usePathname } from "next/navigation";
 import StorefrontIcon from "@mui/icons-material/Storefront";
@@ -23,13 +21,10 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
-import { AccountCircle } from "@mui/icons-material";
-import { signOut, useSession } from "next-auth/react";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { useSession } from "next-auth/react";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
+import OpcionesUsuario from "./OpcionesUsuario";
 
 export default function DenseAppBar() {
   const { data: session, update } = useSession();
@@ -43,18 +38,7 @@ export default function DenseAppBar() {
   const [state, setState] = useState({
     left: false,
   });
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const open = Boolean(anchorEl);
-
-  const handleMenu = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+ 
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) => (event: KeyboardEvent | MouseEvent) => {
@@ -92,67 +76,7 @@ export default function DenseAppBar() {
             SIMPLE_TPV
           </Typography>
           {session && (
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                id="account-menu"
-                open={open}
-                onClose={handleClose}
-                onClick={handleClose}
-                PaperProps={{
-                  elevation: 0,
-                  sx: {
-                    overflow: "visible",
-                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                    mt: 1.5,
-                    "& .MuiAvatar-root": {
-                      width: 32,
-                      height: 32,
-                      ml: -0.5,
-                      mr: 1,
-                    },
-                    "&:before": {
-                      content: '""',
-                      display: "block",
-                      position: "absolute",
-                      top: 0,
-                      right: 14,
-                      width: 10,
-                      height: 10,
-                      bgcolor: "background.paper",
-                      transform: "translateY(-50%) rotate(45deg)",
-                      zIndex: 0,
-                    },
-                  },
-                }}
-                transformOrigin={{ horizontal: "right", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-              >
-                <MenuItem onClick={() => router.push("/perfil")}>
-                  <ListItemIcon>
-                    <PersonIcon fontSize="small" />
-                  </ListItemIcon>
-                  Perfil
-                </MenuItem>
-                <Divider />
-                <MenuItem onClick={() => signOut()}>
-                  <ListItemIcon>
-                    <ExitToAppIcon fontSize="small" />
-                  </ListItemIcon>
-                  Salir
-                </MenuItem>
-              </Menu>
-            </div>
+            <OpcionesUsuario />
           )}
         </Toolbar>
       </AppBar>

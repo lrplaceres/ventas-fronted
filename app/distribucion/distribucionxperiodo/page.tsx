@@ -1,7 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import VistasMenu from "../_components/VistasMenuVenta";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -15,6 +14,7 @@ import {
   GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
+import VistasMenuDistribucion from "../_components/VistasMenuDistribucion";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -33,16 +33,18 @@ const columns: GridColDef[] = [
     },
   },
   { field: "nombre_punto", headerName: "Punto", width: 100 },
+  { field: "nombre_negocio", headerName: "Negocio", width: 100 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: "Listado de ventas por período",
+    groupId: "Distribuciones por período",
     description: "",
     children: [
       { field: "nombre_producto" },
       { field: "nombre_punto" },
       { field: "cantidad" },
+      { field: "nombre_negocio" },
     ],
   },
 ];
@@ -50,7 +52,7 @@ const columnGroupingModel: GridColumnGroupingModel = [
 function Page() {
   const { data: session, update } = useSession();
 
-  const [ventas, setVentas] = useState([]);
+  const [distribuciones, setDistribuciones] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -65,15 +67,15 @@ function Page() {
   };
 
   useEffect(() => {
-    obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+    obtenerDistribucionesPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
   }, []);
 
-  const obtenerVentasPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
+  const obtenerDistribucionesPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
     if(fecha_inicio > fecha_fin){
-      setVentas([])
+      setDistribuciones([])
       return notificacion("La fecha fin debe ser mayor que la fecha inicio")
     }
-    await fetch(`${process.env.MI_API_BACKEND}/ventas-periodo/${fecha_inicio}/${fecha_fin}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-periodo/${fecha_inicio}/${fecha_fin}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +84,7 @@ function Page() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setVentas(data);
+        setDistribuciones(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -97,7 +99,7 @@ function Page() {
             <DatePicker
               label="Fecha inicio"
               onChange={(newvalue) => {
-                obtenerVentasPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
+                obtenerDistribucionesPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
                 setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
               }}
               format="YYYY-MM-DD"
@@ -110,7 +112,7 @@ function Page() {
             <DatePicker
               label="Fecha fin"
               onChange={(newvalue) => {
-                obtenerVentasPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
+                obtenerDistribucionesPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
                 setFechas({ ...fechas, fecha_fin: newvalue.format("YYYY-MM-DD") });
               }}
               format="YYYY-MM-DD"
@@ -119,13 +121,13 @@ function Page() {
           </LocalizationProvider>
         </div>
 
-        <VistasMenu />
+        <VistasMenuDistribucion />
       </div>
 
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={ventas}
+          rows={distribuciones}
           columns={columns}
           checkboxSelection
           experimentalFeatures={{ columnGrouping: true }}

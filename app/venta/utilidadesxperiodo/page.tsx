@@ -27,6 +27,18 @@ const currencyFormatterCount = new Intl.NumberFormat("en-US");
 const columns: GridColDef[] = [
   { field: "nombre_producto", headerName: "Producto", width: 150 },
   {
+    field: "cantidad",
+    headerName: "Cant",
+    width: 70,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatterCount.format(value);
+    },
+  },
+  {
     field: "utilidad",
     headerName: "Utilidad",
     width: 90,
@@ -50,19 +62,7 @@ const columns: GridColDef[] = [
       }
       return currencyFormatter.format(value);
     },
-  },  
-  {
-    field: "cantidad",
-    headerName: "Cant",
-    width: 70,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatterCount.format(value);
-    },
-  },  
+  },
   {
     field: "monto",
     headerName: "Monto",
@@ -140,12 +140,13 @@ function Page() {
       monto: false,
       precio_inventario: false,
       utilidad_esperada: false,
+      precio_costo: false,
     });
 
   const [fechas, setFechas] = useState({
     fecha_inicio: moment(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
     fecha_fin: moment(new Date()).format("YYYY-MM-DD"),
-  })
+  });
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
@@ -156,18 +157,21 @@ function Page() {
     obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
   }, []);
 
-  const obtenerVentasPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
-    if(fecha_inicio > fecha_fin){
-      setVentas([])
-      return notificacion("La fecha fin debe ser mayor que la fecha inicio")
+  const obtenerVentasPeriodo = async (fecha_inicio: Date, fecha_fin: Date) => {
+    if (fecha_inicio > fecha_fin) {
+      setVentas([]);
+      return notificacion("La fecha fin debe ser mayor que la fecha inicio");
     }
-    await fetch(`${process.env.MI_API_BACKEND}/ventas-utilidades-periodo/${fecha_inicio}/${fecha_fin}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
+    await fetch(
+      `${process.env.MI_API_BACKEND}/ventas-utilidades-periodo/${fecha_inicio}/${fecha_fin}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setVentas(data);
@@ -185,12 +189,18 @@ function Page() {
             <DatePicker
               label="Fecha inicio"
               onChange={(newvalue) => {
-                obtenerVentasPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
-                setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
+                obtenerVentasPeriodo(
+                  newvalue?.format("YYYY-MM-DD"),
+                  fechas.fecha_fin
+                );
+                setFechas({
+                  ...fechas,
+                  fecha_inicio: newvalue.format("YYYY-MM-DD"),
+                });
               }}
               format="YYYY-MM-DD"
-              defaultValue={dayjs(moment().subtract(7, "day"))}              
-              sx={{mb: 1}}
+              defaultValue={dayjs(moment().subtract(7, "day"))}
+              sx={{ mb: 1 }}
             />
           </LocalizationProvider>
 
@@ -198,8 +208,14 @@ function Page() {
             <DatePicker
               label="Fecha fin"
               onChange={(newvalue) => {
-                obtenerVentasPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
-                setFechas({ ...fechas, fecha_fin: newvalue.format("YYYY-MM-DD") });
+                obtenerVentasPeriodo(
+                  fechas.fecha_inicio,
+                  newvalue?.format("YYYY-MM-DD")
+                );
+                setFechas({
+                  ...fechas,
+                  fecha_fin: newvalue.format("YYYY-MM-DD"),
+                });
               }}
               format="YYYY-MM-DD"
               defaultValue={dayjs(new Date())}

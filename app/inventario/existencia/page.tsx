@@ -1,40 +1,30 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import "dayjs/locale/es";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import {
   DataGrid,
+  esES,
   GridColDef,
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
-  esES,
 } from "@mui/x-data-grid";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
-import BotonInsertar from "./_components/BotonInsertar";
-import VistasMenuDistribucion from "./_components/VistasMenuDistribucion";
+import VistasMenuInventario from "../_components/VistasMenuInventario";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 const columns: GridColDef[] = [
+  { field: "nombre", headerName: "Producto", width: 150 },
   {
-    field: "producto_id",
-    headerName: "Producto",
-    width: 120,
-    renderCell: (params) => (
-      <Link href={`/distribucion/${params.row.id}`} className="decoration-none">
-        {params.value}
-      </Link>
-    ),
-  },
-  {
-    field: "cantidad",
+    field: "existencia",
     headerName: "Cant",
-    width: 80,
+    width: 60,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -43,7 +33,7 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "punto_id", headerName: "Punto", width: 90 },
+  { field: "fecha", headerName: "Fecha", width: 100 },
   {
     field: "costo",
     headerName: "Costo",
@@ -56,49 +46,46 @@ const columns: GridColDef[] = [
       return currencyFormatter.format(value);
     },
   },
-  { field: "fecha", headerName: "Fecha", width: 100 },
-  { field: "negocio_id", headerName: "Negocio", width: 100 },
+  { field: "nombre_negocio", headerName: "Negocio", width: 100 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: "Listado de distribuciones",
+    groupId: "Existencia en almacén",
     description: "",
     children: [
-      { field: "producto_id" },
-      { field: "cantidad" },
-      { field: "punto_id" },
-      { field: "costo" },
+      { field: "nombre" },
+      { field: "existencia" },
       { field: "fecha" },
+      { field: "costo" },
+      { field: "nombre_negocio" },
     ],
   },
 ];
 
 function Page() {
-  const router = useRouter();
-
   const { data: session, update } = useSession();
 
-  const [distribucion, setDistribucion] = useState([]);
+  const [existencia, setExistencia] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const [columnVisibilityModel, setColumnVisibilityModel] =
     useState<GridColumnVisibilityModel>({
-      negocio_id: false,
+      nombre_negocio: false,
     });
-
-  useEffect(() => {
-    obtenerDistribucion();
-  }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerDistribucion = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribuciones`, {
+  useEffect(() => {
+    obtenerExistencia();
+  }, []);
+
+  const obtenerExistencia = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +94,7 @@ function Page() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setDistribucion(data);
+        setExistencia(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -116,15 +103,16 @@ function Page() {
 
   return (
     <>
-    <div style={{display: "flex"}}>
-      <BotonInsertar />
-      <VistasMenuDistribucion />
-    </div>
+      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
+        <div style={{ flexGrow: 1 }}></div>
+
+        <VistasMenuInventario />
+      </div>
 
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={distribucion}
+          rows={existencia}
           columns={columns}
           checkboxSelection
           columnVisibilityModel={columnVisibilityModel}
@@ -146,7 +134,7 @@ function Page() {
   );
 }
 
-function PageDistribucion() {
+function Existencia() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -157,4 +145,4 @@ function PageDistribucion() {
   );
 }
 
-export default PageDistribucion;
+export default Existencia;

@@ -7,7 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import { Alert } from "@mui/material";
+import { Alert, Typography } from "@mui/material";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
@@ -54,13 +54,16 @@ function ViewKiokoPropietario() {
         </Alert>
       ) : (
         <>
+          <Typography variant="h6" color="primary" align="center">
+            Mis negocios
+          </Typography>
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
           >
             {negocios.map((negocio, index) => (
               <ListItem key={index.toString()}>
                 <ListItemAvatar>
-                  <Avatar sx={{bgcolor: "#1976d2"}}>
+                  <Avatar sx={{ bgcolor: "#1976d2" }}>
                     <StorefrontIcon />
                   </Avatar>
                 </ListItemAvatar>
@@ -76,7 +79,6 @@ function ViewKiokoPropietario() {
     </>
   );
 }
-
 
 function Pagepropietario() {
   return (

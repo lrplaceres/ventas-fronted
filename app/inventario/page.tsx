@@ -1,12 +1,17 @@
 "use client";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import { Button } from "@mui/material";
-import { DataGrid, GridColDef, GridColumnGroupingModel, GridColumnVisibilityModel, esES } from "@mui/x-data-grid";
-import { useRouter } from "next/navigation";
+import {
+  DataGrid,
+  GridColDef,
+  GridColumnGroupingModel,
+  GridColumnVisibilityModel,
+  esES,
+} from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import BotonInsertar from "./_components/BotonInsertar";
+import VistasMenuInventario from "./_components/VistasMenuInventario";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -67,14 +72,19 @@ const columns: GridColDef[] = [
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: 'Listado de Inventarios',
-    description: '',
-    children: [{ field: 'nombre' },{ field: 'cantidad' },{ field: 'negocio_id' },{ field: 'costo' },{ field: 'precio_venta' }],
-  }
+    groupId: "Listado de Inventarios",
+    description: "",
+    children: [
+      { field: "nombre" },
+      { field: "cantidad" },
+      { field: "negocio_id" },
+      { field: "costo" },
+      { field: "precio_venta" },
+    ],
+  },
 ];
 
 function Page() {
-  const router = useRouter();
 
   const { data: session, update } = useSession();
 
@@ -116,15 +126,10 @@ function Page() {
 
   return (
     <>
-      <Button
-        variant="contained"
-        color="inherit"
-        sx={{ mt: 1, mb: 1 }}
-        startIcon={<LibraryAddIcon />}
-        onClick={() => router.push("/inventario/nuevo")}
-      >
-        Insertar Inventario
-      </Button>
+      <div style={{ display: "flex" }}>
+        <BotonInsertar />
+        <VistasMenuInventario />
+      </div>
 
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid

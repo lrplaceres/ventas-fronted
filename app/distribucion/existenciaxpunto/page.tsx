@@ -1,12 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import VistasMenu from "../_components/VistasMenuVenta";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
-import moment from "moment";
 import "dayjs/locale/es";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import {
@@ -15,13 +9,14 @@ import {
   GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
+import VistasMenuDistribucion from "../_components/VistasMenuDistribucion";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 const columns: GridColDef[] = [
   { field: "nombre_producto", headerName: "Producto", width: 150 },
   {
-    field: "cantidad",
+    field: "existencia",
     headerName: "Cant",
     width: 60,
     type: "number",
@@ -37,11 +32,11 @@ const columns: GridColDef[] = [
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: "Listado de ventas por período",
+    groupId: "Existencia en punto",
     description: "",
     children: [
       { field: "nombre_producto" },
-      { field: "nombre_punto" },
+      { field: "existencia" },
       { field: "cantidad" },
     ],
   },
@@ -50,14 +45,9 @@ const columnGroupingModel: GridColumnGroupingModel = [
 function Page() {
   const { data: session, update } = useSession();
 
-  const [ventas, setVentas] = useState([]);
+  const [existencia, setExistencia] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [fechas, setFechas] = useState({
-    fecha_inicio: moment(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
-    fecha_fin: moment(new Date()).format("YYYY-MM-DD"),
-  })
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
@@ -65,15 +55,11 @@ function Page() {
   };
 
   useEffect(() => {
-    obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+   obtenerExistencia();
   }, []);
 
-  const obtenerVentasPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
-    if(fecha_inicio > fecha_fin){
-      setVentas([])
-      return notificacion("La fecha fin debe ser mayor que la fecha inicio")
-    }
-    await fetch(`${process.env.MI_API_BACKEND}/ventas-periodo/${fecha_inicio}/${fecha_fin}`, {
+  const obtenerExistencia = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +68,7 @@ function Page() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setVentas(data);
+        setExistencia(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -92,40 +78,16 @@ function Page() {
   return (
     <>
       <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
-        <div style={{ flexGrow: 1 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha inicio"
-              onChange={(newvalue) => {
-                obtenerVentasPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
-                setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(moment().subtract(7, "day"))}              
-              sx={{mb: 1}}
-            />
-          </LocalizationProvider>
-
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha fin"
-              onChange={(newvalue) => {
-                obtenerVentasPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
-                setFechas({ ...fechas, fecha_fin: newvalue.format("YYYY-MM-DD") });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date())}
-            />
-          </LocalizationProvider>
+        <div style={{ flexGrow: 1 }}>          
         </div>
 
-        <VistasMenu />
+        <VistasMenuDistribucion />
       </div>
 
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={ventas}
+          rows={existencia}
           columns={columns}
           checkboxSelection
           experimentalFeatures={{ columnGrouping: true }}
@@ -143,7 +105,7 @@ function Page() {
   );
 }
 
-function PageVentaXPeriodo() {
+function Existencia() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -154,4 +116,4 @@ function PageVentaXPeriodo() {
   );
 }
 
-export default PageVentaXPeriodo;
+export default Existencia;

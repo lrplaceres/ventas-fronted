@@ -3,18 +3,21 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
+import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import IconButton from "@mui/material/IconButton";
 
-export default function VistasMenuVenta() {
+export default function VistasMenuInventario() {
   const router = useRouter();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -48,14 +51,9 @@ export default function VistasMenuVenta() {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={() => router.push("/venta/ventaxdia")}>
-          Ventas por fecha
-        </MenuItem>
-        <MenuItem onClick={() => router.push("/venta/ventaxperiodo")}>
-          Ventas por período
-        </MenuItem>
-        <MenuItem onClick={() => router.push("/venta/utilidadesxperiodo")}>
-          Utilidades por período
+        
+        <MenuItem onClick={() => router.push("/inventario/existencia")}>
+          Existencia en almacén
         </MenuItem>
       </Menu>
     </>
