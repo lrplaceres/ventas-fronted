@@ -78,7 +78,7 @@ function Page() {
         Insertar Negocio
       </Button>
 
-      <div style={{ height: 500, width: "100%" }}>
+      <div style={{ height: 540, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={negocios}

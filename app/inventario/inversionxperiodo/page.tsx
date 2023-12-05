@@ -1,7 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import VistasMenu from "../_components/VistasMenuVenta";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -14,34 +13,36 @@ import {
   GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
+import VistasMenuInventario from "../_components/VistasMenuInventario";
 
-const currencyFormatterCount = new Intl.NumberFormat("en-US");
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
 
 const columns: GridColDef[] = [
-  { field: "nombre_producto", headerName: "Producto", width: 150 },
+  { field: "fecha", headerName: "Fecha", width: 120 },
   {
-    field: "cantidad",
-    headerName: "Cant",
-    width: 60,
+    field: "monto",
+    headerName: "Monto",
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
         return value;
       }
-      return currencyFormatterCount.format(value);
+      return currencyFormatter.format(value);
     },
   },
-  { field: "nombre_punto", headerName: "Punto", width: 100 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: "Listado de ventas por período",
+    groupId: "Listado de inversiones por período",
     description: "",
     children: [
-      { field: "nombre_producto" },
-      { field: "nombre_punto" },
-      { field: "cantidad" },
+      { field: "fecha" },
+      { field: "monto" },
     ],
   },
 ];
@@ -49,7 +50,7 @@ const columnGroupingModel: GridColumnGroupingModel = [
 function Page() {
   const { data: session, update } = useSession();
 
-  const [ventas, setVentas] = useState([]);
+  const [inversiones, setInversiones] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -64,15 +65,15 @@ function Page() {
   };
 
   useEffect(() => {
-    obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+    obtenerInversionesPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
   }, []);
 
-  const obtenerVentasPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
+  const obtenerInversionesPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
     if(fecha_inicio > fecha_fin){
-      setVentas([])
+      setInversiones([])
       return notificacion("La fecha fin debe ser mayor que la fecha inicio")
     }
-    await fetch(`${process.env.MI_API_BACKEND}/ventas-periodo/${fecha_inicio}/${fecha_fin}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/inventarios-costos-brutos/${fecha_inicio}/${fecha_fin}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -81,7 +82,7 @@ function Page() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setVentas(data);
+        setInversiones(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -96,7 +97,7 @@ function Page() {
             <DatePicker
               label="Fecha inicio"
               onChange={(newvalue) => {
-                obtenerVentasPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
+                obtenerInversionesPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
                 setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
               }}
               format="YYYY-MM-DD"
@@ -109,7 +110,7 @@ function Page() {
             <DatePicker
               label="Fecha fin"
               onChange={(newvalue) => {
-                obtenerVentasPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
+                obtenerInversionesPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
                 setFechas({ ...fechas, fecha_fin: newvalue.format("YYYY-MM-DD") });
               }}
               format="YYYY-MM-DD"
@@ -118,13 +119,13 @@ function Page() {
           </LocalizationProvider>
         </div>
 
-        <VistasMenu />
+        <VistasMenuInventario />
       </div>
 
       <div style={{ height: 450, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={ventas}
+          rows={inversiones}
           columns={columns}
           checkboxSelection
           experimentalFeatures={{ columnGrouping: true }}
@@ -142,7 +143,7 @@ function Page() {
   );
 }
 
-function PageVentaXPeriodo() {
+function PageInversionPeriodo() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -153,4 +154,4 @@ function PageVentaXPeriodo() {
   );
 }
 
-export default PageVentaXPeriodo;
+export default PageInversionPeriodo;

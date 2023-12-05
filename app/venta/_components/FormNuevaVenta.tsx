@@ -83,7 +83,7 @@ function FormVenta() {
         .then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
-              notificacion(`Se ha insertado la venta`, "success");
+              notificacion(`Se ha insertado la venta`, "info");
               setTimeout(() => router.push("/venta"), 300);
             });
           } else {
@@ -193,7 +193,7 @@ function FormVenta() {
         <Box sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/venta")}
             startIcon={<CancelIcon />}
@@ -202,7 +202,7 @@ function FormVenta() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
             startIcon={<DoneIcon />}

@@ -13,7 +13,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
-import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -94,7 +93,7 @@ function FormVenta() {
         .then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
-              notificacion(`Se ha editado la venta`, "success");
+              notificacion(`Se ha editado la venta`, "info");
               setTimeout(() => router.push("/venta"), 300);
             });
           } else {
@@ -121,7 +120,7 @@ function FormVenta() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`La venta se ha sido eliminado`, "success");
+          notificacion(`La venta se ha sido eliminado`, "info");
           setTimeout(() => router.push("/venta"), 300);
         } else {
           response.json().then((data) => {
@@ -189,7 +188,7 @@ function FormVenta() {
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/venta")}
             startIcon={<CancelIcon />}
@@ -198,7 +197,7 @@ function FormVenta() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
             startIcon={<DoneIcon />}

@@ -37,13 +37,6 @@ export const authConfig = {
           }
           );
 
-        //if (c.password !== "1") return null;
-        /*return {
-          name: "Fill Murray",
-          email: "bill@fillmurray.com",
-          image: "https://www.fillmurray.com/64/64",
-          id: "1",
-        };*/
       },
     }),
   ],

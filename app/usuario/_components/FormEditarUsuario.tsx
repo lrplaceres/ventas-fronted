@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import {
-  Card,
+  Box,
   FormControl,
   FormControlLabel,
   InputLabel,
@@ -104,10 +104,7 @@ function FormUsuario() {
       })
         .then(function (response) {
           if (response.ok) {
-            notificacion(
-              `Se ha editado el usuario ${usuario.usuario}`,
-              "success"
-            );
+            notificacion(`Se ha editado el usuario ${usuario.usuario}`, "info");
             setTimeout(() => router.push("/usuario"), 300);
           } else {
             response.json().then((data) => {
@@ -135,7 +132,7 @@ function FormUsuario() {
         if (response.ok) {
           notificacion(
             `El usuario ${usuario.usuario} ha sido eliminado`,
-            "success"
+            "info"
           );
           setTimeout(() => router.push("/usuario"), 300);
         } else {
@@ -214,10 +211,10 @@ function FormUsuario() {
           type="email"
         />
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/usuario")}
           >
@@ -225,19 +222,21 @@ function FormUsuario() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
           >
             Aceptar
           </Button>
+        </Box>
 
+        <Box sx={{ textAlign: "center" }}>
           {params?.id && (
             <Button variant="contained" color="error" onClick={handleClickOpen}>
               Eliminar
             </Button>
           )}
-        </Card>
+        </Box>
       </form>
 
       <Dialog
@@ -246,7 +245,9 @@ function FormUsuario() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title" textAlign="center">{"Eliminar usuario"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title" textAlign="center">
+          {"Eliminar usuario"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}

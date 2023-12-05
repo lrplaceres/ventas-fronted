@@ -2,11 +2,19 @@
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Card, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
 
 function FormUsuario() {
   const router = useRouter();
@@ -55,23 +63,24 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `${session?.token_type} ${session?.access_token}`,
+          Authorization: `${session?.token_type} ${session?.access_token}`,
         },
-      }).then(function (response) {
-        if (response.ok) {
-          response.json().then((data) => {
-            notificacion(`Se ha creado el usuario ${data.usuario}`, "success");
-            setTimeout(() => router.push("/usuario"), 300);
-          });
-        } else {
-          response.json().then((data) => {
-            notificacion(`${data.detail}`);
-          });
-        }
       })
-      .catch(function (error) {
-        notificacion("Se ha producido un error")
-      });
+        .then(function (response) {
+          if (response.ok) {
+            response.json().then((data) => {
+              notificacion(`Se ha creado el usuario ${data.usuario}`, "info");
+              setTimeout(() => router.push("/usuario"), 300);
+            });
+          } else {
+            response.json().then((data) => {
+              notificacion(`${data.detail}`);
+            });
+          }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
     } catch (error) {
       return notificacion(error);
     }
@@ -91,7 +100,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.usuario}
           onChange={handleChange}
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
           required
         />
         <TextField
@@ -101,23 +110,23 @@ function FormUsuario() {
           fullWidth
           value={usuario.password}
           onChange={handleChange}
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
           type="password"
           required
         />
         <TextField
           id="repite"
           name="repite"
-          label="Repite contreseña"
+          label="Repite contraseña"
           fullWidth
           value={usuario.repite}
           onChange={handleChange}
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
           type="password"
           required
         />
 
-        <FormControl fullWidth sx={{ mb:  1  }}>
+        <FormControl fullWidth sx={{ mb: 1 }}>
           <InputLabel id="demo-simple-select-label">Rol</InputLabel>
           <Select
             name="rol"
@@ -140,7 +149,7 @@ function FormUsuario() {
           fullWidth
           value={usuario.nombre}
           onChange={handleChange}
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
         />
         <TextField
           id="email"
@@ -149,23 +158,24 @@ function FormUsuario() {
           fullWidth
           value={usuario.email}
           onChange={handleChange}
-          sx={{ mb:  1  }}
+          sx={{ mb: 1 }}
           type="email"
         />
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            color="warning"
-            sx={{ mr:  1  }}
+            color="inherit"
+            sx={{ mr: 1 }}
             onClick={() => router.push("/usuario")}
+            startIcon={<CancelIcon />}
           >
             Cancelar
           </Button>
-          <Button variant="contained" color="success" type="submit">
+          <Button variant="contained" color="info" type="submit" startIcon={<DoneIcon />}>
             Aceptar
           </Button>
-        </Card>
+        </Box>
       </form>
     </>
   );

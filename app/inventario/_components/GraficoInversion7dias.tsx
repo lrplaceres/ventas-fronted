@@ -1,31 +1,90 @@
 import ReactEcharts from "echarts-for-react";
 import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import dayjs from "dayjs";
 
 function GraficoInversion7Dias() {
+  const { data: session, update } = useSession();
+
+  const [keys, setKeys] = useState([]);
+
+  const [values, setValues] = useState([]);
+
+  useEffect(() => {
+    obtenerInversionPeriodo(
+      dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
+      dayjs(new Date()).format("YYYY-MM-DD")
+    );
+  }, []);
+
+  const obtenerInversionPeriodo = async (
+    fecha_inicio: Date,
+    fecha_fin: Date
+  ) => {
+    var key_tmp: [] = [];
+    var values_tmp: [] = [];
+    await fetch(
+      `${process.env.MI_API_BACKEND}/inventarios-costos-brutos/${fecha_inicio}/${fecha_fin}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        data.map((d: []) => {
+          key_tmp.push(d["fecha"]);
+          values_tmp.push(d["monto"]);
+        });
+        setKeys(key_tmp);
+        setValues(values_tmp);
+      })
+      .catch(function (error) {});
+  };
+
   const option = {
+    title: {
+      text: 'Inversión últimos 7 días',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow",
+      },
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true,
+    },
     xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      type: "category",
+      data: keys,
+      axisTick: {
+        alignWithLabel: true,
+      },
     },
     yAxis: {
-      type: 'value'
+      type: "value",
     },
     series: [
       {
-        data: [120, 200, 150, 80, 70, 110, 130],
-        type: 'bar'
-      }
-    ]
+        data: values,
+        type: "bar",
+        barWidth: '60%',
+      },
+    ],
   };
 
   return (
     <>
-      <Typography variant="h6" color="primary" align="center">
-        Inversión últimos 7 días
-      </Typography>
       <ReactEcharts option={option} />
-      <Box pl={5}></Box>
     </>
   );
 }

@@ -54,6 +54,9 @@ export default function VistasMenuVenta() {
         <MenuItem onClick={() => router.push("/venta/ventaxperiodo")}>
           Ventas por período
         </MenuItem>
+        <MenuItem onClick={() => router.push("/venta/ventasbrutasxperiodo")}>
+          Ventas brutas por período
+        </MenuItem>
         <MenuItem onClick={() => router.push("/venta/utilidadesxperiodo")}>
           Utilidades por período
         </MenuItem>

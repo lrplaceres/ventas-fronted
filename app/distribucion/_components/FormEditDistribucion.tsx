@@ -149,7 +149,7 @@ function FormDistribucion() {
         .then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
-              notificacion(`Se ha editado la distribución`, "success");
+              notificacion(`Se ha editado la distribución`, "info");
               setTimeout(() => router.push("/distribucion"), 300);
             });
           } else {
@@ -176,7 +176,7 @@ function FormDistribucion() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`La distribución se ha sido eliminado`, "success");
+          notificacion(`La distribución se ha sido eliminado`, "info");
           setTimeout(() => router.push("/distribucion"), 300);
         } else {
           response.json().then((data) => {
@@ -256,7 +256,7 @@ function FormDistribucion() {
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/distribucion")}
             startIcon={<CancelIcon />}
@@ -265,7 +265,7 @@ function FormDistribucion() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
             startIcon={<DoneIcon />}

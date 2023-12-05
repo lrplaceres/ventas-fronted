@@ -1,6 +1,5 @@
 import ReactEcharts from "echarts-for-react";
 import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
@@ -45,6 +44,10 @@ function GraficoVentas7Dias() {
   };
 
   const option = {
+    title: {
+      text: 'Ventas últimos 7 días',
+      left: 'center'
+    },
     xAxis: {
       type: "category",
       data: keys,
@@ -62,11 +65,7 @@ function GraficoVentas7Dias() {
 
   return (
     <>
-      <Typography variant="h6" color="primary" align="center">
-        Ventas últimos 7 días
-      </Typography>
       <ReactEcharts option={option} />
-      <Box pl={5}></Box>
     </>
   );
 }

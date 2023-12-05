@@ -65,7 +65,7 @@ export default async function SignIn() {
                 required
               />
 
-              <Button variant="contained" color="success" type="submit">
+              <Button variant="contained" color="info" type="submit">
                 Acceder
               </Button>
             </form>

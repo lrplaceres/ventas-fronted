@@ -127,7 +127,7 @@ function FormNegocio() {
             if (response.ok) {
               notificacion(
                 `Se ha editato el Negocio ${negocio.nombre}`,
-                "success"
+                "info"
               );
               setTimeout(() => router.push("/negocio"), 300);
             } else {
@@ -153,7 +153,7 @@ function FormNegocio() {
               response.json().then((data) => {
                 notificacion(
                   `Se ha creado el Negocio ${negocio.nombre}`,
-                  "success"
+                  "info"
                 );
                 setTimeout(() => router.push("/negocio"), 300);
               });
@@ -183,7 +183,7 @@ function FormNegocio() {
       if (response.ok) {
         notificacion(
           `El Negocio ${negocio.nombre} ha sido eliminado`,
-          "success"
+          "info"
         );
         setTimeout(() => router.push("/negocio"), 300);
       } else {
@@ -283,7 +283,7 @@ function FormNegocio() {
         <Card variant="outlined" sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/negocio")}
           >
@@ -291,7 +291,7 @@ function FormNegocio() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
           >

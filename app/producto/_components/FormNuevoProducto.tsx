@@ -116,7 +116,7 @@ function FormProducto() {
               response.json().then((data) => {
                 notificacion(
                   `Se ha editado el Producto ${producto.nombre}`,
-                  "success"
+                  "info"
                 );
                 setTimeout(() => router.push("/producto"), 300);
               });
@@ -143,7 +143,7 @@ function FormProducto() {
               response.json().then((data) => {
                 notificacion(
                   `Se ha creado el Producto ${producto.nombre}`,
-                  "success"
+                  "info"
                 );
                 setTimeout(() => router.push("/producto"), 300);
               });
@@ -174,7 +174,7 @@ function FormProducto() {
         if (response.ok) {
           notificacion(
             `El Producto ${producto.nombre} ha sido eliminado`,
-            "success"
+            "info"
           );
           setTimeout(() => router.push("/producto"), 300);
         } else {
@@ -229,7 +229,7 @@ function FormProducto() {
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/producto")}
             startIcon={<CancelIcon />}
@@ -238,7 +238,7 @@ function FormProducto() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
             startIcon={<DoneIcon />}

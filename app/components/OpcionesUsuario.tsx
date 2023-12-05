@@ -84,7 +84,7 @@ function OpcionesUsuario() {
             </ListItemIcon>
             Perfil
           </MenuItem>
-          <MenuItem onClick={() => router.push("/usuario/cambiarcontraseña")}>
+          <MenuItem onClick={() => router.push("/usuario/cambiarpassword")}>
             <ListItemIcon>
               <PasswordIcon fontSize="small" />
             </ListItemIcon>

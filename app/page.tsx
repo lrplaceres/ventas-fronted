@@ -11,7 +11,6 @@ export default function Home() {
   return (
     <main>
       <DenseAppBar />
-      <p>Bienvenid@ {session?.user.name}!</p>
       {session?.rol == "propietario" && (
         <>
           <ViewKiokoPropietario />

@@ -84,7 +84,7 @@ function Page() {
         <VistasMenuDistribucion />
       </div>
 
-      <div style={{ height: 500, width: "100%" }}>
+      <div style={{ height: 535, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={existencia}

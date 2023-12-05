@@ -55,6 +55,9 @@ export default function VistasMenuInventario() {
         <MenuItem onClick={() => router.push("/inventario/existencia")}>
           Existencia en almacén
         </MenuItem>
+        <MenuItem onClick={() => router.push("/inventario/inversionxperiodo")}>
+          Inversión por período
+        </MenuItem>
       </Menu>
     </>
   );

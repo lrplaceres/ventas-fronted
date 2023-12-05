@@ -123,7 +123,7 @@ function FormPunto() {
               response.json().then((data) => {
                 notificacion(
                   `Se ha editado el Punto ${punto.nombre}`,
-                  "success"
+                  "info"
                 );
                 setTimeout(() => router.push("/punto"), 300);
               });
@@ -150,7 +150,7 @@ function FormPunto() {
               response.json().then((data) => {
                 notificacion(
                   `Se ha creado el Punto ${punto.nombre}`,
-                  "success"
+                  "info"
                 );
                 setTimeout(() => router.push("/punto"), 300);
               });
@@ -179,7 +179,7 @@ function FormPunto() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "success");
+          notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "info");
           setTimeout(() => router.push("/punto"), 300);
         } else {
           response.json().then((data) => {
@@ -244,7 +244,7 @@ function FormPunto() {
         <Box sx={{ textAlign: "center", mb:4 }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/punto")}
             startIcon={<CancelIcon />}
@@ -253,7 +253,7 @@ function FormPunto() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
             startIcon={<DoneIcon />}

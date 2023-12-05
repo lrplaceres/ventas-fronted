@@ -104,7 +104,7 @@ function FormDistribucion() {
         .then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
-              notificacion(`Se ha creado el distribución`, "success");
+              notificacion(`Se ha creado el distribución`, "info");
               setTimeout(() => router.push("/distribucion"), 300);
             });
           } else {
@@ -206,7 +206,7 @@ function FormDistribucion() {
         <Box sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/distribucion")}
             startIcon={<CancelIcon />}
@@ -215,7 +215,7 @@ function FormDistribucion() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
             startIcon={<DoneIcon />}

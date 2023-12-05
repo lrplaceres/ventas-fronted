@@ -40,7 +40,7 @@ const columns: GridColDef[] = [
   {
     field: "utilidad",
     headerName: "Utilidad",
-    width: 90,
+    width: 100,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -185,7 +185,7 @@ function Page() {
       <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
         <div style={{ flexGrow: 1 }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DateTimePicker
+            <DatePicker
               label="Fecha inicio"
               onChange={(newvalue) => {
                 obtenerVentasPeriodo(
@@ -225,7 +225,7 @@ function Page() {
         <VistasMenu />
       </div>
 
-      <div style={{ height: 500, width: "100%" }}>
+      <div style={{ height: 450, width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={ventas}

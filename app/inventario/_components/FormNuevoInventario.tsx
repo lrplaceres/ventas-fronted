@@ -156,7 +156,7 @@ function FormInventario() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(`Se ha editado el Inventario`, "success");
+                notificacion(`Se ha editado el Inventario`, "info");
                 setTimeout(() => router.push("/inventario"), 300);
               });
             } else {
@@ -180,7 +180,7 @@ function FormInventario() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(`Se ha creado el Inventario`, "success");
+                notificacion(`Se ha creado el Inventario`, "info");
                 setTimeout(() => router.push("/inventario"), 300);
               });
             } else {
@@ -208,7 +208,7 @@ function FormInventario() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`El Inventario ha sido eliminado`, "success");
+          notificacion(`El Inventario ha sido eliminado`, "info");
           setTimeout(() => router.push("/inventario"), 300);
         } else {
           response.json().then((data) => {
@@ -342,7 +342,7 @@ function FormInventario() {
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Button
             variant="contained"
-            color="warning"
+            color="inherit"
             sx={{ mr: 1 }}
             onClick={() => router.push("/inventario")}
             startIcon={<CancelIcon />}
@@ -351,7 +351,7 @@ function FormInventario() {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             type="submit"
             sx={{ mr: 1 }}
             startIcon={<DoneIcon />}
