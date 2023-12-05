@@ -22,7 +22,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import moment from "moment";
+import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
@@ -241,7 +241,7 @@ function FormDistribucion() {
           helperText={`Cantidad Inventario: ${distribucion.cantidad_inventario} Cantidad distribuída: ${distribucion.cantidad_distribuida}`}
         />
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
           <DatePicker
             label="Fecha"
             onChange={(newvalue) => {
@@ -249,7 +249,7 @@ function FormDistribucion() {
             }}
             format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            value={dayjs(moment(distribucion.fecha).utc().format("YYYY-MM-DD"))}
+            value={dayjs(distribucion.fecha)}
           />
         </LocalizationProvider>
 

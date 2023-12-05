@@ -56,6 +56,7 @@ const columns: GridColDef[] = [
       return currencyFormatter.format(value);
     },
   },
+  { field: "fecha", headerName: "Fecha", width: 120 },
   {
     field: "monto",
     headerName: "Monto",
@@ -67,8 +68,7 @@ const columns: GridColDef[] = [
       }
       return currencyFormatter.format(value);
     },
-  },
-  { field: "fecha", headerName: "Fecha", width: 120 },
+  },  
   { field: "dependiente", headerName: "Dependiente", width: 150 },
 ];
 
@@ -81,6 +81,7 @@ const columnGroupingModel: GridColumnGroupingModel = [
       { field: "cantidad" },
       { field: "nombre_punto" },
       { field: "precio" },
+      { field: "fecha" },
       { field: "monto" },
     ],
   },
@@ -98,7 +99,6 @@ function Page() {
   const [columnVisibilityModel, setColumnVisibilityModel] =
     useState<GridColumnVisibilityModel>({
       monto: false,
-      fecha: false,
       dependiente: false,
     });
 

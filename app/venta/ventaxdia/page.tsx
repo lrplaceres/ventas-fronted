@@ -6,7 +6,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import moment from "moment";
 import "dayjs/locale/es";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import {
@@ -61,7 +60,7 @@ function Page() {
   };
 
   useEffect(() => {
-    obtenerVentas(moment(new Date()).format("YYYY-MM-DD"));
+    obtenerVentas(dayjs(new Date()).format("YYYY-MM-DD"));
   }, []);
 
   const obtenerVentas = async (fecha: Date) => {

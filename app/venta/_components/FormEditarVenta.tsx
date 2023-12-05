@@ -11,13 +11,13 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import moment from "moment";
+import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { DateTimePicker } from "@mui/x-date-pickers";
 
 function FormVenta() {
   const router = useRouter();
@@ -44,24 +44,14 @@ function FormVenta() {
     precio: "",
     fecha: new Date(),
     punto_id: "",
+    nombre_producto: "",
   });
 
-  const [distribuciones, setDistribuciones] = useState([]);
-
-  const [distribucionEdit, setDistribucionEdit] = useState([]);
-
   useEffect(() => {
-    obtenerDistribuciones();
     if (params?.id) {
       obtenerVenta(params?.id);
     }
   }, []);
-
-  useEffect(() => {
-    setDistribucionEdit(
-      distribuciones.filter((v) => v.id == venta.distribucion_id)[0]
-    );
-  }, [distribuciones]);
 
   const handleChange = ({ target: { name, value } }) => {
     setVenta({ ...venta, [name]: value });
@@ -72,24 +62,7 @@ function FormVenta() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerDistribuciones = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDistribuciones(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
-  const obtenerVenta = async (id: number) => {
+   const obtenerVenta = async (id: number) => {
     await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
       method: "GET",
       headers: {
@@ -168,40 +141,13 @@ function FormVenta() {
           INSERTAR VENTA
         </Typography>
 
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={distribuciones}
-          getOptionLabel={(option) =>
-            `${option.nombre_producto} ► ${option.nombre_punto} ► \ud83d\udcc5${option.fecha}`
-          }
-          sx={{ mb: 1 }}
-          value={params?.id ? distribucionEdit : distribuciones[0]}
-          onChange={(event: any, newValue: string | null) => {
-            if (!!newValue) {
-              setVenta({
-                ...venta,
-                distribucion_id: newValue.id,
-                punto_id: newValue.punto_id,
-                precio: newValue.precio_venta,
-              });
-            } else {
-              setVenta({
-                ...venta,
-                distribucion_id: "",
-                punto_id: "",
-                precio: "",
-                cantidad: "",
-              });
-            }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Producto" required />
-          )}
-          disabled={
-            (distribuciones.length > 0 ? false : true) ||
-            (params?.id ? true : false)
-          }
+        <TextField
+          id="prodcuto"
+          label="Producto"
+          value={venta.nombre_producto}
+          disabled={true}    
+          fullWidth
+          sx={{ mb: 1 }}      
         />
 
         <TextField
@@ -228,15 +174,15 @@ function FormVenta() {
           required
         />
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+          <DateTimePicker
             label="Fecha"
             onChange={(newvalue) => {
               setVenta({ ...venta, fecha: newvalue });
             }}
             format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            value={dayjs(moment(venta.fecha).utc().format("YYYY-MM-DD"))}
+            value={dayjs(venta.fecha)}
           />
         </LocalizationProvider>
 
@@ -263,7 +209,12 @@ function FormVenta() {
 
         <Box sx={{ textAlign: "center" }}>
           {params?.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen} startIcon={<DeleteForeverIcon />}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleClickOpen}
+              startIcon={<DeleteForeverIcon />}
+            >
               Eliminar
             </Button>
           )}

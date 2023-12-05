@@ -2,8 +2,8 @@ import ReactEcharts from "echarts-for-react";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import moment from "moment";
 import { useSession } from "next-auth/react";
+import dayjs from "dayjs";
 
 function GraficoVentas7Dias() {
   const { data: session, update } = useSession();
@@ -14,8 +14,8 @@ function GraficoVentas7Dias() {
 
   useEffect(() => {
     obtenerVentasPeriodo(
-      moment(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
-      moment(new Date()).format("YYYY-MM-DD")
+      dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
+      dayjs(new Date()).format("YYYY-MM-DD")
     );
   }, []);
 

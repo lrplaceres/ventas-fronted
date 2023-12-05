@@ -5,7 +5,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import moment from "moment";
 import "dayjs/locale/es";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import {
@@ -57,8 +56,8 @@ function Page() {
   const { enqueueSnackbar } = useSnackbar();
 
   const [fechas, setFechas] = useState({
-    fecha_inicio: moment(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
-    fecha_fin: moment(new Date()).format("YYYY-MM-DD"),
+    fecha_inicio: dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
+    fecha_fin: dayjs(new Date()).format("YYYY-MM-DD"),
   })
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -103,7 +102,7 @@ function Page() {
                 setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
               }}
               format="YYYY-MM-DD"
-              defaultValue={dayjs(moment().subtract(7, "day"))}              
+              defaultValue={dayjs(new Date()).subtract(7, "day")}              
               sx={{mb: 1}}
             />
           </LocalizationProvider>

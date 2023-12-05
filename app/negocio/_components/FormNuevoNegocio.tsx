@@ -17,7 +17,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import moment from "moment";
 
 function FormNegocio() {
   const router = useRouter();
@@ -276,7 +275,7 @@ function FormNegocio() {
             format="YYYY-MM-DD"
             sx={{ mb: 1 }}
             value={dayjs(
-              moment(negocio.fecha_licencia).utc().format("YYYY-MM-DD")
+              dayjs(negocio.fecha_licencia).add(1, "month").format("YYYY-MM-DD")
             )}
           />
         </LocalizationProvider>

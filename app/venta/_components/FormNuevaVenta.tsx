@@ -6,12 +6,12 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import moment from "moment";
+import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+import { DateTimePicker } from "@mui/x-date-pickers";
 
 function FormVenta() {
   const router = useRouter();
@@ -175,15 +175,18 @@ function FormVenta() {
           required
         />
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+          <DateTimePicker
             label="Fecha"
             onChange={(newvalue) => {
-              setVenta({ ...venta, fecha: newvalue });
+              setVenta({
+                ...venta,
+                fecha: newvalue,
+              });
             }}
             format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            value={dayjs(moment(venta.fecha).utc().format("YYYY-MM-DD"))}
+            value={dayjs(venta.fecha)}
           />
         </LocalizationProvider>
 
