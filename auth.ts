@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import type { NextAuthConfig, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import GitHub from "next-auth/providers/github";
 
 declare module "next-auth" {
   interface Session {

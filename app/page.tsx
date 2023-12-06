@@ -18,6 +18,10 @@ export default function Home() {
           <GraficoInversion7Dias />
         </>
       )}
+
+      {session?.rol == "superadmin" && (
+        <>mostrar gráficas y estadísticas del uso de la app</>
+      )}
     </main>
   );
 }

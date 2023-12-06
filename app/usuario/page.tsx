@@ -49,7 +49,7 @@ function Page() {
   };
 
   const obtenerUsuarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/user`, {
+    await fetch(`${process.env.MI_API_BACKEND}/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

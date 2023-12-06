@@ -94,7 +94,7 @@ function FormNegocio() {
   };
 
   const obtenerPropietarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/user/propietarios`, {
+    await fetch(`${process.env.MI_API_BACKEND}/users-propietarios`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

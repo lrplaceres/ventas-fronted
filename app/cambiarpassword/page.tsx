@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { Box, Button, Typography } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+import { signOut } from "@/auth";
 
 function Page() {
   const router = useRouter();
@@ -22,7 +23,7 @@ function Page() {
   });
 
   const handleChange = ({ target: { name, value } }) => {
-    setContrasenna({ ...usuario, [name]: value });
+    setContrasenna({ ...contrasenna, [name]: value });
   };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -32,10 +33,39 @@ function Page() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (contrasenna.contrasenna_nueva != contrasenna.repite_contrasenna_nueva) {
+      return notificacion("Las contraseñas deben coincidir", "error");
+    }
+
     try {
-      if (contrasenna.contrasenna_nueva != contrasenna.repite_contrasenna_nueva) {
-        return notificacion("Las contraseñas deben coincidir", "error");
-      }
+      fetch(`${process.env.MI_API_BACKEND}/users-cambiar-contrasenna`, {
+        method: "PUT",
+        body: JSON.stringify(contrasenna),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then(function (response) {
+          if (response.ok) {
+            
+              notificacion(
+                `Se ha cambiado la contraseña`,
+                "info");
+              
+              setTimeout(()=>router.push("/"), 300);
+           
+          } else {
+            response.json().then((data) => {
+              notificacion(`${data.detail}`);
+            });
+          }
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+
     } catch (error) {
       return notificacion(error);
     }
