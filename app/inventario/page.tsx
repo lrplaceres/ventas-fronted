@@ -1,6 +1,7 @@
 "use client";
 import {
   DataGrid,
+  GridActionsCellItem,
   GridColDef,
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
@@ -12,63 +13,19 @@ import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import BotonInsertar from "./_components/BotonInsertar";
 import VistasMenuInventario from "./_components/VistasMenuInventario";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Button, Container } from "@mui/material";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
-
-const columns: GridColDef[] = [
-  {
-    field: "nombre",
-    headerName: "Nombre",
-    width: 120,
-    renderCell: (params) => (
-      <Link href={`/inventario/${params.row.id}`} className="decoration-none">
-        {params.value}
-      </Link>
-    ),
-  },
-  {
-    field: "cantidad",
-    headerName: "Cant",
-    width: 60,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatterCount.format(value);
-    },
-  },
-  { field: "negocio_id", headerName: "Negocio", width: 100 },
-  {
-    field: "costo",
-    headerName: "$ Costo",
-    width: 100,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  {
-    field: "precio_venta",
-    headerName: "$ Venta",
-    width: 90,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  { field: "fecha", headerName: "Fecha", width: 100 },
-];
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -85,6 +42,72 @@ const columnGroupingModel: GridColumnGroupingModel = [
 ];
 
 function Page() {
+  const columns: GridColDef[] = [
+    {
+      field: "nombre",
+      headerName: "Nombre",
+      width: 120,
+      renderCell: (params) => (
+        <Link href={`/inventario/${params.row.id}`} className="decoration-none">
+          {params.value}
+        </Link>
+      ),
+    },
+    {
+      field: "cantidad",
+      headerName: "Cant",
+      width: 60,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatterCount.format(value);
+      },
+    },
+    { field: "negocio_id", headerName: "Negocio", width: 100 },
+    {
+      field: "costo",
+      headerName: "$ Costo",
+      width: 100,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatter.format(value);
+      },
+    },
+    {
+      field: "precio_venta",
+      headerName: "$ Venta",
+      width: 90,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatter.format(value);
+      },
+    },
+    { field: "fecha", headerName: "Fecha", width: 100 },
+    {
+      field: "actions",
+      type: "actions",
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Eliminar"
+          onClick={() => {
+            handleClickOpen();
+            setTemp(params.id);
+          }}
+          showInMenu
+        />,
+      ],
+    },
+  ];
 
   const { data: session, update } = useSession();
 
@@ -97,6 +120,18 @@ function Page() {
       fecha: false,
       dependiente: false,
     });
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const [temp, setTemp] = useState(0);
 
   useEffect(() => {
     obtenerInventarios();
@@ -124,34 +159,89 @@ function Page() {
       });
   };
 
+  const eliminarInventario = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then(function (response) {
+        if (response.ok) {
+          notificacion(`El Inventario ha sido eliminado`, "info");
+          setInventarios(
+            inventarios.filter((inventario) => inventario.id != id)
+          );
+          handleClose();
+        } else {
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
+        }
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
+
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <BotonInsertar />
-        <VistasMenuInventario />
-      </div>
+      <Container maxWidth="md">
+        <div style={{ display: "flex" }}>
+          <BotonInsertar />
+          <VistasMenuInventario />
+        </div>
 
-      <div style={{ height: 540, width: "100%" }}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={inventarios}
-          columns={columns}
-          checkboxSelection
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) =>
-            setColumnVisibilityModel(newModel)
-          }
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
-          }}
-        />
-      </div>
+        <div style={{ height: 540, width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={inventarios}
+            columns={columns}
+            checkboxSelection
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={(newModel) =>
+              setColumnVisibilityModel(newModel)
+            }
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 1,
+              borderColor: "primary.main",
+              "& .MuiDataGrid-cell:hover": {
+                color: "primary.main",
+              },
+            }}
+          />
+        </div>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Eliminar inventario"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarInventario(temp)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

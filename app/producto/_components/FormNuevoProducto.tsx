@@ -14,14 +14,8 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormProducto() {
   const router = useRouter();
@@ -36,16 +30,6 @@ function FormProducto() {
     nombre: "",
     negocio_id: "",
   });
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const [negocios, setNegocios] = useState([]);
 
@@ -163,32 +147,6 @@ function FormProducto() {
     }
   };
 
-  const eliminarProducto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then(function (response) {
-        if (response.ok) {
-          notificacion(
-            `El Producto ${producto.nombre} ha sido eliminado`,
-            "info"
-          );
-          setTimeout(() => router.push("/producto"), 300);
-        } else {
-          response.json().then((data) => {
-            notificacion(`${data.detail}`);
-          });
-        }
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
   return (
     <>
       <Container maxWidth="sm">
@@ -249,46 +207,9 @@ function FormProducto() {
             </Button>
           </Box>
 
-          <Box sx={{ textAlign: "center" }}>
-            {params?.id && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleClickOpen}
-                startIcon={<DeleteForeverIcon />}
-              >
-                Eliminar
-              </Button>
-            )}
-          </Box>
         </form>
 
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Eliminar producto"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-              relacionados.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button
-              onClick={() => eliminarProducto(params?.id)}
-              autoFocus
-              color="error"
-            >
-              Estoy de acuerdo
-            </Button>
-          </DialogActions>
-        </Dialog>
+        
       </Container>
     </>
   );

@@ -1,36 +1,64 @@
 "use client";
-import { Button } from "@mui/material";
-import { DataGrid, GridColDef, esES } from "@mui/x-data-grid";
+import { Button, Container } from "@mui/material";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridColumnGroupingModel,
+  esES,
+} from "@mui/x-data-grid";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
-
-const columns: GridColDef[] = [
-  {
-    field: "nombre",
-    headerName: "Nombre",
-    width: 150,
-    renderCell: (params) => (
-      <Link href={`/producto/${params.row.id}`} className="decoration-none">
-        {params.value}
-      </Link>
-    ),
-  },
-  { field: "negocio_nombre", headerName: "Negocio", width: 150 },
-];
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: 'Listado de Productos',
-    description: '',
-    children: [{ field: 'nombre' },{ field: 'negocio_nombre' }],
-  }
+    groupId: "Listado de Productos",
+    description: "",
+    children: [{ field: "nombre" }, { field: "negocio_nombre" }],
+  },
 ];
 
 function Page() {
+  const columns: GridColDef[] = [
+    {
+      field: "nombre",
+      headerName: "Nombre",
+      width: 150,
+      renderCell: (params) => (
+        <Link href={`/producto/${params.row.id}`} className="decoration-none">
+          {params.value}
+        </Link>
+      ),
+    },
+    { field: "negocio_nombre", headerName: "Negocio", width: 150 },
+    {
+      field: "actions",
+      type: "actions",
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Eliminar"
+          onClick={() => {
+            handleClickOpen();
+            setTemp(params.id);
+          }}
+          showInMenu
+        />,
+      ],
+    },
+  ];
+
   const router = useRouter();
 
   const { data: session, update } = useSession();
@@ -38,6 +66,18 @@ function Page() {
   const [productos, setProductos] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const [temp, setTemp] = useState(0);
 
   useEffect(() => {
     obtenerProductos();
@@ -65,39 +105,91 @@ function Page() {
       });
   };
 
+  const eliminarProducto = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then(function (response) {
+        if (response.ok) {
+          notificacion(`El Producto ha sido eliminado`, "info");
+          setProductos(productos.filter((productos) => productos.id != id));
+          handleClose();
+        } else {
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
+        }
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
+
   return (
     <>
-      <Button
-        variant="contained"
-        color="inherit"
-        sx={{ mt:  1 , mb:  1  }}
-        startIcon={<PostAddIcon />}
-        onClick={() => router.push("/producto/nuevo")}
-      >
-        Insertar Producto
-      </Button>
+      <Container maxWidth="md">
+        <Button
+          variant="contained"
+          color="inherit"
+          sx={{ mt: 1, mb: 1 }}
+          startIcon={<PostAddIcon />}
+          onClick={() => router.push("/producto/nuevo")}
+        >
+          Insertar Producto
+        </Button>
 
-      <div style={{ height: 540, width: "100%" }}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={productos}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
-          }}
-        />
-      </div>
+        <div style={{ height: 540, width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={productos}
+            columns={columns}
+            checkboxSelection
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 1,
+              borderColor: "primary.main",
+              "& .MuiDataGrid-cell:hover": {
+                color: "primary.main",
+              },
+            }}
+          />
+        </div>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Eliminar producto"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarProducto(temp)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }
-
 
 function PageProducto() {
   return (

@@ -14,14 +14,8 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormPunto() {
   const router = useRouter();
@@ -30,17 +24,7 @@ function FormPunto() {
 
   const { data: session, update } = useSession();
 
-  const { enqueueSnackbar } = useSnackbar();
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const { enqueueSnackbar } = useSnackbar();  
 
   const [punto, setPunto] = useState({
     nombre: "",
@@ -164,28 +148,6 @@ function FormPunto() {
     }
   };
 
-  const eliminarPunto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then(function (response) {
-        if (response.ok) {
-          notificacion(`El Punto ${punto.nombre} ha sido eliminado`, "info");
-          setTimeout(() => router.push("/punto"), 300);
-        } else {
-          response.json().then((data) => {
-            notificacion(`${data.detail}`);
-          });
-        }
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
 
   return (
     <>
@@ -257,45 +219,8 @@ function FormPunto() {
               Aceptar
             </Button>
           </Box>
-
-          <Box sx={{ textAlign: "center" }}>
-            {params?.id && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleClickOpen}
-                startIcon={<DeleteForeverIcon />}
-              >
-                Eliminar
-              </Button>
-            )}
-          </Box>
         </form>
-
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Eliminar punto"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-              relacionados.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button
-              onClick={() => eliminarPunto(params?.id)}
-              autoFocus
-              color="error"
-            >
-              Estoy de acuerdo
-            </Button>
-          </DialogActions>
-        </Dialog>
+        
       </Container>
     </>
   );

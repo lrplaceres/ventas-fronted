@@ -14,11 +14,6 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -27,7 +22,6 @@ import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormDistribucion() {
   const router = useRouter();
@@ -37,16 +31,6 @@ function FormDistribucion() {
   const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const [distribucion, setDistribucion] = useState({
     inventario_id: "",
@@ -167,29 +151,7 @@ function FormDistribucion() {
     }
   };
 
-  const eliminarDistribucion = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then(function (response) {
-        if (response.ok) {
-          notificacion(`La distribución se ha sido eliminado`, "info");
-          setTimeout(() => router.push("/distribucion"), 300);
-        } else {
-          response.json().then((data) => {
-            notificacion(`${data.detail}`);
-          });
-        }
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
+  
   return (
     <>
       <Container maxWidth="sm">
@@ -275,47 +237,7 @@ function FormDistribucion() {
               Aceptar
             </Button>
           </Box>
-
-          <Box sx={{ textAlign: "center" }}>
-            {params?.id && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleClickOpen}
-                startIcon={<DeleteForeverIcon />}
-              >
-                Eliminar
-              </Button>
-            )}
-          </Box>
-        </form>
-
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Eliminar distribución"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-              relacionados.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button
-              onClick={() => eliminarDistribucion(params?.id)}
-              autoFocus
-              color="error"
-            >
-              Estoy de acuerdo
-            </Button>
-          </DialogActions>
-        </Dialog>
+        </form>        
       </Container>
     </>
   );

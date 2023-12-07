@@ -1,11 +1,12 @@
 "use client";
-import { Button } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   esES,
   GridRowSelectionModel,
   GridColumnGroupingModel,
+  GridActionsCellItem,
 } from "@mui/x-data-grid";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
@@ -13,21 +14,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
-
-const columns: GridColDef[] = [
-  {
-    field: "nombre",
-    headerName: "Nombre",
-    width: 150,
-    renderCell: (params) => (
-      <Link href={`/punto/${params.row.id}`} className="decoration-none">
-        {params.value}
-      </Link>
-    ),
-  },
-  { field: "direccion", headerName: "Dirección", width: 150 },
-  { field: "negocio_id", headerName: "Negocio", width: 150 },
-];
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -42,6 +34,37 @@ const columnGroupingModel: GridColumnGroupingModel = [
 ];
 
 function Page() {
+  const columns: GridColDef[] = [
+    {
+      field: "nombre",
+      headerName: "Nombre",
+      width: 150,
+      renderCell: (params) => (
+        <Link href={`/punto/${params.row.id}`} className="decoration-none">
+          {params.value}
+        </Link>
+      ),
+    },
+    { field: "direccion", headerName: "Dirección", width: 150 },
+    { field: "negocio_id", headerName: "Negocio", width: 150 },
+    {
+      field: "actions",
+      type: "actions",
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Eliminar"
+          onClick={() => {
+            handleClickOpen();
+            setTemp(params.id);
+          }}
+          showInMenu
+        />,
+      ],
+    },
+  ];
+
   const router = useRouter();
 
   const { data: session, update } = useSession();
@@ -54,6 +77,18 @@ function Page() {
 
   const [rowSelectionModel, setRowSelectionModel] =
     useState<GridRowSelectionModel>([]);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const [temp, setTemp] = useState(0);
 
   useEffect(() => {
     obtenerPuntos();
@@ -81,41 +116,88 @@ function Page() {
       });
   };
 
+  const eliminarPunto = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then(function (response) {
+        if (response.ok) {
+          notificacion(`El Punto ha sido eliminado`, "info");
+          setPuntos(puntos.filter((punto) => punto.id != id));
+          handleClose();
+        } else {
+          response.json().then((data) => {
+            notificacion(`${data.detail}`);
+          });
+        }
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
+
   return (
     <>
-      <Button
-        variant="contained"
-        color="inherit"
-        sx={{ mt: 1, mb: 1 }}
-        startIcon={<AddBusinessIcon />}
-        onClick={() => router.push("/punto/nuevo")}
-      >
-        Insertar Punto
-      </Button>
+      <Container maxWidth="md">
+        <Button
+          variant="contained"
+          color="inherit"
+          sx={{ mt: 1, mb: 1 }}
+          startIcon={<AddBusinessIcon />}
+          onClick={() => router.push("/punto/nuevo")}
+        >
+          Insertar Punto
+        </Button>
 
-      <div style={{ height: 540, width: "100%" }}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={puntos}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          onRowSelectionModelChange={(ids) => {
-            const selectedRowsData = ids.map((id) =>
-              puntos.find((row) => row.id === id)
-            );
-            console.log(selectedRowsData);
-          }}
-          sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
-          }}
-        />
-      </div>
+        <div style={{ height: 540, width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={puntos}
+            columns={columns}
+            checkboxSelection
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            onRowSelectionModelChange={(ids) => {
+              const selectedRowsData = ids.map((id) =>
+                puntos.find((row) => row.id === id)
+              );
+              console.log(selectedRowsData);
+            }}
+            sx={{
+              border: 1,
+              borderColor: "primary.main",
+              "& .MuiDataGrid-cell:hover": {
+                color: "primary.main",
+              },
+            }}
+          />
+        </div>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Eliminar punto"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button onClick={() => eliminarPunto(temp)} autoFocus color="error">
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

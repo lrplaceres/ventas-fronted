@@ -2,15 +2,10 @@
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
-import { Button, Card, FormControlLabel, Container, Box } from "@mui/material";
+import { Button, FormControlLabel, Container, Box } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useSession } from "next-auth/react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -19,7 +14,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormNegocio() {
   const router = useRouter();
@@ -175,24 +169,7 @@ function FormNegocio() {
     }
   };
 
-  const eliminarKiosko = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    }).then(function (response) {
-      if (response.ok) {
-        notificacion(`El Negocio ${negocio.nombre} ha sido eliminado`, "info");
-        setTimeout(() => router.push("/negocio"), 300);
-      } else {
-        response.json().then((data) => {
-          notificacion(`${data.detail}`);
-        });
-      }
-    });
-  };
+
 
   return (
     <>
@@ -305,47 +282,8 @@ function FormNegocio() {
             </Button>
             </Box>
 
-          <Box sx={{ textAlign: "center" }}>
-
-            {params?.id && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleClickOpen}
-                startIcon={<DeleteForeverIcon />}
-              >
-                Eliminar
-              </Button>
-            )}
-          </Box>
         </form>
 
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Eliminar negocio"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-              relacionados.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button
-              onClick={() => eliminarKiosko(params.id)}
-              autoFocus
-              color="error"
-            >
-              Estoy de acuerdo
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Container>
     </>
   );

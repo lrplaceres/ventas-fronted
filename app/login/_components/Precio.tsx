@@ -17,7 +17,7 @@ function Precio() {
 
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={1}>
-            <Grid item sm={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <Paper elevation={3}>
                 <Card variant="outlined">
                   <CardContent>
@@ -39,7 +39,7 @@ function Precio() {
               </Paper>
             </Grid>
 
-            <Grid item sm={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <Paper elevation={3}>
                 <Card variant="outlined">
                   <CardContent>
@@ -62,7 +62,7 @@ function Precio() {
               </Paper>
             </Grid>
 
-            <Grid item sm={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <Paper elevation={3}>
                 <Card variant="outlined">
                   <CardContent>

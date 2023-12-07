@@ -2,7 +2,6 @@
 import {
   Box,
   Button,
-  Card,
   FormControl,
   InputLabel,
   MenuItem,
@@ -15,11 +14,6 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -38,16 +32,6 @@ function FormInventario() {
   const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const [inventario, setInventario] = useState({
     producto_id: "",
@@ -197,29 +181,6 @@ function FormInventario() {
     } catch (error) {
       return notificacion(error);
     }
-  };
-
-  const eliminarInventario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then(function (response) {
-        if (response.ok) {
-          notificacion(`El Inventario ha sido eliminado`, "info");
-          setTimeout(() => router.push("/inventario"), 300);
-        } else {
-          response.json().then((data) => {
-            notificacion(`${data.detail}`);
-          });
-        }
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
   };
 
   return (
@@ -379,33 +340,7 @@ function FormInventario() {
             )}
           </Box>
         </form>
-
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Eliminar inventario"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-              relacionados.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button
-              onClick={() => eliminarInventario(params?.id)}
-              autoFocus
-              color="error"
-            >
-              Estoy de acuerdo
-            </Button>
-          </DialogActions>
-        </Dialog>
+        
       </Container>
     </>
   );

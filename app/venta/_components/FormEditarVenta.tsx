@@ -15,7 +15,6 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { DateTimePicker } from "@mui/x-date-pickers";
 
 function FormVenta() {
@@ -26,16 +25,6 @@ function FormVenta() {
   const { data: session, update } = useSession();
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const [venta, setVenta] = useState({
     distribucion_id: "",
@@ -110,28 +99,7 @@ function FormVenta() {
     }
   };
 
-  const eliminarVenta = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then(function (response) {
-        if (response.ok) {
-          notificacion(`La venta se ha sido eliminado`, "info");
-          setTimeout(() => router.push("/venta"), 300);
-        } else {
-          response.json().then((data) => {
-            notificacion(`${data.detail}`);
-          });
-        }
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+  
 
   return (
     <>
@@ -205,46 +173,8 @@ function FormVenta() {
             >
               Aceptar
             </Button>
-          </Box>
-
-          <Box sx={{ textAlign: "center" }}>
-            {params?.id && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleClickOpen}
-                startIcon={<DeleteForeverIcon />}
-              >
-                Eliminar
-              </Button>
-            )}
-          </Box>
-        </form>
-
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Eliminar venta"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-              relacionados.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button
-              onClick={() => eliminarVenta(params?.id)}
-              autoFocus
-              color="error"
-            >
-              Estoy de acuerdo
-            </Button>
-          </DialogActions>
-        </Dialog>
+          </Box>  
+        </form>        
       </Container>
     </>
   );

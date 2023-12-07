@@ -179,7 +179,7 @@ export default function DenseAppBar() {
 
                 <ListItem
                   disablePadding
-                  onClick={() => router.push("/dependiente")}
+                  onClick={() => router.push("/error/construccion")}
                   sx={{
                     backgroundColor:
                       pathname?.split("/")[1] == "dependiente" ? "#bbdefb" : "",

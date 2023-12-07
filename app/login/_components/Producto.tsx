@@ -13,7 +13,7 @@ function Producto() {
 
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={1}>
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <Card variant="outlined" sx={{border: 1, borderColor: "primary.main"}}>
                 <CardContent>
                   <Typography variant="h6" color="primary" component="div">
@@ -28,7 +28,7 @@ function Producto() {
               </Card>
             </Grid>
 
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <Card variant="outlined" sx={{border: 1, borderColor: "primary.main"}}>
                 <CardContent>
                   <Typography variant="h6" color="primary" component="div">
@@ -42,7 +42,7 @@ function Producto() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <Card variant="outlined" sx={{border: 1, borderColor: "primary.main"}}>
                 <CardContent>
                   <Typography variant="h6" color="primary" component="div">
@@ -57,7 +57,7 @@ function Producto() {
               </Card>
             </Grid>
 
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <Card variant="outlined" sx={{border: 1, borderColor: "primary.main"}}>
                 <CardContent>
                   <Typography variant="h6" color="primary" component="div">
