@@ -8,6 +8,7 @@ import {
   Select,
   TextField,
   Typography,
+  Container,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -191,124 +192,131 @@ function FormDistribucion() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          {params?.id ? "EDITAR" : "INSERTAR"} DISTRIBUCIÓN
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            {params?.id ? "EDITAR" : "INSERTAR"} DISTRIBUCIÓN
+          </Typography>
 
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={inventarios}
-          getOptionLabel={(option) => `${option.nombre}`}
-          sx={{ mb: 1 }}
-          value={params?.id ? inventarioEdit : inventarios[0]}
-          renderInput={(params) => (
-            <TextField {...params} label="Inventario" required />
-          )}
-          disabled
-        />
-
-        <FormControl fullWidth sx={{ mb: 1 }}>
-          <InputLabel id="demo-simple-select-label">Punto</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            name="punto_id"
-            label="Punto"
-            value={distribucion.punto_id}
-            onChange={handleChange}
-            required
-          >
-            {puntos.map((punto, index) => (
-              <MenuItem key={index.toString()} value={punto.id}>
-                {punto.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <TextField
-          id="cantidad"
-          name="cantidad"
-          label="Cantidad"
-          value={distribucion.cantidad}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-          required
-          helperText={`Cantidad Inventario: ${distribucion.cantidad_inventario} Cantidad distribuída: ${distribucion.cantidad_distribuida}`}
-        />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-          <DatePicker
-            label="Fecha"
-            onChange={(newvalue) => {
-              setDistribucion({ ...distribucion, fecha: newvalue });
-            }}
-            format="YYYY-MM-DD"
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={inventarios}
+            getOptionLabel={(option) => `${option.nombre}`}
             sx={{ mb: 1 }}
-            value={dayjs(distribucion.fecha)}
+            value={params?.id ? inventarioEdit : inventarios[0]}
+            renderInput={(params) => (
+              <TextField {...params} label="Inventario" required />
+            )}
+            disabled
           />
-        </LocalizationProvider>
 
-        <Box sx={{ textAlign: "center", mb: 4 }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/distribucion")}
-            startIcon={<CancelIcon />}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-            startIcon={<DoneIcon />}
-          >
-            Aceptar
-          </Button>
-        </Box>
+          <FormControl fullWidth sx={{ mb: 1 }}>
+            <InputLabel id="demo-simple-select-label">Punto</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              name="punto_id"
+              label="Punto"
+              value={distribucion.punto_id}
+              onChange={handleChange}
+              required
+            >
+              {puntos.map((punto, index) => (
+                <MenuItem key={index.toString()} value={punto.id}>
+                  {punto.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        <Box sx={{ textAlign: "center" }}>
-          {params?.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen} startIcon={<DeleteForeverIcon />}>
-              Eliminar
+          <TextField
+            id="cantidad"
+            name="cantidad"
+            label="Cantidad"
+            value={distribucion.cantidad}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            type="number"
+            required
+            helperText={`Cantidad Inventario: ${distribucion.cantidad_inventario} Cantidad distribuída: ${distribucion.cantidad_distribuida}`}
+          />
+
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            <DatePicker
+              label="Fecha"
+              onChange={(newvalue) => {
+                setDistribucion({ ...distribucion, fecha: newvalue });
+              }}
+              format="YYYY-MM-DD"
+              sx={{ mb: 1 }}
+              value={dayjs(distribucion.fecha)}
+            />
+          </LocalizationProvider>
+
+          <Box sx={{ textAlign: "center", mb: 4 }}>
+            <Button
+              variant="contained"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/distribucion")}
+              startIcon={<CancelIcon />}
+            >
+              Cancelar
             </Button>
-          )}
-        </Box>
-      </form>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Eliminar distribución"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-            relacionados.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={() => eliminarDistribucion(params?.id)}
-            autoFocus
-            color="error"
-          >
-            Estoy de acuerdo
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Box sx={{ textAlign: "center" }}>
+            {params?.id && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleClickOpen}
+                startIcon={<DeleteForeverIcon />}
+              >
+                Eliminar
+              </Button>
+            )}
+          </Box>
+        </form>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Eliminar distribución"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarDistribucion(params?.id)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

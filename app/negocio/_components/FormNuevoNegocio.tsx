@@ -2,7 +2,7 @@
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
-import { Button, Card, FormControlLabel } from "@mui/material";
+import { Button, Card, FormControlLabel, Container } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
@@ -181,10 +181,7 @@ function FormNegocio() {
       },
     }).then(function (response) {
       if (response.ok) {
-        notificacion(
-          `El Negocio ${negocio.nombre} ha sido eliminado`,
-          "info"
-        );
+        notificacion(`El Negocio ${negocio.nombre} ha sido eliminado`, "info");
         setTimeout(() => router.push("/negocio"), 300);
       } else {
         response.json().then((data) => {
@@ -196,140 +193,150 @@ function FormNegocio() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          {params?.id ? "EDITAR" : "INSERTAR"} NEGOCIO
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            {params?.id ? "EDITAR" : "INSERTAR"} NEGOCIO
+          </Typography>
 
-        <TextField
-          id="nombre"
-          name="nombre"
-          label="Nombre"
-          value={negocio.nombre}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          required
-        />
-
-        <TextField
-          id="direccion"
-          name="direccion"
-          label="Dirección"
-          value={negocio.direccion}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          required
-          multiline
-          maxRows={2}
-        />
-
-        <TextField
-          id="informacion"
-          name="informacion"
-          label="Información"
-          value={negocio.informacion}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          required
-          multiline
-          maxRows={3}
-        />
-
-        <FormControlLabel
-          control={
-            <Switch
-              name="activo"
-              onChange={handleChangeSlider}
-              checked={negocio.activo}
-            />
-          }
-          label="Activo"
-          sx={{ mb: 1 }}
-        />
-
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={propietarios}
-          getOptionLabel={(option) => `${option.nombre} ► ${option.usuario}`}
-          sx={{ mb: 1 }}
-          value={params.id ? propietarioEdit : propietarios[0]}
-          onChange={(event: any, newValue: string | null) => {
-            setNegocio({ ...negocio, propietario_id: newValue.id });
-            setPropietarioEdit(newValue);
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Propietario" required />
-          )}
-        />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="Fecha licencia"
-            onChange={(newvalue) => {
-              setNegocio({ ...negocio, fecha_licencia: newvalue });
-            }}
-            format="YYYY-MM-DD"
+          <TextField
+            id="nombre"
+            name="nombre"
+            label="Nombre"
+            value={negocio.nombre}
+            onChange={handleChange}
+            fullWidth
             sx={{ mb: 1 }}
-            value={dayjs(
-              dayjs(negocio.fecha_licencia).add(1, "month").format("YYYY-MM-DD")
+            required
+          />
+
+          <TextField
+            id="direccion"
+            name="direccion"
+            label="Dirección"
+            value={negocio.direccion}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            required
+            multiline
+            maxRows={2}
+          />
+
+          <TextField
+            id="informacion"
+            name="informacion"
+            label="Información"
+            value={negocio.informacion}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            required
+            multiline
+            maxRows={3}
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
+                name="activo"
+                onChange={handleChangeSlider}
+                checked={negocio.activo}
+              />
+            }
+            label="Activo"
+            sx={{ mb: 1 }}
+          />
+
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={propietarios}
+            getOptionLabel={(option) => `${option.nombre} ► ${option.usuario}`}
+            sx={{ mb: 1 }}
+            value={params.id ? propietarioEdit : propietarios[0]}
+            onChange={(event: any, newValue: string | null) => {
+              setNegocio({ ...negocio, propietario_id: newValue.id });
+              setPropietarioEdit(newValue);
+            }}
+            renderInput={(params) => (
+              <TextField {...params} label="Propietario" required />
             )}
           />
-        </LocalizationProvider>
 
-        <Card variant="outlined" sx={{ textAlign: "center" }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/negocio")}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-          >
-            Aceptar
-          </Button>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Fecha licencia"
+              onChange={(newvalue) => {
+                setNegocio({ ...negocio, fecha_licencia: newvalue });
+              }}
+              format="YYYY-MM-DD"
+              sx={{ mb: 1 }}
+              value={dayjs(
+                dayjs(negocio.fecha_licencia)
+                  .add(1, "month")
+                  .format("YYYY-MM-DD")
+              )}
+            />
+          </LocalizationProvider>
 
-          {params.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen}>
-              Eliminar
+          <Card variant="outlined" sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/negocio")}
+            >
+              Cancelar
             </Button>
-          )}
-        </Card>
-      </form>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+            >
+              Aceptar
+            </Button>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Eliminar negocio"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-            relacionados.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={() => eliminarKiosko(params.id)}
-            autoFocus
-            color="error"
-          >
-            Estoy de acuerdo
-          </Button>
-        </DialogActions>
-      </Dialog>
+            {params.id && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleClickOpen}
+              >
+                Eliminar
+              </Button>
+            )}
+          </Card>
+        </form>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Eliminar negocio"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarKiosko(params.id)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

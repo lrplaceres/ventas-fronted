@@ -8,6 +8,7 @@ import {
   Select,
   TextField,
   Typography,
+  Container,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -123,107 +124,112 @@ function FormDistribucion() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          INSERTAR DISTRIBUCIÓN
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            INSERTAR DISTRIBUCIÓN
+          </Typography>
 
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={inventarios}
-          getOptionLabel={(option) =>
-            `${option.nombre} ► $${option.costo} ► \ud83d\udcc5${option.fecha}`
-          }
-          sx={{ mb: 1 }}
-          onChange={(event: any, newValue: string | null) => {
-            if (!!newValue) {
-              setDistribucion({ ...distribucion, inventario_id: newValue?.id });
-              setMaximaCantidad(newValue.cantidad - newValue.distribuido);
-              obtenerPuntosNegocio(newValue.negocio_id);
-            } else {
-              setDistribucion({ ...distribucion, inventario_id: "" });
-              setMaximaCantidad(0);
-              setDistribucion({ ...distribucion, punto_id: "" });
-              setPuntos([]);
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={inventarios}
+            getOptionLabel={(option) =>
+              `${option.nombre} ► $${option.costo} ► \ud83d\udcc5${option.fecha}`
             }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Inventario" required />
-          )}
-        />
-
-        <FormControl fullWidth sx={{ mb: 1 }}>
-          <InputLabel id="demo-simple-select-label">Punto</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            name="punto_id"
-            label="Punto"
-            value={distribucion.punto_id}
-            onChange={handleChange}
-            required
-            inputProps={{ readOnly: puntos.length ? false : true }}
-          >
-            {puntos.map((punto, index) => (
-              <MenuItem key={index.toString()} value={punto.id}>
-                {punto.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <TextField
-          id="cantidad"
-          name="cantidad"
-          label="Cantidad"
-          value={distribucion.cantidad}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-          required
-          inputProps={{
-            min: 1,
-            max: maximacantidad,
-          }}
-          helperText={`Cantidad disponible ${maximacantidad}`}
-          disabled={maximacantidad ? false : true}
-        />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-          <DatePicker
-            label="Fecha"
-            onChange={(newvalue) => {
-              setDistribucion({ ...distribucion, fecha: newvalue });
-            }}
-            format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            value={dayjs(distribucion.fecha)}
+            onChange={(event: any, newValue: string | null) => {
+              if (!!newValue) {
+                setDistribucion({
+                  ...distribucion,
+                  inventario_id: newValue?.id,
+                });
+                setMaximaCantidad(newValue.cantidad - newValue.distribuido);
+                obtenerPuntosNegocio(newValue.negocio_id);
+              } else {
+                setDistribucion({ ...distribucion, inventario_id: "" });
+                setMaximaCantidad(0);
+                setDistribucion({ ...distribucion, punto_id: "" });
+                setPuntos([]);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField {...params} label="Inventario" required />
+            )}
           />
-        </LocalizationProvider>
 
-        <Box sx={{ textAlign: "center" }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/distribucion")}
-            startIcon={<CancelIcon />}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-            startIcon={<DoneIcon />}
-          >
-            Aceptar
-          </Button>
-        </Box>
-      </form>
+          <FormControl fullWidth sx={{ mb: 1 }}>
+            <InputLabel id="demo-simple-select-label">Punto</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              name="punto_id"
+              label="Punto"
+              value={distribucion.punto_id}
+              onChange={handleChange}
+              required
+              inputProps={{ readOnly: puntos.length ? false : true }}
+            >
+              {puntos.map((punto, index) => (
+                <MenuItem key={index.toString()} value={punto.id}>
+                  {punto.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <TextField
+            id="cantidad"
+            name="cantidad"
+            label="Cantidad"
+            value={distribucion.cantidad}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            type="number"
+            required
+            inputProps={{
+              min: 1,
+              max: maximacantidad,
+            }}
+            helperText={`Cantidad disponible ${maximacantidad}`}
+            disabled={maximacantidad ? false : true}
+          />
+
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            <DatePicker
+              label="Fecha"
+              onChange={(newvalue) => {
+                setDistribucion({ ...distribucion, fecha: newvalue });
+              }}
+              format="YYYY-MM-DD"
+              sx={{ mb: 1 }}
+              value={dayjs(distribucion.fecha)}
+            />
+          </LocalizationProvider>
+
+          <Box sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/distribucion")}
+              startIcon={<CancelIcon />}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
+        </form>
+      </Container>
     </>
   );
 }

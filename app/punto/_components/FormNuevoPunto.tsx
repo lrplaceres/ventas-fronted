@@ -8,6 +8,7 @@ import {
   Select,
   TextField,
   Typography,
+  Container,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -121,10 +122,7 @@ function FormPunto() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(
-                  `Se ha editado el Punto ${punto.nombre}`,
-                  "info"
-                );
+                notificacion(`Se ha editado el Punto ${punto.nombre}`, "info");
                 setTimeout(() => router.push("/punto"), 300);
               });
             } else {
@@ -148,10 +146,7 @@ function FormPunto() {
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
-                notificacion(
-                  `Se ha creado el Punto ${punto.nombre}`,
-                  "info"
-                );
+                notificacion(`Se ha creado el Punto ${punto.nombre}`, "info");
                 setTimeout(() => router.push("/punto"), 300);
               });
             } else {
@@ -194,112 +189,114 @@ function FormPunto() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          {params?.id ? "EDITAR" : "INSERTAR"} PUNTO
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            {params?.id ? "EDITAR" : "INSERTAR"} PUNTO
+          </Typography>
 
-        <TextField
-          id="nombre"
-          name="nombre"
-          label="Nombre"
-          value={punto.nombre}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          required
-        />
-
-        <TextField
-          id="direccion"
-          name="direccion"
-          label="Dirección"
-          value={punto.direccion}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          required
-        />
-
-        <FormControl fullWidth>
-          <InputLabel>Negocio</InputLabel>
-          <Select
-            id="negocio_id"
-            name="negocio_id"
-            value={punto.negocio_id}
-            label="Negocio"
+          <TextField
+            id="nombre"
+            name="nombre"
+            label="Nombre"
+            value={punto.nombre}
             onChange={handleChange}
+            fullWidth
             sx={{ mb: 1 }}
             required
-          >
-            {negocios.length > 0 &&
-              negocios.map((negocio, index) => (
-                <MenuItem key={index.toString()} value={negocio.id}>
-                  {negocio.nombre}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
+          />
 
-        <Box sx={{ textAlign: "center", mb:4 }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/punto")}
-            startIcon={<CancelIcon />}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-            startIcon={<DoneIcon />}
-          >
-            Aceptar
-          </Button>
-        </Box>
+          <TextField
+            id="direccion"
+            name="direccion"
+            label="Dirección"
+            value={punto.direccion}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            required
+          />
 
-        <Box sx={{ textAlign: "center" }}>
-          {params?.id && (
+          <FormControl fullWidth>
+            <InputLabel>Negocio</InputLabel>
+            <Select
+              id="negocio_id"
+              name="negocio_id"
+              value={punto.negocio_id}
+              label="Negocio"
+              onChange={handleChange}
+              sx={{ mb: 1 }}
+              required
+            >
+              {negocios.length > 0 &&
+                negocios.map((negocio, index) => (
+                  <MenuItem key={index.toString()} value={negocio.id}>
+                    {negocio.nombre}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
+          <Box sx={{ textAlign: "center", mb: 4 }}>
             <Button
               variant="contained"
-              color="error"
-              onClick={handleClickOpen}
-              startIcon={<DeleteForeverIcon />}
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/punto")}
+              startIcon={<CancelIcon />}
             >
-              Eliminar
+              Cancelar
             </Button>
-          )}
-        </Box>
-      </form>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Eliminar punto"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-            relacionados.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={() => eliminarPunto(params?.id)}
-            autoFocus
-            color="error"
-          >
-            Estoy de acuerdo
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Box sx={{ textAlign: "center" }}>
+            {params?.id && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleClickOpen}
+                startIcon={<DeleteForeverIcon />}
+              >
+                Eliminar
+              </Button>
+            )}
+          </Box>
+        </form>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Eliminar punto"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarPunto(params?.id)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

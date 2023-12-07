@@ -4,10 +4,9 @@ import TextField from "@mui/material/TextField";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Container } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import { signOut } from "@/auth";
 
 function Page() {
   const router = useRouter();
@@ -49,13 +48,9 @@ function Page() {
       })
         .then(function (response) {
           if (response.ok) {
-            
-              notificacion(
-                `Se ha cambiado la contraseña`,
-                "info");
-              
-              setTimeout(()=>router.push("/"), 300);
-           
+            notificacion(`Se ha cambiado la contraseña`, "info");
+
+            setTimeout(() => router.push("/"), 300);
           } else {
             response.json().then((data) => {
               notificacion(`${data.detail}`);
@@ -65,67 +60,75 @@ function Page() {
         .catch(function (error) {
           notificacion("Se ha producido un error");
         });
-
     } catch (error) {
       return notificacion(error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Typography variant="h6" color="primary" align="center">
-        CAMBIAR CONTRASEÑA
-      </Typography>
+    <>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            CAMBIAR CONTRASEÑA
+          </Typography>
 
-      <TextField
-        id="contrasenna_actual"
-        name="contrasenna_actual"
-        label="Contraseña actual"
-        fullWidth
-        value={contrasenna.contrasenna_actual}
-        onChange={handleChange}
-        sx={{ mb: 1 }}
-        type="password"
-        required
-      />
-      <TextField
-        id="contrasenna_nueva"
-        name="contrasenna_nueva"
-        label="Contraseña nueva"
-        fullWidth
-        value={contrasenna.contrasenna_nueva}
-        onChange={handleChange}
-        sx={{ mb: 1 }}
-        type="password"
-        required
-      />
-      <TextField
-        id="repite_contrasenna_nueva"
-        name="repite_contrasenna_nueva"
-        label="Repite contraseña nueva"
-        fullWidth
-        value={contrasenna.repite_contrasenna_nueva}
-        onChange={handleChange}
-        sx={{ mb: 1 }}
-        type="password"
-        required
-      />
+          <TextField
+            id="contrasenna_actual"
+            name="contrasenna_actual"
+            label="Contraseña actual"
+            fullWidth
+            value={contrasenna.contrasenna_actual}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            type="password"
+            required
+          />
+          <TextField
+            id="contrasenna_nueva"
+            name="contrasenna_nueva"
+            label="Contraseña nueva"
+            fullWidth
+            value={contrasenna.contrasenna_nueva}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            type="password"
+            required
+          />
+          <TextField
+            id="repite_contrasenna_nueva"
+            name="repite_contrasenna_nueva"
+            label="Repite contraseña nueva"
+            fullWidth
+            value={contrasenna.repite_contrasenna_nueva}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            type="password"
+            required
+          />
 
-      <Box sx={{ textAlign: "center" }}>
-        <Button
-          variant="contained"
-          color="inherit"
-          sx={{ mr: 1 }}
-          onClick={() => router.back()}
-          startIcon={<CancelIcon />}
-        >
-          Cancelar
-        </Button>
-        <Button variant="contained" color="info" type="submit" startIcon={<DoneIcon />}>
-          Aceptar
-        </Button>
-      </Box>
-    </form>
+          <Box sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/")}
+              startIcon={<CancelIcon />}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="contained"
+              color="info"
+              type="submit"
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
+        </form>
+      </Container>
+    </>
   );
 }
 

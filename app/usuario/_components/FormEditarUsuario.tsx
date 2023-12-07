@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   Switch,
+  Container,
 } from "@mui/material";
 import { useRouter, useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -20,6 +21,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useSession } from "next-auth/react";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormUsuario() {
   const router = useRouter();
@@ -148,123 +152,132 @@ function FormUsuario() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          EDITAR USUARIO
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            EDITAR USUARIO
+          </Typography>
 
-        <TextField
-          id="usuario"
-          label="Usuario"
-          value={usuario.usuario}
-          fullWidth
-          sx={{ mb: 1 }}
-          disabled
-        />
+          <TextField
+            id="usuario"
+            label="Usuario"
+            value={usuario.usuario}
+            fullWidth
+            sx={{ mb: 1 }}
+            disabled
+          />
 
-        <FormControlLabel
-          control={
-            <Switch
-              name="activo"
-              onChange={handleChangeSlider}
-              checked={usuario.activo}
-            />
-          }
-          label="Activo"
-          sx={{ mb: 1 }}
-        />
+          <FormControlLabel
+            control={
+              <Switch
+                name="activo"
+                onChange={handleChangeSlider}
+                checked={usuario.activo}
+              />
+            }
+            label="Activo"
+            sx={{ mb: 1 }}
+          />
 
-        <FormControl fullWidth sx={{ mb: 1 }}>
-          <InputLabel id="demo-simple-select-label">Rol</InputLabel>
-          <Select
-            name="rol"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={usuario.rol}
-            label="Rol"
+          <FormControl fullWidth sx={{ mb: 1 }}>
+            <InputLabel id="demo-simple-select-label">Rol</InputLabel>
+            <Select
+              name="rol"
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={usuario.rol}
+              label="Rol"
+              onChange={handleChange}
+              required
+            >
+              <MenuItem value={"dependiente"}>Dependiente</MenuItem>
+              <MenuItem value={"propietario"}>Propietario</MenuItem>
+              <MenuItem value={"superadmin"}>Superadmin</MenuItem>
+            </Select>
+          </FormControl>
+
+          <TextField
+            id="nombre"
+            name="nombre"
+            label="Nombre"
+            fullWidth
+            value={usuario.nombre}
             onChange={handleChange}
-            required
-          >
-            <MenuItem value={"dependiente"}>Dependiente</MenuItem>
-            <MenuItem value={"propietario"}>Propietario</MenuItem>
-            <MenuItem value={"superadmin"}>Superadmin</MenuItem>
-          </Select>
-        </FormControl>
+            sx={{ mb: 1 }}
+          />
+          <TextField
+            id="email"
+            name="email"
+            label="Correo electrónico"
+            fullWidth
+            value={usuario.email}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            type="email"
+          />
 
-        <TextField
-          id="nombre"
-          name="nombre"
-          label="Nombre"
-          fullWidth
-          value={usuario.nombre}
-          onChange={handleChange}
-          sx={{ mb: 1 }}
-        />
-        <TextField
-          id="email"
-          name="email"
-          label="Correo electrónico"
-          fullWidth
-          value={usuario.email}
-          onChange={handleChange}
-          sx={{ mb: 1 }}
-          type="email"
-        />
-
-        <Box sx={{ textAlign: "center" }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/usuario")}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-          >
-            Aceptar
-          </Button>
-        </Box>
-
-        <Box sx={{ textAlign: "center" }}>
-          {params?.id && (
-            <Button variant="contained" color="error" onClick={handleClickOpen}>
-              Eliminar
+          <Box sx={{ textAlign: "center", mb: 4 }}>
+            <Button
+              variant="contained"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/usuario")}
+              startIcon={<CancelIcon />}
+            >
+              Cancelar
             </Button>
-          )}
-        </Box>
-      </form>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title" textAlign="center">
-          {"Eliminar usuario"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-            relacionados.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={() => eliminarUsuario(params?.id)}
-            autoFocus
-            color="error"
-          >
-            Estoy de acuerdo
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Box sx={{ textAlign: "center" }}>
+            {params?.id && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleClickOpen}
+                startIcon={<DeleteForeverIcon />}
+              >
+                Eliminar
+              </Button>
+            )}
+          </Box>
+        </form>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title" textAlign="center">
+            {"Eliminar usuario"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarUsuario(params?.id)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

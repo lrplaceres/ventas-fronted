@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography, Container } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
@@ -102,115 +102,119 @@ function FormVenta() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          INSERTAR VENTA
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            INSERTAR VENTA
+          </Typography>
 
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={distribuciones}
-          getOptionLabel={(option) =>
-            `${option.nombre_producto} ► ${option.nombre_punto} ► \ud83d\udcc5${option.fecha}`
-          }
-          sx={{ mb: 1 }}
-          value={params?.id ? distribucionEdit : distribuciones[0]}
-          onChange={(event: any, newValue: string | null) => {
-            if (!!newValue) {
-              setVenta({
-                ...venta,
-                distribucion_id: newValue.id,
-                punto_id: newValue.punto_id,
-                precio: newValue.precio_venta,
-              });
-              setDistribucionEdit(newValue);
-              setMaximaCantidad(newValue.cantidad - newValue.cantidad_vendida);
-              setUm(newValue.um);
-            } else {
-              setVenta({
-                ...venta,
-                distribucion_id: "",
-                punto_id: "",
-                precio: "",
-                cantidad: "",
-              });
-              setDistribucionEdit([]);
-              setMaximaCantidad(0);
-              setUm("");
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={distribuciones}
+            getOptionLabel={(option) =>
+              `${option.nombre_producto} ► ${option.nombre_punto} ► \ud83d\udcc5${option.fecha}`
             }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Producto" required />
-          )}
-          disabled={distribuciones.length > 0 ? false : true}
-        />
-
-        <TextField
-          id="cantidad"
-          name="cantidad"
-          label="Cantidad"
-          value={venta.cantidad}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-          required
-          inputProps={{
-            max: maximacantidad,
-          }}
-          helperText={`Cantidad disponible: ${maximacantidad} UM: ${um}`}
-          disabled={venta.distribucion_id ? false : true}
-        />
-
-        <TextField
-          id="precio"
-          name="precio"
-          label="Precio"
-          value={venta.precio}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-          required
-        />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-          <DateTimePicker
-            label="Fecha"
-            onChange={(newvalue) => {
-              setVenta({
-                ...venta,
-                fecha: newvalue,
-              });
-            }}
-            format="YYYY-MM-DD"
             sx={{ mb: 1 }}
-            value={dayjs(venta.fecha)}
+            value={params?.id ? distribucionEdit : distribuciones[0]}
+            onChange={(event: any, newValue: string | null) => {
+              if (!!newValue) {
+                setVenta({
+                  ...venta,
+                  distribucion_id: newValue.id,
+                  punto_id: newValue.punto_id,
+                  precio: newValue.precio_venta,
+                });
+                setDistribucionEdit(newValue);
+                setMaximaCantidad(
+                  newValue.cantidad - newValue.cantidad_vendida
+                );
+                setUm(newValue.um);
+              } else {
+                setVenta({
+                  ...venta,
+                  distribucion_id: "",
+                  punto_id: "",
+                  precio: "",
+                  cantidad: "",
+                });
+                setDistribucionEdit([]);
+                setMaximaCantidad(0);
+                setUm("");
+              }
+            }}
+            renderInput={(params) => (
+              <TextField {...params} label="Producto" required />
+            )}
+            disabled={distribuciones.length > 0 ? false : true}
           />
-        </LocalizationProvider>
 
-        <Box sx={{ textAlign: "center" }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/venta")}
-            startIcon={<CancelIcon />}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-            startIcon={<DoneIcon />}
-          >
-            Aceptar
-          </Button>
-        </Box>
-      </form>
+          <TextField
+            id="cantidad"
+            name="cantidad"
+            label="Cantidad"
+            value={venta.cantidad}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            type="number"
+            required
+            inputProps={{
+              max: maximacantidad,
+            }}
+            helperText={`Cantidad disponible: ${maximacantidad} UM: ${um}`}
+            disabled={venta.distribucion_id ? false : true}
+          />
+
+          <TextField
+            id="precio"
+            name="precio"
+            label="Precio"
+            value={venta.precio}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            type="number"
+            required
+          />
+
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            <DateTimePicker
+              label="Fecha"
+              onChange={(newvalue) => {
+                setVenta({
+                  ...venta,
+                  fecha: newvalue,
+                });
+              }}
+              format="YYYY-MM-DD"
+              sx={{ mb: 1 }}
+              value={dayjs(venta.fecha)}
+            />
+          </LocalizationProvider>
+
+          <Box sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/venta")}
+              startIcon={<CancelIcon />}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
+        </form>
+      </Container>
     </>
   );
 }

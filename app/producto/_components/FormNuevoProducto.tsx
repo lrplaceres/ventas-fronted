@@ -8,6 +8,7 @@ import {
   Select,
   TextField,
   Typography,
+  Container,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -190,101 +191,105 @@ function FormProducto() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          INSERTAR PRODUCTO
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            INSERTAR PRODUCTO
+          </Typography>
 
-        <TextField
-          id="nombre"
-          name="nombre"
-          label="Nombre"
-          value={producto.nombre}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          required
-        />
-
-        <FormControl fullWidth>
-          <InputLabel>Negocio</InputLabel>
-          <Select
-            id="negocio_id"
-            name="negocio_id"
-            value={producto.negocio_id}
-            label="Negocio"
+          <TextField
+            id="nombre"
+            name="nombre"
+            label="Nombre"
+            value={producto.nombre}
             onChange={handleChange}
+            fullWidth
             sx={{ mb: 1 }}
             required
-          >
-            {negocios.length > 0 &&
-              negocios.map((producto, index) => (
-                <MenuItem key={index.toString()} value={producto.id}>
-                  {producto.nombre}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
+          />
 
-        <Box sx={{ textAlign: "center", mb: 4 }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/producto")}
-            startIcon={<CancelIcon />}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-            startIcon={<DoneIcon />}
-          >
-            Aceptar
-          </Button>
-        </Box>
+          <FormControl fullWidth>
+            <InputLabel>Negocio</InputLabel>
+            <Select
+              id="negocio_id"
+              name="negocio_id"
+              value={producto.negocio_id}
+              label="Negocio"
+              onChange={handleChange}
+              sx={{ mb: 1 }}
+              required
+            >
+              {negocios.length > 0 &&
+                negocios.map((producto, index) => (
+                  <MenuItem key={index.toString()} value={producto.id}>
+                    {producto.nombre}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
 
-        <Box sx={{ textAlign: "center" }}>
-          {params?.id && (
+          <Box sx={{ textAlign: "center", mb: 4 }}>
             <Button
               variant="contained"
-              color="error"
-              onClick={handleClickOpen}
-              startIcon={<DeleteForeverIcon />}
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/producto")}
+              startIcon={<CancelIcon />}
             >
-              Eliminar
+              Cancelar
             </Button>
-          )}
-        </Box>
-      </form>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Eliminar producto"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-            relacionados.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={() => eliminarProducto(params?.id)}
-            autoFocus
-            color="error"
-          >
-            Estoy de acuerdo
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Box sx={{ textAlign: "center" }}>
+            {params?.id && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleClickOpen}
+                startIcon={<DeleteForeverIcon />}
+              >
+                Eliminar
+              </Button>
+            )}
+          </Box>
+        </form>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Eliminar producto"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarProducto(params?.id)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

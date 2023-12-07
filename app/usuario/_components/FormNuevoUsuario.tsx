@@ -8,6 +8,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Container,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -88,95 +89,102 @@ function FormUsuario() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          INSERTAR USUARIO
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            INSERTAR USUARIO
+          </Typography>
 
-        <TextField
-          id="usuario"
-          name="usuario"
-          label="Usuario"
-          fullWidth
-          value={usuario.usuario}
-          onChange={handleChange}
-          sx={{ mb: 1 }}
-          required
-        />
-        <TextField
-          id="password"
-          name="password"
-          label="Contraseña"
-          fullWidth
-          value={usuario.password}
-          onChange={handleChange}
-          sx={{ mb: 1 }}
-          type="password"
-          required
-        />
-        <TextField
-          id="repite"
-          name="repite"
-          label="Repite contraseña"
-          fullWidth
-          value={usuario.repite}
-          onChange={handleChange}
-          sx={{ mb: 1 }}
-          type="password"
-          required
-        />
-
-        <FormControl fullWidth sx={{ mb: 1 }}>
-          <InputLabel id="demo-simple-select-label">Rol</InputLabel>
-          <Select
-            name="rol"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={usuario.rol}
-            label="Rol"
+          <TextField
+            id="usuario"
+            name="usuario"
+            label="Usuario"
+            fullWidth
+            value={usuario.usuario}
             onChange={handleChange}
+            sx={{ mb: 1 }}
             required
-          >
-            <MenuItem value={"propietario"}>Propietario</MenuItem>
-            <MenuItem value={"superadmin"}>Superadmin</MenuItem>
-          </Select>
-        </FormControl>
+          />
+          <TextField
+            id="password"
+            name="password"
+            label="Contraseña"
+            fullWidth
+            value={usuario.password}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            type="password"
+            required
+          />
+          <TextField
+            id="repite"
+            name="repite"
+            label="Repite contraseña"
+            fullWidth
+            value={usuario.repite}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            type="password"
+            required
+          />
 
-        <TextField
-          id="nombre"
-          name="nombre"
-          label="Nombre"
-          fullWidth
-          value={usuario.nombre}
-          onChange={handleChange}
-          sx={{ mb: 1 }}
-        />
-        <TextField
-          id="email"
-          name="email"
-          label="Correo electrónico"
-          fullWidth
-          value={usuario.email}
-          onChange={handleChange}
-          sx={{ mb: 1 }}
-          type="email"
-        />
+          <FormControl fullWidth sx={{ mb: 1 }}>
+            <InputLabel id="demo-simple-select-label">Rol</InputLabel>
+            <Select
+              name="rol"
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={usuario.rol}
+              label="Rol"
+              onChange={handleChange}
+              required
+            >
+              <MenuItem value={"propietario"}>Propietario</MenuItem>
+              <MenuItem value={"superadmin"}>Superadmin</MenuItem>
+            </Select>
+          </FormControl>
 
-        <Box sx={{ textAlign: "center" }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/usuario")}
-            startIcon={<CancelIcon />}
-          >
-            Cancelar
-          </Button>
-          <Button variant="contained" color="info" type="submit" startIcon={<DoneIcon />}>
-            Aceptar
-          </Button>
-        </Box>
-      </form>
+          <TextField
+            id="nombre"
+            name="nombre"
+            label="Nombre"
+            fullWidth
+            value={usuario.nombre}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+          />
+          <TextField
+            id="email"
+            name="email"
+            label="Correo electrónico"
+            fullWidth
+            value={usuario.email}
+            onChange={handleChange}
+            sx={{ mb: 1 }}
+            type="email"
+          />
+
+          <Box sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/usuario")}
+              startIcon={<CancelIcon />}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="contained"
+              color="info"
+              type="submit"
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
+        </form>
+      </Container>
     </>
   );
 }

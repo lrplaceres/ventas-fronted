@@ -9,6 +9,7 @@ import {
   Select,
   TextField,
   Typography,
+  Container,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -223,183 +224,189 @@ function FormInventario() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" color="primary" align="center">
-          {params?.id ? "EDITAR" : "INSERTAR"} INVENTARIO
-        </Typography>
+      <Container maxWidth="sm">
+        <form onSubmit={handleSubmit}>
+          <Typography variant="h6" color="primary" align="center">
+            {params?.id ? "EDITAR" : "INSERTAR"} INVENTARIO
+          </Typography>
 
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={productos}
-          getOptionLabel={(option) => `${option.nombre}`}
-          sx={{ mb: 1 }}
-          value={params?.id ? productoEdit : productos[0]}
-          onChange={(event: any, newValue: string | null) => {
-            if (!!newValue) {
-              setInventario({
-                ...inventario,
-                producto_id: newValue.id,
-                negocio_id: newValue.negocio_id,
-              });
-            } else {
-              setInventario({ ...inventario, producto_id: "", negocio_id: "" });
-              setProductoEdit([]);
-            }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Producto" required />
-          )}
-          disabled={productos.length > 0 ? false : true}
-        />
-
-        <TextField
-          id="cantidad"
-          name="cantidad"
-          label="Cantidad"
-          value={inventario.cantidad}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-          required
-        />
-
-        <FormControl fullWidth sx={{ mb: 1 }}>
-          <InputLabel id="demo-simple-select-label">UM</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            name="um"
-            label="UM"
-            value={inventario.um}
-            onChange={handleChange}
-            required
-          >
-            <MenuItem value={"libra"}>LB</MenuItem>
-            <MenuItem value={"kilogramo"}>KG</MenuItem>
-            <MenuItem value={"unidad"}>Unidad</MenuItem>
-            <MenuItem value={"quintal"}>Quintal</MenuItem>
-            <MenuItem value={"caja"}>Caja</MenuItem>
-          </Select>
-        </FormControl>
-
-        <TextField
-          id="costo"
-          name="costo"
-          label="Costo"
-          value={inventario.costo}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-        />
-
-        <TextField
-          id="precio_venta"
-          name="precio_venta"
-          label="Precio de Venta"
-          value={inventario.precio_venta}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 1 }}
-          type="number"
-        />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="es">
-          <DatePicker
-            label="Fecha"
-            onChange={(newvalue) => {
-              setInventario({ ...inventario, fecha: newvalue });
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={productos}
+            getOptionLabel={(option) => `${option.nombre}`}
+            sx={{ mb: 1 }}
+            value={params?.id ? productoEdit : productos[0]}
+            onChange={(event: any, newValue: string | null) => {
+              if (!!newValue) {
+                setInventario({
+                  ...inventario,
+                  producto_id: newValue.id,
+                  negocio_id: newValue.negocio_id,
+                });
+              } else {
+                setInventario({
+                  ...inventario,
+                  producto_id: "",
+                  negocio_id: "",
+                });
+                setProductoEdit([]);
+              }
             }}
-            format="YYYY-MM-DD"
-            sx={{ mb: 1 }}
-            value={dayjs(inventario.fecha)}
+            renderInput={(params) => (
+              <TextField {...params} label="Producto" required />
+            )}
+            disabled={productos.length > 0 ? false : true}
           />
-        </LocalizationProvider>
 
-        <FormControl fullWidth>
-          <InputLabel>Negocio</InputLabel>
-          <Select
-            id="negocio_id"
-            name="negocio_id"
-            value={inventario.negocio_id}
-            label="Negocio"
+          <TextField
+            id="cantidad"
+            name="cantidad"
+            label="Cantidad"
+            value={inventario.cantidad}
             onChange={handleChange}
+            fullWidth
             sx={{ mb: 1 }}
+            type="number"
             required
-            inputProps={{ readOnly: true }}
-          >
-            {negocios.length > 0 &&
-              negocios.map((negocio, index) => (
-                <MenuItem key={index.toString()} value={negocio.id}>
-                  {negocio.nombre}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
+          />
 
-        <Box sx={{ textAlign: "center", mb: 4 }}>
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ mr: 1 }}
-            onClick={() => router.push("/inventario")}
-            startIcon={<CancelIcon />}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ mr: 1 }}
-            startIcon={<DoneIcon />}
-          >
-            Aceptar
-          </Button>
-        </Box>
+          <FormControl fullWidth sx={{ mb: 1 }}>
+            <InputLabel id="demo-simple-select-label">UM</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              name="um"
+              label="UM"
+              value={inventario.um}
+              onChange={handleChange}
+              required
+            >
+              <MenuItem value={"libra"}>LB</MenuItem>
+              <MenuItem value={"kilogramo"}>KG</MenuItem>
+              <MenuItem value={"unidad"}>Unidad</MenuItem>
+              <MenuItem value={"quintal"}>Quintal</MenuItem>
+              <MenuItem value={"caja"}>Caja</MenuItem>
+            </Select>
+          </FormControl>
 
-        <Box sx={{ textAlign: "center" }}>
-          {params?.id && (
+          <TextField
+            id="costo"
+            name="costo"
+            label="Costo"
+            value={inventario.costo}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            type="number"
+          />
+
+          <TextField
+            id="precio_venta"
+            name="precio_venta"
+            label="Precio de Venta"
+            value={inventario.precio_venta}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1 }}
+            type="number"
+          />
+
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            <DatePicker
+              label="Fecha"
+              onChange={(newvalue) => {
+                setInventario({ ...inventario, fecha: newvalue });
+              }}
+              format="YYYY-MM-DD"
+              sx={{ mb: 1 }}
+              value={dayjs(inventario.fecha)}
+            />
+          </LocalizationProvider>
+
+          <FormControl fullWidth>
+            <InputLabel>Negocio</InputLabel>
+            <Select
+              id="negocio_id"
+              name="negocio_id"
+              value={inventario.negocio_id}
+              label="Negocio"
+              onChange={handleChange}
+              sx={{ mb: 1 }}
+              required
+              inputProps={{ readOnly: true }}
+            >
+              {negocios.length > 0 &&
+                negocios.map((negocio, index) => (
+                  <MenuItem key={index.toString()} value={negocio.id}>
+                    {negocio.nombre}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
+          <Box sx={{ textAlign: "center", mb: 4 }}>
             <Button
               variant="contained"
-              color="error"
-              onClick={handleClickOpen}
-              startIcon={<DeleteForeverIcon />}
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => router.push("/inventario")}
+              startIcon={<CancelIcon />}
             >
-              Eliminar
+              Cancelar
             </Button>
-          )}
-        </Box>
-      </form>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
+            >
+              Aceptar
+            </Button>
+          </Box>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Eliminar inventario"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
-            relacionados.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={() => eliminarInventario(params?.id)}
-            autoFocus
-            color="error"
-          >
-            Estoy de acuerdo
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Box sx={{ textAlign: "center" }}>
+            {params?.id && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleClickOpen}
+                startIcon={<DeleteForeverIcon />}
+              >
+                Eliminar
+              </Button>
+            )}
+          </Box>
+        </form>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Eliminar inventario"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
+              relacionados.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button
+              onClick={() => eliminarInventario(params?.id)}
+              autoFocus
+              color="error"
+            >
+              Estoy de acuerdo
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

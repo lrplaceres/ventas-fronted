@@ -1,78 +1,176 @@
-import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
+"use client";
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import MenuIcon from "@mui/icons-material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Image from "next/image";
-import puntoventa from "../../public/punto-de-venta.webp";
-import { headers } from "next/headers";
+import { useRouter } from "next/navigation";
+import LoginIcon from "@mui/icons-material/Login";
+import Producto from "./_components/Producto";
+import Precio from "./_components/Precio";
+import Contacto from "./_components/Contacto";
+import Vistas from "./_components/Vistas";
 
-export default async function SignIn() {
-
-  const csrfToken = await fetch(`${process.env.MI_API_FRONTEND}/api/auth/csrf`,{
-    headers: headers(),
-  })
-    .then( res => res.json() )
-    .then( csrfTokenObject => csrfTokenObject?.csrfToken );
-
-  return (
-    <>
-      <Container
-        maxWidth="sm"
-        sx={{
-          minHeight: "90vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Grid container spacing={0}>
-          <Grid item xs={6}>
-            <Image
-              src={puntoventa}
-              alt="imagen"
-              width={700}
-              height={475}
-              sizes="100vw"
-              style={{
-                width: "100%",
-                height: "auto",
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <form method="post" action="/api/auth/callback/credentials">
-
-              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-              
-              <TextField
-                id="username"
-                name="username"
-                label="Usuario"
-                fullWidth
-                sx={{ mb: 1 }}
-                required
-              />
-
-              <TextField
-                id="password"
-                name="password"
-                label="Contraseña"
-                fullWidth
-                sx={{ mb: 1 }}
-                type="password"
-                required
-              />
-
-              <Button variant="contained" color="info" type="submit">
-                Acceder
-              </Button>
-            </form>
-          </Grid>
-        </Grid>
-      </Container>
-    </>
-  );
+interface Props {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  window?: () => Window;
 }
 
+const drawerWidth = 200;
+
+export default function DrawerAppBar(props: Props) {
+  const router = useRouter();
+
+  const { window } = props;
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        SIMPLE_TPV
+      </Typography>
+      <Divider />
+      <List>
+        
+          <ListItem disablePadding onClick={() => router.push("/login#producto")}>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary="Producto" />
+            </ListItemButton>
+          </ListItem>
+        
+          <ListItem disablePadding onClick={() => router.push("/login#precio")}>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary="Precios" />
+            </ListItemButton>
+          </ListItem>
+
+
+          <ListItem disablePadding onClick={() => router.push("/login#contacto")}>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary="Contacto" />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding onClick={() => router.push("/login/form")}>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary="Login" />
+            </ListItemButton>
+          </ListItem>
+      </List>
+    </Box>
+  );
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar component="nav">
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1}}
+          >
+            SIMPLE_TPV
+          </Typography>
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+            <Button
+              sx={{ color: "#fff" }}
+              onClick={() => router.push("/login#producto")}
+            >
+              Producto
+            </Button>
+
+            <Button
+              sx={{ color: "#fff" }}
+              onClick={() => router.push("/login#precio")}
+            >
+              Precios
+            </Button>
+
+            <Button
+              sx={{ color: "#fff" }}
+              onClick={() => router.push("/login#contacto")}
+            >
+              Contacto
+            </Button>
+
+            <Button
+              sx={{ color: "#fff" }}
+              onClick={() => router.push("/login/form")}
+            >
+              <LoginIcon />
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <nav>
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </nav>
+      <Box sx={{ p: 3 }}>
+        <Toolbar />
+        <Producto />
+
+        <Vistas />
+
+        <Precio />
+
+        <Contacto />
+
+        <Typography
+          variant="button"
+          color="initial"
+          textAlign="center"
+          component="div"
+        >
+          ©2023, Ciego de Ávila, Cuba
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
