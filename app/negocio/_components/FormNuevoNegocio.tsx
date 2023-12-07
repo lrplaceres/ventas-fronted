@@ -2,7 +2,7 @@
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
-import { Button, Card, FormControlLabel, Container } from "@mui/material";
+import { Button, Card, FormControlLabel, Container, Box } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
@@ -17,6 +17,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormNegocio() {
   const router = useRouter();
@@ -280,34 +283,41 @@ function FormNegocio() {
             />
           </LocalizationProvider>
 
-          <Card variant="outlined" sx={{ textAlign: "center" }}>
+          <Box sx={{ textAlign: "center", mb: 4 }}>
             <Button
               variant="contained"
               color="inherit"
               sx={{ mr: 1 }}
               onClick={() => router.push("/negocio")}
+              startIcon={<CancelIcon />}
             >
               Cancelar
             </Button>
+
             <Button
               variant="contained"
               color="primary"
               type="submit"
               sx={{ mr: 1 }}
+              startIcon={<DoneIcon />}
             >
               Aceptar
             </Button>
+            </Box>
 
-            {params.id && (
+          <Box sx={{ textAlign: "center" }}>
+
+            {params?.id && (
               <Button
                 variant="contained"
                 color="error"
                 onClick={handleClickOpen}
+                startIcon={<DeleteForeverIcon />}
               >
                 Eliminar
               </Button>
             )}
-          </Card>
+          </Box>
         </form>
 
         <Dialog
