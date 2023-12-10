@@ -14,7 +14,7 @@ function BotonInsertar() {
         startIcon={<AddShoppingCartIcon />}
         onClick={() => router.push("/venta/nueva")}
       >
-        Insertar Venta
+        Insertar
       </Button>
     </div>
   );

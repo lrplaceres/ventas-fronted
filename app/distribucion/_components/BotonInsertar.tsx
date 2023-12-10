@@ -14,7 +14,7 @@ function BotonInsertar() {
         startIcon={<LocalShippingIcon />}
         onClick={() => router.push("/distribucion/nuevo")}
       >
-        Insertar distribución
+        Insertar
       </Button>
     </div>
   );

@@ -14,7 +14,7 @@ function BotonInsertar() {
         startIcon={<LibraryAddIcon />}
         onClick={() => router.push("/inventario/nuevo")}
       >
-        Insertar Inventario
+        Insertar
       </Button>
     </div>
   );

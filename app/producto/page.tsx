@@ -7,7 +7,6 @@ import {
   GridColumnGroupingModel,
   esES,
 } from "@mui/x-data-grid";
-import PostAddIcon from "@mui/icons-material/PostAdd";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -19,6 +18,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import BotonInsertar from "./_components/BotonInsertar";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -132,15 +132,7 @@ function Page() {
   return (
     <>
       <Container maxWidth="md">
-        <Button
-          variant="contained"
-          color="inherit"
-          sx={{ mt: 1, mb: 1 }}
-          startIcon={<PostAddIcon />}
-          onClick={() => router.push("/producto/nuevo")}
-        >
-          Insertar Producto
-        </Button>
+        <BotonInsertar />
 
         <div style={{ height: 540, width: "100%" }}>
           <DataGrid

@@ -8,7 +8,6 @@ import {
   GridColumnGroupingModel,
   GridActionsCellItem,
 } from "@mui/x-data-grid";
-import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -20,6 +19,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import BotonInsertar from "./_components/BotonInsertar";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -143,15 +143,7 @@ function Page() {
   return (
     <>
       <Container maxWidth="md">
-        <Button
-          variant="contained"
-          color="inherit"
-          sx={{ mt: 1, mb: 1 }}
-          startIcon={<AddBusinessIcon />}
-          onClick={() => router.push("/punto/nuevo")}
-        >
-          Insertar Punto
-        </Button>
+        <BotonInsertar />
 
         <div style={{ height: 540, width: "100%" }}>
           <DataGrid
