@@ -85,7 +85,7 @@ function Page() {
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={<DeleteIcon color="error"/>}
           label="Eliminar"
           onClick={() => {
             handleClickOpen();

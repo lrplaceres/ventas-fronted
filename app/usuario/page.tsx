@@ -67,7 +67,7 @@ function Page() {
           showInMenu
         />,
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={<DeleteIcon color="error"/>}
           label="Eliminar"
           onClick={() => {
             handleClickOpen();
