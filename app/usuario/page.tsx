@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -14,9 +14,9 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PasswordIcon from '@mui/icons-material/Password';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
+import PasswordIcon from "@mui/icons-material/Password";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -32,7 +32,6 @@ const columnGroupingModel: GridColumnGroupingModel = [
 ];
 
 function Page() {
-
   const columns: GridColDef[] = [
     {
       field: "usuario",
@@ -58,13 +57,13 @@ function Page() {
         <GridActionsCellItem
           icon={<LockIcon />}
           label="Bloquear"
-          onClick={()=> bloquearUsuario(params.id)}
+          onClick={() => bloquearUsuario(params.id)}
           showInMenu
         />,
         <GridActionsCellItem
           icon={<LockOpenIcon />}
           label="Desbloquear"
-          onClick={()=> desbloquearUsuario(params.id)}
+          onClick={() => desbloquearUsuario(params.id)}
           showInMenu
         />,
         <GridActionsCellItem
@@ -98,7 +97,7 @@ function Page() {
     setOpen(false);
   };
 
-  const [temp, setTemp] = useState(0)
+  const [temp, setTemp] = useState(0);
 
   useEffect(() => {
     obtenerUsuarios();
@@ -136,10 +135,7 @@ function Page() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(
-            `El usuario ha sido bloqueado`,
-            "info"
-          );
+          notificacion(`El usuario ha sido bloqueado`, "info");
           obtenerUsuarios();
         } else {
           response.json().then((data) => {
@@ -162,10 +158,7 @@ function Page() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(
-            `El usuario ha sido bloqueado`,
-            "info"
-          );
+          notificacion(`El usuario ha sido bloqueado`, "info");
           obtenerUsuarios();
         } else {
           response.json().then((data) => {
@@ -188,11 +181,8 @@ function Page() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(
-            `El usuario ha sido eliminado`,
-            "info"
-          );
-          setUsuarios(usuarios.filter((usuario)=> usuario.id != id))
+          notificacion(`El usuario ha sido eliminado`, "info");
+          setUsuarios(usuarios.filter((usuario) => usuario.id != id));
           handleClose();
         } else {
           response.json().then((data) => {
@@ -207,35 +197,36 @@ function Page() {
 
   return (
     <>
-      <Button
-        variant="contained"
-        color="inherit"
-        sx={{ mt: 1, mb: 1 }}
-        startIcon={<PersonAddAlt1Icon />}
-        onClick={() => router.push("/usuario/nuevo")}
-      >
-        Insertar Usuario
-      </Button>
+      <Container maxWidth="md">
+        <Button
+          variant="contained"
+          color="inherit"
+          sx={{ mt: 1, mb: 1 }}
+          startIcon={<PersonAddAlt1Icon />}
+          onClick={() => router.push("/usuario/nuevo")}
+        >
+          Insertar Usuario
+        </Button>
 
-      <div style={{ height: 540, width: "100%" }}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={usuarios}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
-          }}
-        />
-      </div>
+        <div style={{ height: 540, width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={usuarios}
+            columns={columns}
+            checkboxSelection
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 1,
+              borderColor: "primary.main",
+              "& .MuiDataGrid-cell:hover": {
+                color: "primary.main",
+              },
+            }}
+          />
+        </div>
 
-      <Dialog
+        <Dialog
           open={open}
           onClose={handleClose}
           aria-labelledby="alert-dialog-title"
@@ -261,6 +252,7 @@ function Page() {
             </Button>
           </DialogActions>
         </Dialog>
+      </Container>
     </>
   );
 }
