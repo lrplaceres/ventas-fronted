@@ -60,7 +60,7 @@ function Page() {
         <GridActionsCellItem
           icon={<PasswordIcon />}
           label="Cambiar contraseña"
-          onClick={() => router.push(`/usuario/cambiarpassword/${params.id}`)}
+          onClick={() => router.push(`/dependiente/cambiarpassword/${params.id}`)}
         />,
         <GridActionsCellItem
           icon={<LockIcon />}
@@ -120,7 +120,7 @@ function Page() {
   };
 
   const bloquearUsuario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/users-bloquear/${id}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/dependiente-bloquear/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -129,7 +129,7 @@ function Page() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`El usuario ha sido bloqueado`, "info");
+          notificacion(`El dependiente ha sido bloqueado`, "info");
           obtenerDependientes();
         } else {
           response.json().then((data) => {
@@ -143,7 +143,7 @@ function Page() {
   };
 
   const desbloquearUsuario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/users-desbloquear/${id}`, {
+    await fetch(`${process.env.MI_API_BACKEND}/dependiente-desbloquear/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -152,7 +152,7 @@ function Page() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`El usuario ha sido bloqueado`, "info");
+          notificacion(`El dependiente ha sido bloqueado`, "info");
           obtenerDependientes();
         } else {
           response.json().then((data) => {

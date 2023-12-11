@@ -40,7 +40,7 @@ function Page() {
     }
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/users-cambiar-contrasenna-admin/${params?.id}`, {
+      fetch(`${process.env.MI_API_BACKEND}/dependiente-cambiar-contrasenna-propietario/${params?.id}`, {
         method: "PUT",
         body: JSON.stringify(contrasenna),
         headers: {
@@ -52,7 +52,7 @@ function Page() {
           if (response.ok) {
             notificacion(`Se ha cambiado la contraseña`, "info");
 
-            setTimeout(() => router.push("/usuario"), 300);
+            setTimeout(() => router.push("/dependiente"), 300);
           } else {
             response.json().then((data) => {
               notificacion(`${data.detail}`);
@@ -104,7 +104,7 @@ function Page() {
               variant="contained"
               color="inherit"
               sx={{ mr: 1 }}
-              onClick={() => router.push("/usuario")}
+              onClick={() => router.push("/dependiente")}
               startIcon={<CancelIcon />}
             >
               Cancelar
