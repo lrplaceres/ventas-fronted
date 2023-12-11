@@ -8,24 +8,17 @@ import {
   esES,
   GridColDef,
   GridColumnGroupingModel,
-  GridColumnVisibilityModel,
 } from "@mui/x-data-grid";
-import VistasMenuInventario from "../_components/VistasMenuInventario";
 import { Box } from "@mui/material";
-
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 const columns: GridColDef[] = [
-  { field: "nombre", headerName: "Producto", width: 160 },
+  { field: "nombre_producto", headerName: "Producto", width: 160 },
   {
     field: "existencia",
     headerName: "Cant",
-    width: 100,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -34,32 +27,17 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "fecha", headerName: "Fecha", width: 140 },
-  {
-    field: "costo",
-    headerName: "Costo",
-    width: 120,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  { field: "nombre_negocio", headerName: "Negocio", width: 140 },
+  { field: "nombre_punto", headerName: "Punto", width: 120 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
-    groupId: "Existencia en almacén",
+    groupId: "Existencia en punto",
     description: "",
     children: [
-      { field: "nombre" },
+      { field: "nombre_producto" },
       { field: "existencia" },
-      { field: "fecha" },
-      { field: "costo" },
-      { field: "nombre_negocio" },
+      { field: "cantidad" },
     ],
   },
 ];
@@ -71,11 +49,6 @@ function Page() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [columnVisibilityModel, setColumnVisibilityModel] =
-    useState<GridColumnVisibilityModel>({
-      nombre_negocio: false,
-    });
-
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
@@ -86,7 +59,7 @@ function Page() {
   }, []);
 
   const obtenerExistencia = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
+    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta-punto`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -104,22 +77,12 @@ function Page() {
 
   return (
     <>
-      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
-        <div style={{ flexGrow: 1 }}></div>
-
-        <VistasMenuInventario />
-      </div>
-
-      <Box sx={{height: "81vh", width:"100%"}}>
+      <Box sx={{ height: "87vh", width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={existencia}
           columns={columns}
           checkboxSelection
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) =>
-            setColumnVisibilityModel(newModel)
-          }
           experimentalFeatures={{ columnGrouping: true }}
           columnGroupingModel={columnGroupingModel}
           sx={{

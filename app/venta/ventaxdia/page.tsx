@@ -14,15 +14,16 @@ import {
   GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
+import { Box, Container } from "@mui/material";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 const columns: GridColDef[] = [
-  { field: "nombre_producto", headerName: "Producto", width: 150 },
+  { field: "nombre_producto", headerName: "Producto", width: 160 },
   {
     field: "cantidad",
     headerName: "Cant",
-    width: 60,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -31,7 +32,7 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "nombre_punto", headerName: "Punto", width: 100 },
+  { field: "nombre_punto", headerName: "Punto", width: 120 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
@@ -82,6 +83,7 @@ function Page() {
 
   return (
     <>
+    <Container maxWidth="md">      
       <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
         <div style={{ flexGrow: 1 }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
@@ -99,7 +101,7 @@ function Page() {
         <VistasMenu />
       </div>
 
-      <div style={{ height: 515, width: "100%" }}>
+      <Box sx={{height: "78vh", width:"100%"}}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={ventas}
@@ -108,14 +110,11 @@ function Page() {
           experimentalFeatures={{ columnGrouping: true }}
           columnGroupingModel={columnGroupingModel}
           sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
+            border: 0,
           }}
         />
-      </div>
+      </Box>
+    </Container>
     </>
   );
 }

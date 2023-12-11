@@ -15,6 +15,7 @@ import {
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
 } from "@mui/x-data-grid";
+import { Box, Container } from "@mui/material";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -24,11 +25,11 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 const columns: GridColDef[] = [
-  { field: "nombre_producto", headerName: "Producto", width: 150 },
+  { field: "nombre_producto", headerName: "Producto", width: 160 },
   {
     field: "cantidad",
     headerName: "Cant",
-    width: 70,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -40,7 +41,7 @@ const columns: GridColDef[] = [
   {
     field: "utilidad",
     headerName: "Utilidad",
-    width: 100,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -49,11 +50,11 @@ const columns: GridColDef[] = [
       return currencyFormatter.format(value);
     },
   },
-  { field: "nombre_punto", headerName: "Punto", width: 100 },
+  { field: "nombre_punto", headerName: "Punto", width: 120 },
   {
     field: "precio_costo",
     headerName: "Costo",
-    width: 90,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -65,7 +66,7 @@ const columns: GridColDef[] = [
   {
     field: "monto",
     headerName: "Monto",
-    width: 100,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -77,7 +78,7 @@ const columns: GridColDef[] = [
   {
     field: "precio_inventario",
     headerName: "Precio Inv",
-    width: 90,
+    width: 140,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -89,7 +90,7 @@ const columns: GridColDef[] = [
   {
     field: "utilidad_esperada",
     headerName: "U. Esperada",
-    width: 100,
+    width: 140,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -101,7 +102,7 @@ const columns: GridColDef[] = [
   {
     field: "diferencia_utilidad",
     headerName: "Dif",
-    width: 80,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -182,6 +183,7 @@ function Page() {
 
   return (
     <>
+    <Container maxWidth="md">      
       <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
         <div style={{ flexGrow: 1 }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
@@ -225,7 +227,7 @@ function Page() {
         <VistasMenu />
       </div>
 
-      <div style={{ height: 450, width: "100%" }}>
+      <Box sx={{height: "69vh", width:"100%"}}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={ventas}
@@ -238,14 +240,11 @@ function Page() {
           experimentalFeatures={{ columnGrouping: true }}
           columnGroupingModel={columnGroupingModel}
           sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
+            border: 0,
           }}
         />
-      </div>
+      </Box>
+    </Container>
     </>
   );
 }

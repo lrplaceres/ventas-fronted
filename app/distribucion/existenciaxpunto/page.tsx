@@ -10,15 +10,16 @@ import {
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
 import VistasMenuDistribucion from "../_components/VistasMenuDistribucion";
+import { Box } from "@mui/material";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 const columns: GridColDef[] = [
-  { field: "nombre_producto", headerName: "Producto", width: 150 },
+  { field: "nombre_producto", headerName: "Producto", width: 160 },
   {
     field: "existencia",
     headerName: "Cant",
-    width: 60,
+    width: 120,
     type: "number",
     valueFormatter: ({ value }) => {
       if (!value) {
@@ -27,7 +28,7 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "nombre_punto", headerName: "Punto", width: 100 },
+  { field: "nombre_punto", headerName: "Punto", width: 120 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
@@ -84,7 +85,7 @@ function Page() {
         <VistasMenuDistribucion />
       </div>
 
-      <div style={{ height: 535, width: "100%" }}>
+      <Box sx={{height: "81vh", width:"100%"}}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={existencia}
@@ -93,14 +94,10 @@ function Page() {
           experimentalFeatures={{ columnGrouping: true }}
           columnGroupingModel={columnGroupingModel}
           sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
+            border: 0,
           }}
         />
-      </div>
+      </Box>
     </>
   );
 }

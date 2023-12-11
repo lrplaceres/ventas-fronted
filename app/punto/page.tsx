@@ -1,5 +1,5 @@
 "use client";
-import { Button, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -145,7 +145,7 @@ function Page() {
       <Container maxWidth="md">
         <BotonInsertar />
 
-        <div style={{ height: 540, width: "100%" }}>
+        <Box sx={{height: "83vh", width:"100%"}}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={puntos}
@@ -160,14 +160,10 @@ function Page() {
               console.log(selectedRowsData);
             }}
             sx={{
-              border: 1,
-              borderColor: "primary.main",
-              "& .MuiDataGrid-cell:hover": {
-                color: "primary.main",
-              },
+              border: 0,
             }}
           />
-        </div>
+        </Box>
 
         <Dialog
           open={open}

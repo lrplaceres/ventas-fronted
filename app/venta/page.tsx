@@ -20,7 +20,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -33,7 +33,7 @@ function Page() {
     {
       field: "nombre_producto",
       headerName: "Nombre",
-      width: 120,
+      width: 160,
       renderCell: (params) => (
         <Link href={`/venta/${params.row.id}`} className="decoration-none">
           {params.value}
@@ -43,7 +43,7 @@ function Page() {
     {
       field: "cantidad",
       headerName: "Cant",
-      width: 60,
+      width: 120,
       type: "number",
       valueFormatter: ({ value }) => {
         if (!value) {
@@ -52,11 +52,11 @@ function Page() {
         return currencyFormatterCount.format(value);
       },
     },
-    { field: "nombre_punto", headerName: "Punto", width: 100 },
+    { field: "nombre_punto", headerName: "Punto", width: 120 },
     {
       field: "precio",
       headerName: "Precio",
-      width: 90,
+      width: 120,
       type: "number",
       valueFormatter: ({ value }) => {
         if (!value) {
@@ -65,11 +65,11 @@ function Page() {
         return currencyFormatter.format(value);
       },
     },
-    { field: "fecha", headerName: "Fecha", width: 120 },
+    { field: "fecha", headerName: "Fecha", width: 140 },
     {
       field: "monto",
       headerName: "Monto",
-      width: 110,
+      width: 120,
       type: "number",
       valueFormatter: ({ value }) => {
         if (!value) {
@@ -197,7 +197,7 @@ function Page() {
           <VistasMenuVenta />
         </div>
 
-        <div style={{ height: 540, width: "100%" }}>
+        <Box sx={{height: "83vh", width:"100%"}}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={ventas}
@@ -210,14 +210,10 @@ function Page() {
             experimentalFeatures={{ columnGrouping: true }}
             columnGroupingModel={columnGroupingModel}
             sx={{
-              border: 1,
-              borderColor: "primary.main",
-              "& .MuiDataGrid-cell:hover": {
-                color: "primary.main",
-              },
+              border: 0,
             }}
           />
-        </div>
+        </Box>
 
         <Dialog
           open={open}

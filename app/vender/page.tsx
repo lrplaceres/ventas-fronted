@@ -1,19 +1,17 @@
 "use client";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridColDef,
-  GridColumnGroupingModel,
-  GridColumnVisibilityModel,
   esES,
+  GridColumnVisibilityModel,
+  GridColumnGroupingModel,
+  GridActionsCellItem,
 } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import BotonInsertar from "./_components/BotonInsertar";
-import VistasMenuDistribucion from "./_components/VistasMenuDistribucion";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -28,34 +26,12 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
-const columnGroupingModel: GridColumnGroupingModel = [
-  {
-    groupId: "Listado de distribuciones",
-    description: "",
-    children: [
-      { field: "producto_id" },
-      { field: "cantidad" },
-      { field: "punto_id" },
-      { field: "costo" },
-      { field: "fecha" },
-    ],
-  },
-];
-
 function Page() {
   const columns: GridColDef[] = [
     {
-      field: "producto_id",
-      headerName: "Producto",
+      field: "nombre_producto",
+      headerName: "Nombre",
       width: 160,
-      renderCell: (params) => (
-        <Link
-          href={`/distribucion/${params.row.id}`}
-          className="decoration-none"
-        >
-          {params.value}
-        </Link>
-      ),
     },
     {
       field: "cantidad",
@@ -69,10 +45,22 @@ function Page() {
         return currencyFormatterCount.format(value);
       },
     },
-    { field: "punto_id", headerName: "Punto", width: 120 },
+    { field: "nombre_punto", headerName: "Punto", width: 120 },
     {
-      field: "costo",
-      headerName: "Costo",
+      field: "precio",
+      headerName: "Precio",
+      width: 120,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatter.format(value);
+      },
+    },
+    {
+      field: "monto",
+      headerName: "Monto",
       width: 120,
       type: "number",
       valueFormatter: ({ value }) => {
@@ -83,14 +71,14 @@ function Page() {
       },
     },
     { field: "fecha", headerName: "Fecha", width: 140 },
-    { field: "negocio_id", headerName: "Negocio", width: 140 },
+    { field: "dependiente", headerName: "Dependiente", width: 150 },
     {
       field: "actions",
       type: "actions",
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<DeleteIcon color="error"/>}
+          icon={<DeleteIcon color="error" />}
           label="Eliminar"
           onClick={() => {
             handleClickOpen();
@@ -102,17 +90,34 @@ function Page() {
     },
   ];
 
+  const columnGroupingModel: GridColumnGroupingModel = [
+    {
+      groupId: "Listado de ventas",
+      description: "",
+      children: [
+        { field: "nombre_producto" },
+        { field: "cantidad" },
+        { field: "nombre_punto" },
+        { field: "precio" },
+        { field: "fecha" },
+        { field: "monto" },
+      ],
+    },
+  ];
+
   const router = useRouter();
 
   const { data: session, update } = useSession();
 
-  const [distribucion, setDistribucion] = useState([]);
+  const [ventas, setVentas] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const [columnVisibilityModel, setColumnVisibilityModel] =
     useState<GridColumnVisibilityModel>({
-      negocio_id: false,
+      nombre_punto: false,
+      dependiente: false,
+      fecha: false,
     });
 
   const [open, setOpen] = useState(false);
@@ -128,7 +133,7 @@ function Page() {
   const [temp, setTemp] = useState(0);
 
   useEffect(() => {
-    obtenerDistribucion();
+    obtenerVentas();
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -136,8 +141,8 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerDistribucion = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribuciones`, {
+  const obtenerVentas = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/ventas-punto`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -146,15 +151,15 @@ function Page() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setDistribucion(data);
+        setVentas(data);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
       });
   };
 
-  const eliminarDistribucion = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
+  const eliminarVenta = async (id: number) => {
+    await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -163,8 +168,8 @@ function Page() {
     })
       .then(function (response) {
         if (response.ok) {
-          notificacion(`La distribución se ha sido eliminado`, "info");
-          setDistribucion(distribucion.filter((dist) => dist.id != id));
+          notificacion(`La venta se ha sido eliminado`, "info");
+          setVentas(ventas.filter((venta) => venta.id != id));
           handleClose();
         } else {
           response.json().then((data) => {
@@ -182,13 +187,12 @@ function Page() {
       <Container maxWidth="md">
         <div style={{ display: "flex" }}>
           <BotonInsertar />
-          <VistasMenuDistribucion />
         </div>
 
-        <Box sx={{height: "83vh", width:"100%"}}>
+        <Box sx={{ height: "82vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-            rows={distribucion}
+            rows={ventas}
             columns={columns}
             checkboxSelection
             columnVisibilityModel={columnVisibilityModel}
@@ -209,9 +213,7 @@ function Page() {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">
-            {"Eliminar distribución"}
-          </DialogTitle>
+          <DialogTitle id="alert-dialog-title">{"Eliminar venta"}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Al confirmar esta acción <strong>se borrarán los datos</strong>{" "}
@@ -220,11 +222,7 @@ function Page() {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button
-              onClick={() => eliminarDistribucion(temp)}
-              autoFocus
-              color="error"
-            >
+            <Button onClick={() => eliminarVenta(temp)} autoFocus color="error">
               Estoy de acuerdo
             </Button>
           </DialogActions>
@@ -234,7 +232,7 @@ function Page() {
   );
 }
 
-function PageDistribucion() {
+function PageVenta() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -245,4 +243,4 @@ function PageDistribucion() {
   );
 }
 
-export default PageDistribucion;
+export default PageVenta;

@@ -38,7 +38,6 @@ export default function DenseAppBar() {
   const [state, setState] = useState({
     left: false,
   });
- 
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) => (event: KeyboardEvent | MouseEvent) => {
@@ -75,9 +74,7 @@ export default function DenseAppBar() {
           >
             SIMPLE_TPV
           </Typography>
-          {session && (
-            <OpcionesUsuario />
-          )}
+          {session && <OpcionesUsuario />}
         </Toolbar>
       </AppBar>
 
@@ -232,6 +229,25 @@ export default function DenseAppBar() {
                 </ListItem>
               </>
             )}
+
+            {session?.rol == "dependiente" && (
+              <ListItem
+                disablePadding
+                onClick={() => router.push("/vender")}
+                sx={{
+                  backgroundColor:
+                    pathname?.split("/")[1] == "vender" ? "#bbdefb" : "",
+                }}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <PersonIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Ventas"} />
+                </ListItemButton>
+              </ListItem>
+            )}
+            
           </List>
         </Box>
       </Drawer>

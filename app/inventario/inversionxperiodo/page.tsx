@@ -14,6 +14,7 @@ import {
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
 import VistasMenuInventario from "../_components/VistasMenuInventario";
+import { Box } from "@mui/material";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -21,7 +22,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   });
 
 const columns: GridColDef[] = [
-  { field: "fecha", headerName: "Fecha", width: 120 },
+  { field: "fecha", headerName: "Fecha", width: 140 },
   {
     field: "monto",
     headerName: "Monto",
@@ -122,7 +123,7 @@ function Page() {
         <VistasMenuInventario />
       </div>
 
-      <div style={{ height: 450, width: "100%" }}>
+      <Box sx={{height: "69vh", width:"100%"}}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={inversiones}
@@ -131,14 +132,10 @@ function Page() {
           experimentalFeatures={{ columnGrouping: true }}
           columnGroupingModel={columnGroupingModel}
           sx={{
-            border: 1,
-            borderColor: "primary.main",
-            "& .MuiDataGrid-cell:hover": {
-              color: "primary.main",
-            },
+            border: 0,
           }}
         />
-      </div>
+      </Box>
     </>
   );
 }
