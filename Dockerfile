@@ -1,19 +1,35 @@
-FROM node:alpine as BUILD_IMAGE
+FROM node:20-alpine as base
+RUN apk add --no-cache g++ make py3-pip libc6-compat
 WORKDIR /app
-COPY package.json yarn.lock ./
-# install dependencies
-RUN yarn install --frozen-lockfile
+COPY package*.json ./
+EXPOSE 3000
+
+FROM base as builder
+WORKDIR /app
 COPY . .
-# build
-RUN yarn build
-# remove dev dependencies
-RUN npm prune --production
-FROM node:alpine
+RUN npm run build
+
+
+FROM base as production
 WORKDIR /app
-# copy from build image
-COPY --from=BUILD_IMAGE /app/package.json ./package.json
-COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
-COPY --from=BUILD_IMAGE /app/.next ./.next
-COPY --from=BUILD_IMAGE /app/public ./public
-EXPOSE 80
-CMD ["yarn", "start"]
+
+ENV NODE_ENV=production
+RUN npm ci
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+USER nextjs
+
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/public ./public
+
+CMD npm start
+
+FROM base as dev
+ENV NODE_ENV=development
+RUN npm install 
+COPY . .
+CMD npm run dev
