@@ -65,10 +65,10 @@ function Page() {
   };
 
   useEffect(() => {
-    obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+    obtenerVentasPeriodo(fechas?.fecha_inicio, fechas?.fecha_fin);
   }, []);
 
-  const obtenerVentasPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
+  const obtenerVentasPeriodo = async (fecha_inicio,fecha_fin) => {
     if(fecha_inicio > fecha_fin){
       setVentas([])
       return notificacion("La fecha fin debe ser mayor que la fecha inicio")
