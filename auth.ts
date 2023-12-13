@@ -19,7 +19,7 @@ export const authConfig = {
     Credentials({
       credentials: { username: { label: "Username", type: "text" }, password: { label: "Password", type: "password" }, csrf: { type: "hidden" } },
 
-      authorize(c) {
+      authorize(c:any) {
 
         var formData = new FormData();
         formData.append("username", c.username);
@@ -47,7 +47,7 @@ export const authConfig = {
     async redirect({ url, baseUrl }) {
       return baseUrl
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       // Persist the OAuth access_token to the token right after signin
       if (user) {
         token.rol = user.rol;
@@ -56,7 +56,7 @@ export const authConfig = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       // Send properties to the client, like an access_token from a provider.
       session.rol = token.rol;
       session.access_token = token.access_token;
@@ -67,8 +67,8 @@ export const authConfig = {
   session: {
     strategy: "jwt",
     maxAge: 20 * 60 * 60, // 20 horas
-    async encode() {},
-    async decode() {},
+    //async encode() {},
+    //async decode() {},
   },
   pages: {
     signIn: '/login',

@@ -23,7 +23,7 @@ import Vistas from "./_components/Vistas";
 
 const drawerWidth = 200;
 
-export default function DrawerAppBar(props) {
+export default function DrawerAppBar(props:any) {
   const router = useRouter();
 
   const { window } = props;

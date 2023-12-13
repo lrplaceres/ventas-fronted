@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   env: {
     MI_API_FRONTEND: "http://127.0.0.1:3000",
     MI_API_BACKEND: "http://127.0.0.1:8000",

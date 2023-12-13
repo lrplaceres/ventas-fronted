@@ -42,16 +42,6 @@ function FormUsuario() {
     activo: true,
   });
 
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
     
       const obtenerUsuario = async (id: any) => {

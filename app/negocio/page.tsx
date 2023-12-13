@@ -83,7 +83,7 @@ function Page() {
     setOpen(false);
   };
 
-  const [temp, setTemp] = useState<any>("");
+  const [temp, setTemp] = useState<any>(0);
 
   useEffect(() => {
     const obtenerNegocios = async () => {

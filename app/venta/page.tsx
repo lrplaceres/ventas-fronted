@@ -83,7 +83,7 @@ function Page() {
       field: "actions",
       type: "actions",
       width: 80,
-      getActions: (params) => [
+      getActions: (params:any) => [
         <GridActionsCellItem
           key={`a${params.row.id}`}
           icon={<DeleteIcon color="error"/>}
@@ -178,7 +178,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`La venta se ha sido eliminado`, "info");
-          setVentas(ventas.filter((venta) => venta.id != id));
+          setVentas(ventas.filter((venta:any) => venta.id != id));
           handleClose();
         } else {
           response.json().then((data) => {
@@ -186,7 +186,7 @@ function Page() {
           });
         }
       })
-      .catch(function (error) {
+      .catch(function (error:any) {
         notificacion("Se ha producido un error");
       });
   };

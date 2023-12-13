@@ -63,7 +63,7 @@ function ViewKiokoPropietario() {
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
           >
-            {negocios.map((negocio, index) => (
+            {negocios.map((negocio:any, index) => (
               <ListItem key={index.toString()}>
                 <ListItemAvatar>
                   <Avatar sx={{ bgcolor: "#1976d2" }}>

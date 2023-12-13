@@ -24,7 +24,7 @@ function FormNegocio() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [negocio, setNegocio] = useState({
+  const [negocio, setNegocio] = useState<any>({
     nombre: "",
     direccion: "",
     informacion: "",

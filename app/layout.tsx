@@ -3,7 +3,6 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import Container from "@mui/material/Container";
 import "./globals.css";
 import { auth } from "auth";
 import { Providers } from "./components/providers";
@@ -18,7 +17,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const session:any = await auth();
   return (
     <Providers session={session}>
       <html lang="es">
