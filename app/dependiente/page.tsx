@@ -67,14 +67,14 @@ function Page() {
           key={`b${params.row.id}`}
           icon={<LockIcon />}
           label="Bloquear"
-          onClick={() => bloquearUsuario(params.id)}
+          onClick={() => bloquearUsuario(params?.id)}
           showInMenu
         />,
         <GridActionsCellItem
           key={`c${params.row.id}`}
           icon={<LockOpenIcon />}
           label="Desbloquear"
-          onClick={() => desbloquearUsuario(params.id)}
+          onClick={() => desbloquearUsuario(params?.id)}
           showInMenu
         />,
         
@@ -123,8 +123,24 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
+  const obtenerDependientes = async () => {
+    await fetch(`${process.env.MI_API_BACKEND}/dependientes`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${session?.token_type} ${session?.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDependientes(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
 
-  const bloquearUsuario = async (id: number) => {
+  const bloquearUsuario = async (id: any) => {
     await fetch(`${process.env.MI_API_BACKEND}/dependiente-bloquear/${id}`, {
       method: "PUT",
       headers: {
@@ -147,7 +163,7 @@ function Page() {
       });
   };
 
-  const desbloquearUsuario = async (id: number) => {
+  const desbloquearUsuario = async (id: any) => {
     await fetch(`${process.env.MI_API_BACKEND}/dependiente-desbloquear/${id}`, {
       method: "PUT",
       headers: {

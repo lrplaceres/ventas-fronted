@@ -71,7 +71,7 @@ function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const obtenerDistribucionesPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {
+  const obtenerDistribucionesPeriodo = async (fecha_inicio: any,fecha_fin: any) => {
     if(fecha_inicio > fecha_fin){
       setDistribuciones([])
       return notificacion("La fecha fin debe ser mayor que la fecha inicio")
@@ -99,7 +99,7 @@ function Page() {
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
             <DatePicker
               label="Fecha inicio"
-              onChange={(newvalue) => {
+              onChange={(newvalue:any) => {
                 obtenerDistribucionesPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
                 setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
               }}
@@ -112,7 +112,7 @@ function Page() {
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
             <DatePicker
               label="Fecha fin"
-              onChange={(newvalue) => {
+              onChange={(newvalue:any) => {
                 obtenerDistribucionesPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
                 setFechas({ ...fechas, fecha_fin: newvalue.format("YYYY-MM-DD") });
               }}

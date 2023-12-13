@@ -115,12 +115,12 @@ function FormVenta() {
             disablePortal
             id="combo-box-demo"
             options={distribuciones}
-            getOptionLabel={(option) =>
+            getOptionLabel={(option:any) =>
               `${option.nombre_producto} ► ${option.nombre_punto} ► \ud83d\udcc5${option.fecha}`
             }
             sx={{ mb: 1 }}
             value={params?.id ? distribucionEdit : distribuciones[0]}
-            onChange={(event: any, newValue: string | null) => {
+            onChange={(event: any, newValue: any | null) => {
               if (!!newValue) {
                 setVenta({
                   ...venta,

@@ -65,7 +65,7 @@ function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const obtenerVentas = async (fecha: Date) => {
+  const obtenerVentas = async (fecha: any) => {
     await fetch(`${process.env.MI_API_BACKEND}/ventas-dia/${fecha}`, {
       method: "GET",
       headers: {

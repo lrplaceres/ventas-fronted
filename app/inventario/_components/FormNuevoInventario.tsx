@@ -22,7 +22,6 @@ import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function FormInventario() {
   const router = useRouter();
@@ -87,7 +86,7 @@ function FormInventario() {
     obtenerNegociosPropietario();
     obtenerProductos();
     if (params?.id) {
-      const obtenerInventario = async (id: number) => {
+      const obtenerInventario = async (id: any) => {
         await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
           method: "GET",
           headers: {
@@ -112,7 +111,7 @@ function FormInventario() {
   useEffect(() => {
     if (productos.length > 0) {
       setProductoEdit(
-        productos.filter((v) => v.id == inventario.producto_id)[0]
+        productos.filter((v:any) => v.id == inventario.producto_id)[0]
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -197,10 +196,10 @@ function FormInventario() {
             disablePortal
             id="combo-box-demo"
             options={productos}
-            getOptionLabel={(option) => `${option.nombre}`}
+            getOptionLabel={(option:any) => `${option.nombre}`}
             sx={{ mb: 1 }}
             value={params?.id ? productoEdit : productos[0]}
-            onChange={(event: any, newValue: string | null) => {
+            onChange={(event: any, newValue: any | null) => {
               if (!!newValue) {
                 setInventario({
                   ...inventario,
@@ -300,7 +299,7 @@ function FormInventario() {
               inputProps={{ readOnly: true }}
             >
               {negocios.length > 0 &&
-                negocios.map((negocio, index) => (
+                negocios.map((negocio:any, index) => (
                   <MenuItem key={index.toString()} value={negocio.id}>
                     {negocio.nombre}
                   </MenuItem>
@@ -328,19 +327,7 @@ function FormInventario() {
               Aceptar
             </Button>
           </Box>
-
-          <Box sx={{ textAlign: "center" }}>
-            {params?.id && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleClickOpen}
-                startIcon={<DeleteForeverIcon />}
-              >
-                Eliminar
-              </Button>
-            )}
-          </Box>
+         
         </form>
         
       </Container>

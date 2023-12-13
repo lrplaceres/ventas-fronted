@@ -78,7 +78,7 @@ function Page() {
     setOpen(false);
   };
 
-  const [temp, setTemp] = useState(0);
+  const [temp, setTemp] = useState<any>(0);
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -118,7 +118,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`El Producto ha sido eliminado`, "info");
-          setProductos(productos.filter((productos) => productos.id != id));
+          setProductos(productos.filter((productos:any) => productos.id != id));
           handleClose();
         } else {
           response.json().then((data) => {

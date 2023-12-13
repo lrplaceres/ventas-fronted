@@ -54,7 +54,7 @@ function FormUsuario() {
 
   useEffect(() => {
     
-      const obtenerUsuario = async (id: number) => {
+      const obtenerUsuario = async (id: any) => {
         await fetch(`${process.env.MI_API_BACKEND}/user/${id}`, {
           method: "GET",
           headers: {

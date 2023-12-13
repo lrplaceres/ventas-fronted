@@ -32,7 +32,7 @@ function FormVenta() {
 
   useEffect(() => {
    
-      const obtenerVenta = async (id: number) => {
+      const obtenerVenta = async (id: any) => {
         await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
           method: "GET",
           headers: {

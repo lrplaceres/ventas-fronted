@@ -83,7 +83,7 @@ function Page() {
     setOpen(false);
   };
 
-  const [temp, setTemp] = useState(0);
+  const [temp, setTemp] = useState<any>("");
 
   useEffect(() => {
     const obtenerNegocios = async () => {
@@ -114,7 +114,7 @@ function Page() {
 
 
 
-  const eliminarNegocio = async (id: number) => {
+  const eliminarNegocio = async (id: any) => {
     await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {
       method: "DELETE",
       headers: {
@@ -124,7 +124,7 @@ function Page() {
     }).then(function (response) {
       if (response.ok) {
         notificacion(`El Negocio ha sido eliminado`, "info");
-        setNegocios(negocios.filter((negocio) => negocio.id != id));
+        setNegocios(negocios.filter((negocio:any) => negocio.id != id));
         handleClose();
       } else {
         response.json().then((data) => {

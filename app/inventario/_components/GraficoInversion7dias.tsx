@@ -20,8 +20,8 @@ function GraficoInversion7Dias() {
   }, []);
 
   const obtenerInversionPeriodo = async (
-    fecha_inicio: Date,
-    fecha_fin: Date
+    fecha_inicio: any,
+    fecha_fin: any
   ) => {
     var key_tmp: [] = [];
     var values_tmp: [] = [];
@@ -37,7 +37,7 @@ function GraficoInversion7Dias() {
     )
       .then((response) => response.json())
       .then((data) => {
-        data.map((d: []) => {
+        data.map((d: never) => {
           key_tmp.push(d["fecha"]);
           values_tmp.push(d["monto"]);
         });

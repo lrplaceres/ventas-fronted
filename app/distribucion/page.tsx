@@ -88,7 +88,7 @@ function Page() {
       field: "actions",
       type: "actions",
       width: 80,
-      getActions: (params) => [
+      getActions: (params:any) => [
         <GridActionsCellItem
           key={`a${params.row.id}`}
           icon={<DeleteIcon color="error"/>}
@@ -166,7 +166,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`La distribución se ha sido eliminado`, "info");
-          setDistribucion(distribucion.filter((dist) => dist.id != id));
+          setDistribucion(distribucion.filter((dist:any) => dist.id != id));
           handleClose();
         } else {
           response.json().then((data) => {

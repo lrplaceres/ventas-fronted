@@ -65,7 +65,7 @@ function FormDistribucion() {
         });
     };
 
-    const obtenerDistribucion = async (id: number) => {
+    const obtenerDistribucion = async (id: any) => {
       await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
         method: "GET",
         headers: {
@@ -90,7 +90,7 @@ function FormDistribucion() {
 
   useEffect(() => {
     setInventarioEdit(
-      inventarios.filter((v) => v.id == distribucion.inventario_id)[0]
+      inventarios.filter((v:any) => v.id == distribucion.inventario_id)[0]
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inventarios]);
@@ -152,7 +152,7 @@ function FormDistribucion() {
         .catch(function (error) {
           notificacion("Se ha producido un error");
         });
-    } catch (error) {
+    } catch (error: any) {
       return notificacion(error);
     }
   };
@@ -170,7 +170,7 @@ function FormDistribucion() {
             disablePortal
             id="combo-box-demo"
             options={inventarios}
-            getOptionLabel={(option) => `${option.nombre}`}
+            getOptionLabel={(option: any) => `${option.nombre}`}
             sx={{ mb: 1 }}
             value={params?.id ? inventarioEdit : inventarios[0]}
             renderInput={(params) => (
@@ -190,7 +190,7 @@ function FormDistribucion() {
               onChange={handleChange}
               required
             >
-              {puntos.map((punto, index) => (
+              {puntos.map((punto: any, index) => (
                 <MenuItem key={index.toString()} value={punto.id}>
                   {punto.nombre}
                 </MenuItem>

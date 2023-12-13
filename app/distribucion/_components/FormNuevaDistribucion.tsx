@@ -137,11 +137,11 @@ function FormDistribucion() {
             disablePortal
             id="combo-box-demo"
             options={inventarios}
-            getOptionLabel={(option) =>
+            getOptionLabel={(option:any) =>
               `${option.nombre} ► $${option.costo} ► \ud83d\udcc5${option.fecha}`
             }
             sx={{ mb: 1 }}
-            onChange={(event: any, newValue: string | null) => {
+            onChange={(event: any, newValue: any | null) => {
               if (!!newValue) {
                 setDistribucion({
                   ...distribucion,
@@ -173,7 +173,7 @@ function FormDistribucion() {
               required
               inputProps={{ readOnly: puntos.length ? false : true }}
             >
-              {puntos.map((punto, index) => (
+              {puntos.map((punto:any, index) => (
                 <MenuItem key={index.toString()} value={punto.id}>
                   {punto.nombre}
                 </MenuItem>

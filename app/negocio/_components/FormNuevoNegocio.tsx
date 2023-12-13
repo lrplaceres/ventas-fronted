@@ -64,7 +64,7 @@ function FormNegocio() {
 
   useEffect(() => {
     setPropietarioEdit(
-      propietarios.filter((v) => v.id == negocio.propietario_id)[0]
+      propietarios.filter((v:any) => v.id == negocio.propietario_id)[0]
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propietarios]);
@@ -82,7 +82,7 @@ function FormNegocio() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerNegocio = async (id: number) => {
+  const obtenerNegocio = async (id: any) => {
     await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {
       method: "GET",
       headers: {
@@ -226,10 +226,10 @@ function FormNegocio() {
             disablePortal
             id="combo-box-demo"
             options={propietarios}
-            getOptionLabel={(option) => `${option.nombre} ► ${option.usuario}`}
+            getOptionLabel={(option:any) => `${option.nombre} ► ${option.usuario}`}
             sx={{ mb: 1 }}
-            value={params.id ? propietarioEdit : propietarios[0]}
-            onChange={(event: any, newValue: string | null) => {
+            value={params?.id ? propietarioEdit : propietarios[0]}
+            onChange={(event: any, newValue: any | null) => {
               setNegocio({ ...negocio, propietario_id: newValue.id });
               setPropietarioEdit(newValue);
             }}

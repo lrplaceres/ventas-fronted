@@ -53,7 +53,7 @@ function FormProducto() {
 
     obtenerNegociosPropietario();
     if (params?.id) {
-      const obtenerProducto = async (id: number) => {
+      const obtenerProducto = async (id: any) => {
         await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
           method: "GET",
           headers: {
@@ -179,7 +179,7 @@ function FormProducto() {
               required
             >
               {negocios.length > 0 &&
-                negocios.map((producto, index) => (
+                negocios.map((producto:any, index) => (
                   <MenuItem key={index.toString()} value={producto.id}>
                     {producto.nombre}
                   </MenuItem>

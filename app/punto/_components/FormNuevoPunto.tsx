@@ -54,7 +54,7 @@ function FormPunto() {
 
     obtenerNegociosPropietario();
     if (params?.id) {
-      const obtenerPunto = async (id: number) => {
+      const obtenerPunto = async (id: any) => {
         await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
           method: "GET",
           headers: {
@@ -192,7 +192,7 @@ function FormPunto() {
               required
             >
               {negocios.length > 0 &&
-                negocios.map((negocio, index) => (
+                negocios.map((negocio:any, index) => (
                   <MenuItem key={index.toString()} value={negocio.id}>
                     {negocio.nombre}
                   </MenuItem>

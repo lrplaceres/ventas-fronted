@@ -12,7 +12,7 @@ function GraficoVentas7Dias() {
   const [values, setValues] = useState([]);
 
   useEffect(() => {
-    const obtenerVentasPeriodo = async (fecha_inicio: Date, fecha_fin: Date) => {
+    const obtenerVentasPeriodo = async (fecha_inicio: any, fecha_fin: any) => {
       var key_tmp: [] = [];
       var values_tmp: [] = []
       await fetch(
@@ -27,7 +27,7 @@ function GraficoVentas7Dias() {
       )
         .then((response) => response.json())
         .then((data) => {
-          data.map((d:[]) => {
+          data.map((d:never) => {
             key_tmp.push(d["fecha"]);
             values_tmp.push(d["monto"]);
           });

@@ -155,7 +155,7 @@ function FormUsuario() {
               onChange={handleChange}
               required
             >
-              {puntos.map((punto, index) => (
+              {puntos.map((punto:any, index) => (
                 <MenuItem key={index.toString()} value={punto.id}>
                   {punto.nombre}
                 </MenuItem>

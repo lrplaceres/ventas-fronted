@@ -101,7 +101,7 @@ function Page() {
     setOpen(false);
   };
 
-  const [temp, setTemp] = useState(0);
+  const [temp, setTemp] = useState<any>(0);
 
   useEffect(() => {
     obtenerUsuarios();
@@ -130,7 +130,7 @@ function Page() {
       });
   };
 
-  const bloquearUsuario = async (id: number) => {
+  const bloquearUsuario = async (id: any) => {
     await fetch(`${process.env.MI_API_BACKEND}/users-bloquear/${id}`, {
       method: "PUT",
       headers: {
@@ -153,7 +153,7 @@ function Page() {
       });
   };
 
-  const desbloquearUsuario = async (id: number) => {
+  const desbloquearUsuario = async (id: any) => {
     await fetch(`${process.env.MI_API_BACKEND}/users-desbloquear/${id}`, {
       method: "PUT",
       headers: {
@@ -187,7 +187,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`El usuario ha sido eliminado`, "info");
-          setUsuarios(usuarios.filter((usuario) => usuario.id != id));
+          setUsuarios(usuarios.filter((usuario:any) => usuario.id != id));
           handleClose();
         } else {
           response.json().then((data) => {

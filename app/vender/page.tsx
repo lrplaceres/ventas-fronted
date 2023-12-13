@@ -131,7 +131,7 @@ function Page() {
     setOpen(false);
   };
 
-  const [temp, setTemp] = useState(0);
+  const [temp, setTemp] = useState<any>(0);
 
   useEffect(() => {
     const obtenerVentas = async () => {
@@ -173,7 +173,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`La venta se ha sido eliminado`, "info");
-          setVentas(ventas.filter((venta) => venta.id != id));
+          setVentas(ventas.filter((venta:any) => venta.id != id));
           handleClose();
         } else {
           response.json().then((data) => {

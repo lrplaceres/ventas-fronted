@@ -89,7 +89,7 @@ function Page() {
     setOpen(false);
   };
 
-  const [temp, setTemp] = useState(0);
+  const [temp, setTemp] = useState<any>(0);
 
   useEffect(() => {
     const obtenerPuntos = async () => {
@@ -129,7 +129,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`El Punto ha sido eliminado`, "info");
-          setPuntos(puntos.filter((punto) => punto.id != id));
+          setPuntos(puntos.filter((punto:any) => punto.id != id));
           handleClose();
         } else {
           response.json().then((data) => {
@@ -157,7 +157,7 @@ function Page() {
             columnGroupingModel={columnGroupingModel}
             onRowSelectionModelChange={(ids) => {
               const selectedRowsData = ids.map((id) =>
-                puntos.find((row) => row.id === id)
+                puntos.find((row:any) => row.id === id)
               );
               console.log(selectedRowsData);
             }}
