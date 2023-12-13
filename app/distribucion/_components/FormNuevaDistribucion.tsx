@@ -44,7 +44,25 @@ function FormDistribucion() {
   const [maximacantidad, setMaximaCantidad] = useState(0);
 
   useEffect(() => {
+    const obtenerInventarios = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setInventarios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+    
     obtenerInventarios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -56,22 +74,7 @@ function FormDistribucion() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerInventarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setInventarios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+
 
   const obtenerPuntosNegocio = async (id: number) => {
     await fetch(`${process.env.MI_API_BACKEND}/puntos-negocio/${id}`, {

@@ -48,14 +48,51 @@ function FormDistribucion() {
   const [inventarioEdit, setInventarioEdit] = useState([]);
 
   useEffect(() => {
+    const obtenerInventarios = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setInventarios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
+    const obtenerDistribucion = async (id: number) => {
+      await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDistribucion(data);
+          obtenerPuntosNegocio(data.negocio_id);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
     obtenerInventarios();
     obtenerDistribucion(params?.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setInventarioEdit(
       inventarios.filter((v) => v.id == distribucion.inventario_id)[0]
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inventarios]);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -67,22 +104,7 @@ function FormDistribucion() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerInventarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setInventarios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+  
 
   const obtenerPuntosNegocio = async (id: number) => {
     await fetch(`${process.env.MI_API_BACKEND}/puntos-negocio/${id}`, {
@@ -101,23 +123,7 @@ function FormDistribucion() {
       });
   };
 
-  const obtenerDistribucion = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDistribucion(data);
-        obtenerPuntosNegocio(data.negocio_id);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+  
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

@@ -12,36 +12,37 @@ function GraficoVentas7Dias() {
   const [values, setValues] = useState([]);
 
   useEffect(() => {
+    const obtenerVentasPeriodo = async (fecha_inicio: Date, fecha_fin: Date) => {
+      var key_tmp: [] = [];
+      var values_tmp: [] = []
+      await fetch(
+        `${process.env.MI_API_BACKEND}/ventas-brutas-periodo/${fecha_inicio}/${fecha_fin}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          data.map((d:[]) => {
+            key_tmp.push(d["fecha"]);
+            values_tmp.push(d["monto"]);
+          });
+          setKeys(key_tmp);
+          setValues(values_tmp);
+        })
+        .catch(function (error) {});
+    };
+
     obtenerVentasPeriodo(
       dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
       dayjs(new Date()).format("YYYY-MM-DD")
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const obtenerVentasPeriodo = async (fecha_inicio: Date, fecha_fin: Date) => {
-    var key_tmp: [] = [];
-    var values_tmp: [] = []
-    await fetch(
-      `${process.env.MI_API_BACKEND}/ventas-brutas-periodo/${fecha_inicio}/${fecha_fin}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        data.map((d:[]) => {
-          key_tmp.push(d["fecha"]);
-          values_tmp.push(d["monto"]);
-        });
-        setKeys(key_tmp);
-        setValues(values_tmp);
-      })
-      .catch(function (error) {});
-  };
 
   const option = {
     title: {

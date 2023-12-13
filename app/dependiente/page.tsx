@@ -58,17 +58,20 @@ function Page() {
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
+          key={`a${params.row.id}`}
           icon={<PasswordIcon />}
           label="Cambiar contraseña"
           onClick={() => router.push(`/dependiente/cambiarpassword/${params.id}`)}
         />,
         <GridActionsCellItem
+          key={`b${params.row.id}`}
           icon={<LockIcon />}
           label="Bloquear"
           onClick={() => bloquearUsuario(params.id)}
           showInMenu
         />,
         <GridActionsCellItem
+          key={`c${params.row.id}`}
           icon={<LockOpenIcon />}
           label="Desbloquear"
           onClick={() => desbloquearUsuario(params.id)}
@@ -94,7 +97,25 @@ function Page() {
   });
 
   useEffect(() => {
+    const obtenerDependientes = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/dependientes`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDependientes(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+    
     obtenerDependientes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -102,22 +123,6 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerDependientes = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/dependientes`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDependientes(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
 
   const bloquearUsuario = async (id: number) => {
     await fetch(`${process.env.MI_API_BACKEND}/dependiente-bloquear/${id}`, {

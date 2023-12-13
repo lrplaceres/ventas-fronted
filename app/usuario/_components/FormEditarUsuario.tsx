@@ -53,9 +53,26 @@ function FormUsuario() {
   };
 
   useEffect(() => {
-    if (params?.id) {
+    
+      const obtenerUsuario = async (id: number) => {
+        await fetch(`${process.env.MI_API_BACKEND}/user/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            setUsuario(data);
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
+      };
+
       obtenerUsuario(params?.id);
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -71,22 +88,7 @@ function FormUsuario() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerUsuario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/user/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setUsuario(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

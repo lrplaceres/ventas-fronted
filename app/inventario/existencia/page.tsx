@@ -82,25 +82,26 @@ function Page() {
   };
 
   useEffect(() => {
-    obtenerExistencia();
-  }, []);
-
-  const obtenerExistencia = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setExistencia(data);
+    const obtenerExistencia = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
       })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+        .then((response) => response.json())
+        .then((data) => {
+          setExistencia(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
+    obtenerExistencia();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

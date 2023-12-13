@@ -21,7 +21,25 @@ function ViewKiokoPropietario() {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    const obtenerNegociosPropietario = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setNegocios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+    
     obtenerNegociosPropietario();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -29,22 +47,7 @@ function ViewKiokoPropietario() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setNegocios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+  
 
   return (
     <>

@@ -67,6 +67,7 @@ function Page() {
 
   useEffect(() => {
     obtenerInversionesPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const obtenerInversionesPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {

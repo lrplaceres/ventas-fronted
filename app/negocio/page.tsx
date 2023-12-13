@@ -52,6 +52,7 @@ function Page() {
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
+          key={`a${params.row.id}`}
           icon={<DeleteIcon color="error"/>}
           label="Eliminar"
           onClick={() => {
@@ -85,7 +86,25 @@ function Page() {
   const [temp, setTemp] = useState(0);
 
   useEffect(() => {
+    const obtenerNegocios = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/negocio`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setNegocios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
     obtenerNegocios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -93,22 +112,7 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerNegocios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocio`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setNegocios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+
 
   const eliminarNegocio = async (id: number) => {
     await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {

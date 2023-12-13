@@ -90,6 +90,7 @@ function Page() {
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
+          key={`a${params.row.id}`}
           icon={<DeleteIcon color="error"/>}
           label="Eliminar"
           onClick={() => {
@@ -128,31 +129,32 @@ function Page() {
   const [temp, setTemp] = useState(0);
 
   useEffect(() => {
+    const obtenerDistribucion = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/distribuciones`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDistribucion(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
     obtenerDistribucion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-
-  const obtenerDistribucion = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribuciones`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDistribucion(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
+ 
   const eliminarDistribucion = async (id: number) => {
     await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
       method: "DELETE",

@@ -68,6 +68,7 @@ function Page() {
 
   useEffect(() => {
     obtenerDistribucionesPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const obtenerDistribucionesPeriodo = async (fecha_inicio: Date,fecha_fin: Date) => {

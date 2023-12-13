@@ -39,7 +39,25 @@ function FormVenta() {
   const [um, setUm] = useState("");
 
   useEffect(() => {
+    const obtenerDistribuciones = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDistribuciones(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+    
     obtenerDistribuciones();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -51,22 +69,7 @@ function FormVenta() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerDistribuciones = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDistribuciones(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

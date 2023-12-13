@@ -4,11 +4,6 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
@@ -36,9 +31,26 @@ function FormVenta() {
   });
 
   useEffect(() => {
-    if (params?.id) {
+   
+      const obtenerVenta = async (id: number) => {
+        await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            setVenta(data);
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
+      };
+
       obtenerVenta(params?.id);
-    }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -50,22 +62,7 @@ function FormVenta() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerVenta = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setVenta(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

@@ -19,29 +19,29 @@ function Perfil() {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    const obtenerUsuario = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/users/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session.token_type} ${session.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUsuario(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
     obtenerUsuario();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
-  };
-
-  const obtenerUsuario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/users/me`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session.token_type} ${session.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setUsuario(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
   };
 
   return (

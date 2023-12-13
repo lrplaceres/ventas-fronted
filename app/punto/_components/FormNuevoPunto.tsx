@@ -35,10 +35,51 @@ function FormPunto() {
   const [negocios, setNegocios] = useState([]);
 
   useEffect(() => {
+    const obtenerNegociosPropietario = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setNegocios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
     obtenerNegociosPropietario();
     if (params?.id) {
+      const obtenerPunto = async (id: number) => {
+        await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        })
+          .then(function (response) {
+            if (response.ok) {
+              var result = response.json();
+              result.then((data) => {
+                setPunto(data);
+              });
+            } else {
+              notificacion("Revise los datos asignados");
+            }
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
+      };
+
       obtenerPunto(params?.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -49,47 +90,7 @@ function FormPunto() {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-
-  const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setNegocios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
-  const obtenerPunto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then(function (response) {
-        if (response.ok) {
-          var result = response.json();
-          result.then((data) => {
-            setPunto(data);
-          });
-        } else {
-          notificacion("Revise los datos asignados");
-        }
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
+  
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 

@@ -64,6 +64,7 @@ function Page() {
 
   useEffect(() => {
     obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const obtenerVentasPeriodo = async (fecha_inicio: Date, fecha_fin: Date) => {

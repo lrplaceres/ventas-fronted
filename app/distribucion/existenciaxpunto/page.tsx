@@ -56,25 +56,27 @@ function Page() {
   };
 
   useEffect(() => {
+    const obtenerExistencia = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setExistencia(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
    obtenerExistencia();
+   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const obtenerExistencia = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setExistencia(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
 
   return (
     <>

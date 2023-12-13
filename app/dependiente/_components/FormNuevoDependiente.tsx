@@ -34,7 +34,26 @@ function FormUsuario() {
   const [puntos, setPuntos] = useState([]);
 
   useEffect(() => {
+
+    const obtenerPuntos = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setPuntos(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+    
     obtenerPuntos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -46,22 +65,7 @@ function FormUsuario() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-  const obtenerPuntos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPuntos(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

@@ -62,6 +62,7 @@ function Page() {
 
   useEffect(() => {
     obtenerVentas(dayjs(new Date()).format("YYYY-MM-DD"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const obtenerVentas = async (fecha: Date) => {

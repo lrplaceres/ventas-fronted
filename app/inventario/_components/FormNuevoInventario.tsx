@@ -50,11 +50,63 @@ function FormInventario() {
   const [productoEdit, setProductoEdit] = useState([]);
 
   useEffect(() => {
+    const obtenerNegociosPropietario = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setNegocios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
+    const obtenerProductos = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/productos`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setProductos(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
     obtenerNegociosPropietario();
     obtenerProductos();
     if (params?.id) {
+      const obtenerInventario = async (id: number) => {
+        await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            setInventario(data);
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
+      };
+      
       obtenerInventario(params?.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -63,6 +115,7 @@ function FormInventario() {
         productos.filter((v) => v.id == inventario.producto_id)[0]
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productos]);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -73,58 +126,7 @@ function FormInventario() {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-
-  const obtenerProductos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/productos`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setProductos(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
-  const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setNegocios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
-  const obtenerInventario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setInventario(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
+  
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 

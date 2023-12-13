@@ -37,27 +37,36 @@ function FormNegocio() {
 
   const [propietarioEdit, setPropietarioEdit] = useState([]);
 
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
+    const obtenerPropietarios = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/users-propietarios`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setPropietarios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+    
     obtenerPropietarios();
     if (params?.id) {
       obtenerNegocio(params.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setPropietarioEdit(
       propietarios.filter((v) => v.id == negocio.propietario_id)[0]
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propietarios]);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -90,22 +99,7 @@ function FormNegocio() {
       });
   };
 
-  const obtenerPropietarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/users-propietarios`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPropietarios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

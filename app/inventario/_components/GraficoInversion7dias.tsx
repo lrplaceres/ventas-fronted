@@ -16,6 +16,7 @@ function GraficoInversion7Dias() {
       dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
       dayjs(new Date()).format("YYYY-MM-DD")
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const obtenerInversionPeriodo = async (

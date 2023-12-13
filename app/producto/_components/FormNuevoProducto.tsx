@@ -34,10 +34,45 @@ function FormProducto() {
   const [negocios, setNegocios] = useState([]);
 
   useEffect(() => {
+    const obtenerNegociosPropietario = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setNegocios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
     obtenerNegociosPropietario();
     if (params?.id) {
+      const obtenerProducto = async (id: number) => {
+        await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${session?.token_type} ${session?.access_token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            setProducto(data);
+          })
+          .catch(function (error) {
+            notificacion("Se ha producido un error");
+          });
+      };
+      
       obtenerProducto(params?.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = ({ target: { name, value } }) => {
@@ -47,40 +82,6 @@ function FormProducto() {
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
-  };
-
-  const obtenerNegociosPropietario = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setNegocios(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
-  };
-
-  const obtenerProducto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setProducto(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
   };
 
   const handleSubmit = async (e: FormEvent) => {

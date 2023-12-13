@@ -50,23 +50,27 @@ function Page() {
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
+          key={`a${params.row.id}`}
           icon={<PasswordIcon />}
           label="Camniar contraseña"
           onClick={() => router.push(`/usuario/cambiarpassword/${params.id}`)}
         />,
         <GridActionsCellItem
+        key={`b${params.row.id}`}
           icon={<LockIcon />}
           label="Bloquear"
           onClick={() => bloquearUsuario(params.id)}
           showInMenu
         />,
         <GridActionsCellItem
+        key={`c${params.row.id}`}
           icon={<LockOpenIcon />}
           label="Desbloquear"
           onClick={() => desbloquearUsuario(params.id)}
           showInMenu
         />,
         <GridActionsCellItem
+          key={`d${params.row.id}`}
           icon={<DeleteIcon color="error"/>}
           label="Eliminar"
           onClick={() => {
@@ -101,6 +105,7 @@ function Page() {
 
   useEffect(() => {
     obtenerUsuarios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {

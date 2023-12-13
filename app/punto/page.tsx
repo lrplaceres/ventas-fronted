@@ -53,7 +53,8 @@ function Page() {
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<DeleteIcon color="error"/>}
+          key={`a${params.row.id}`}
+          icon={<DeleteIcon color="error" />}
           label="Eliminar"
           onClick={() => {
             handleClickOpen();
@@ -91,29 +92,30 @@ function Page() {
   const [temp, setTemp] = useState(0);
 
   useEffect(() => {
+    const obtenerPuntos = async () => {
+      await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${session?.token_type} ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setPuntos(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
     obtenerPuntos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
-  };
-
-  const obtenerPuntos = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPuntos(data);
-      })
-      .catch(function (error) {
-        notificacion("Se ha producido un error");
-      });
   };
 
   const eliminarPunto = async (id: number) => {
@@ -145,7 +147,7 @@ function Page() {
       <Container maxWidth="md">
         <BotonInsertar />
 
-        <Box sx={{height: "83vh", width:"100%"}}>
+        <Box sx={{ height: "83vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={puntos}
