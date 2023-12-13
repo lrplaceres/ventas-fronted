@@ -32,7 +32,7 @@ function FormInventario() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [inventario, setInventario] = useState({
+  const [inventario, setInventario] = useState<any>({
     producto_id: "",
     cantidad: "",
     um: "unidad",

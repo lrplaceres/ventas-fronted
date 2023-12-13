@@ -30,7 +30,7 @@ function FormDistribucion() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [distribucion, setDistribucion] = useState({
+  const [distribucion, setDistribucion] = useState<any>({
     inventario_id: "",
     cantidad: "",
     fecha: new Date(),

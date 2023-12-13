@@ -21,7 +21,7 @@ function FormVenta() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [venta, setVenta] = useState({
+  const [venta, setVenta] = useState<any>({
     distribucion_id: "",
     cantidad: "",
     precio: "",
