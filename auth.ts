@@ -4,9 +4,11 @@ import Credentials from "next-auth/providers/credentials";
 
 declare module "next-auth" {
   interface Session {
+    access_token?: string,
+    token_type?: string,
+    rol?: string,
     user: {
-      //picture?: string;
-      access_token?: string;
+      name?: string;
     } & Omit<User, "id">;
   }
 }
@@ -30,7 +32,6 @@ export const authConfig = {
           .then(function (response) {
             if (response.status != 200) return null;
             return response.json().then((data) => {
-              //console.log(data)
               return data;
             })
           }
