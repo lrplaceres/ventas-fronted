@@ -21,17 +21,9 @@ import Precio from "./_components/Precio";
 import Contacto from "./_components/Contacto";
 import Vistas from "./_components/Vistas";
 
-interface Props {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window?: () => Window;
-}
-
 const drawerWidth = 200;
 
-export default function DrawerAppBar(props: Props) {
+export default function DrawerAppBar(props) {
   const router = useRouter();
 
   const { window } = props;

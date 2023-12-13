@@ -118,7 +118,7 @@ function FormInventario() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productos]);
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value } } : any) => {
     setInventario({ ...inventario, [name]: value });
   };
 

@@ -65,7 +65,7 @@ function FormDistribucion() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value } } : any) => {
     setDistribucion({ ...distribucion, [name]: value });
   };
 

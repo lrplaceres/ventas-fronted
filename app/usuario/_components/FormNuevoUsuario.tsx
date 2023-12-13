@@ -34,7 +34,7 @@ function FormUsuario() {
     activo: true,
   });
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value } } : any) => {
     setUsuario({ ...usuario, [name]: value });
   };
 

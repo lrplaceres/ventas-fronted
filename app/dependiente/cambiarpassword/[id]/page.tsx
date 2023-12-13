@@ -23,7 +23,7 @@ function Page() {
     repite_contrasenna_nueva: "",
   });
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value } } : any) => {
     setContrasenna({ ...contrasenna, [name]: value });
   };
 

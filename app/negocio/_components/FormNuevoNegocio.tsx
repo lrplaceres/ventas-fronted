@@ -69,11 +69,11 @@ function FormNegocio() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propietarios]);
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value } } : any) => {
     setNegocio({ ...negocio, [name]: value });
   };
 
-  const handleChangeSlider = ({ target: { name, checked } }) => {
+  const handleChangeSlider = ({ target: { name, checked } } : any) => {
     setNegocio({ ...negocio, [name]: checked });
   };
 

@@ -75,7 +75,7 @@ function FormProducto() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value } } : any) => {
     setProducto({ ...producto, [name]: value });
   };
 

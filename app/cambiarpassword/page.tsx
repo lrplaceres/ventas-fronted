@@ -21,7 +21,7 @@ function Page() {
     contrasenna_actual: "",
   });
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value }}: any) => {
     setContrasenna({ ...contrasenna, [name]: value });
   };
 

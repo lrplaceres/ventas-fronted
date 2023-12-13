@@ -56,7 +56,7 @@ function FormUsuario() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } }) => {
+  const handleChange = ({ target: { name, value } } : any) => {
     setUsuario({ ...usuario, [name]: value });
   };
 
