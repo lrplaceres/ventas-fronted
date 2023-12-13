@@ -175,7 +175,7 @@ function Page() {
         if (response.ok) {
           notificacion(`El Inventario ha sido eliminado`, "info");
           setInventarios(
-            inventarios.filter((inventario) => inventario.id != id)
+            inventarios.filter((inventario:any) => inventario.id != id)
           );
           handleClose();
         } else {
