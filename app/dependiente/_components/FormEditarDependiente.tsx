@@ -39,7 +39,6 @@ function FormUsuario() {
   const [puntos, setPuntos] = useState([]);
 
   useEffect(() => {
-
     const obtenerPuntos = async () => {
       await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
         method: "GET",
@@ -56,7 +55,7 @@ function FormUsuario() {
           notificacion("Se ha producido un error");
         });
     };
-  
+
     const obtenerDependiente = async () => {
       await fetch(`${process.env.MI_API_BACKEND}/dependiente/${params?.id}`, {
         method: "GET",
@@ -98,22 +97,17 @@ function FormUsuario() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    var data = {
+      nombre: usuario.nombre,
+      email: usuario.email,
+      activo: usuario.activo,
+      punto_id: usuario.punto_id,
+    };
+
     try {
-      if (usuario.password != usuario.repite) {
-        return notificacion("Las contraseñas deben coincidir", "error");
-      }
-
-      var data = {
-        nombre: usuario.nombre,
-        email: usuario.email,
-        activo: usuario.activo,
-        punto_id: usuario.punto_id,
-      };
-
       fetch(`${process.env.MI_API_BACKEND}/dependiente/${params?.id}`, {
         method: "PUT",
         body: JSON.stringify(data),
