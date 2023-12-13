@@ -25,6 +25,8 @@ function FormUsuario() {
   const { data: session, update } = useSession();
 
   const [usuario, setUsuario] = useState({    
+    usuario: "",
+    password: "",
     nombre: "",
     email: "",
     activo: true,
@@ -77,7 +79,6 @@ function FormUsuario() {
       var data = {
         usuario: usuario.usuario,
         password: usuario.password,
-        rol: usuario.rol,
         nombre: usuario.nombre,
         email: usuario.email,
         activo: usuario.activo,
@@ -104,11 +105,11 @@ function FormUsuario() {
             });
           }
         })
-        .catch(function (error) {
+        .catch(function (error: any) {
           notificacion("Se ha producido un error");
         });
     } catch (error) {
-      return notificacion(error);
+      return notificacion(error: any);
     }
   };
 

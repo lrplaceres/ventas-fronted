@@ -154,11 +154,11 @@ function FormNegocio() {
               });
             }
           })
-          .catch(function (error) {
+          .catch(function (error: any) {
             notificacion("Se ha producido un error");
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return notificacion(error);
     }
   };
