@@ -27,6 +27,7 @@ function FormUsuario() {
   const [usuario, setUsuario] = useState({    
     usuario: "",
     password: "",
+    repite: "",
     nombre: "",
     email: "",
     activo: true,
@@ -108,8 +109,8 @@ function FormUsuario() {
         .catch(function (error: any) {
           notificacion("Se ha producido un error");
         });
-    } catch (error) {
-      return notificacion(error: any);
+    } catch (error: any) {
+      return notificacion(error);
     }
   };
 

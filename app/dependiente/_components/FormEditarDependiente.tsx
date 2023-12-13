@@ -30,10 +30,6 @@ function FormUsuario() {
   const { data: session, update } = useSession();
 
   const [usuario, setUsuario] = useState({
-    usuario: "",
-    password: "",
-    repite: "",
-    rol: "dependiente",
     nombre: "",
     email: "",
     activo: true,
