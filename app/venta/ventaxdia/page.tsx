@@ -66,7 +66,7 @@ function Page() {
   }, []);
 
   const obtenerVentas = async (fecha: any) => {
-    await fetch(`${process.env.MI_API_BACKEND}/ventas-dia/${fecha}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-dia/${fecha}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

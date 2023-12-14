@@ -59,7 +59,7 @@ function FormUsuario() {
         activo: usuario.activo,
       };
 
-      fetch(`${process.env.MI_API_BACKEND}/user`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/user`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {

@@ -36,7 +36,7 @@ function FormPunto() {
 
   useEffect(() => {
     const obtenerNegociosPropietario = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocios`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -55,7 +55,7 @@ function FormPunto() {
     obtenerNegociosPropietario();
     if (params?.id) {
       const obtenerPunto = async (id: any) => {
-        await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/punto/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -96,7 +96,7 @@ function FormPunto() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/punto/${params?.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/punto/${params?.id}`, {
           method: "PUT",
           body: JSON.stringify(punto),
           headers: {
@@ -120,7 +120,7 @@ function FormPunto() {
             notificacion("Se ha producido un error");
           });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/punto`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/punto`, {
           method: "POST",
           body: JSON.stringify(punto),
           headers: {

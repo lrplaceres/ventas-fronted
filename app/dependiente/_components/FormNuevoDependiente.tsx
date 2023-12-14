@@ -39,7 +39,7 @@ function FormUsuario() {
   useEffect(() => {
 
     const obtenerPuntos = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ function FormUsuario() {
         punto_id: usuario.punto_id,
       };
 
-      fetch(`${process.env.MI_API_BACKEND}/dependiente`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {

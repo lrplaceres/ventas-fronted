@@ -25,7 +25,7 @@ export const authConfig = {
         formData.append("username", c.username);
         formData.append("password", c.password);
 
-        return fetch(`${process.env.MI_API_BACKEND}/token`, {
+        return fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/token`, {
           method: "POST",
           body: formData,
         })

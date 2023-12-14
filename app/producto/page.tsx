@@ -82,7 +82,7 @@ function Page() {
 
   useEffect(() => {
     const obtenerProductos = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/productos`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/productos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +108,7 @@ function Page() {
   };
  
   const eliminarProducto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

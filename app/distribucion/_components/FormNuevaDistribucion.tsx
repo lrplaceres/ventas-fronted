@@ -45,7 +45,7 @@ function FormDistribucion() {
 
   useEffect(() => {
     const obtenerInventarios = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/inventarios-a-distribuir`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-a-distribuir`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ function FormDistribucion() {
 
 
   const obtenerPuntosNegocio = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos-negocio/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos-negocio/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -97,7 +97,7 @@ function FormDistribucion() {
     e.preventDefault();
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/distribucion`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribucion`, {
         method: "POST",
         body: JSON.stringify(distribucion),
         headers: {

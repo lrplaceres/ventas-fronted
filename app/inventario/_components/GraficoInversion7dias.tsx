@@ -26,7 +26,7 @@ function GraficoInversion7Dias() {
     var key_tmp: [] = [];
     var values_tmp: [] = [];
     await fetch(
-      `${process.env.MI_API_BACKEND}/inventarios-costos-brutos/${fecha_inicio}/${fecha_fin}`,
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-costos-brutos/${fecha_inicio}/${fecha_fin}`,
       {
         method: "GET",
         headers: {

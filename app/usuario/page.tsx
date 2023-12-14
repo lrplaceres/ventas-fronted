@@ -114,7 +114,7 @@ function Page() {
   };
 
   const obtenerUsuarios = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/users`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -131,7 +131,7 @@ function Page() {
   };
 
   const bloquearUsuario = async (id: any) => {
-    await fetch(`${process.env.MI_API_BACKEND}/users-bloquear/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-bloquear/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -154,7 +154,7 @@ function Page() {
   };
 
   const desbloquearUsuario = async (id: any) => {
-    await fetch(`${process.env.MI_API_BACKEND}/users-desbloquear/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-desbloquear/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -177,7 +177,7 @@ function Page() {
   };
 
   const eliminarUsuario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/user/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/user/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

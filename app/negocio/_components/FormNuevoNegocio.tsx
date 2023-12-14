@@ -39,7 +39,7 @@ function FormNegocio() {
 
   useEffect(() => {
     const obtenerPropietarios = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/users-propietarios`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-propietarios`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +83,7 @@ function FormNegocio() {
   };
 
   const obtenerNegocio = async (id: any) => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -106,7 +106,7 @@ function FormNegocio() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/negocio/${params?.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio/${params?.id}`, {
           method: "PUT",
           body: JSON.stringify(negocio),
           headers: {
@@ -131,7 +131,7 @@ function FormNegocio() {
             notificacion("Se ha producido un error");
           });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/negocio`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio`, {
           method: "POST",
           body: JSON.stringify(negocio),
           headers: {

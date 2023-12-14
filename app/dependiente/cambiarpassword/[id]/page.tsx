@@ -40,7 +40,7 @@ function Page() {
     }
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/dependiente-cambiar-contrasenna-propietario/${params?.id}`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente-cambiar-contrasenna-propietario/${params?.id}`, {
         method: "PUT",
         body: JSON.stringify(contrasenna),
         headers: {

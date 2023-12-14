@@ -76,7 +76,7 @@ function Page() {
       setDistribuciones([])
       return notificacion("La fecha fin debe ser mayor que la fecha inicio")
     }
-    await fetch(`${process.env.MI_API_BACKEND}/distribuciones-periodo/${fecha_inicio}/${fecha_fin}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-periodo/${fecha_inicio}/${fecha_fin}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -93,7 +93,7 @@ function Page() {
 
   useEffect(() => {
     const obtenerPuntos = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +119,7 @@ function Page() {
   };
 
   const eliminarPunto = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/punto/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/punto/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

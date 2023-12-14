@@ -98,7 +98,7 @@ function Page() {
 
   useEffect(() => {
     const obtenerDependientes = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/dependientes`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependientes`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -124,7 +124,7 @@ function Page() {
   };
 
   const obtenerDependientes = async () => {
-    await fetch(`${process.env.MI_API_BACKEND}/dependientes`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependientes`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -141,7 +141,7 @@ function Page() {
   };
 
   const bloquearUsuario = async (id: any) => {
-    await fetch(`${process.env.MI_API_BACKEND}/dependiente-bloquear/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente-bloquear/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -164,7 +164,7 @@ function Page() {
   };
 
   const desbloquearUsuario = async (id: any) => {
-    await fetch(`${process.env.MI_API_BACKEND}/dependiente-desbloquear/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente-desbloquear/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

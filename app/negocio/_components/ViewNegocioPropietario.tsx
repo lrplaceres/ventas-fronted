@@ -22,7 +22,7 @@ function ViewKiokoPropietario() {
 
   useEffect(() => {
     const obtenerNegociosPropietario = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocios`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

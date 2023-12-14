@@ -87,7 +87,7 @@ function Page() {
 
   useEffect(() => {
     const obtenerNegocios = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/negocio`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +115,7 @@ function Page() {
 
 
   const eliminarNegocio = async (id: any) => {
-    await fetch(`${process.env.MI_API_BACKEND}/negocio/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -136,7 +136,7 @@ function Page() {
 
   useEffect(() => {
     const obtenerInventarios = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -164,7 +164,7 @@ function Page() {
   
 
   const eliminarInventario = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventario/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

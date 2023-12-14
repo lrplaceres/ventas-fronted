@@ -49,7 +49,7 @@ function FormDistribucion() {
 
   useEffect(() => {
     const obtenerInventarios = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/inventarios`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,7 @@ function FormDistribucion() {
     };
 
     const obtenerDistribucion = async (id: any) => {
-      await fetch(`${process.env.MI_API_BACKEND}/distribucion/${id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribucion/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +107,7 @@ function FormDistribucion() {
   
 
   const obtenerPuntosNegocio = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/puntos-negocio/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos-negocio/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -129,7 +129,7 @@ function FormDistribucion() {
     e.preventDefault();
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/distribucion/${params?.id}`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribucion/${params?.id}`, {
         method: "PUT",
         body: JSON.stringify(distribucion),
         headers: {

@@ -135,7 +135,7 @@ function Page() {
 
   useEffect(() => {
     const obtenerVentas = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/ventas-punto`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-punto`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +163,7 @@ function Page() {
 
 
   const eliminarVenta = async (id: number) => {
-    await fetch(`${process.env.MI_API_BACKEND}/venta/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/venta/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -164,7 +164,7 @@ function Page() {
       return notificacion("La fecha fin debe ser mayor que la fecha inicio");
     }
     await fetch(
-      `${process.env.MI_API_BACKEND}/ventas-utilidades-periodo/${fecha_inicio}/${fecha_fin}`,
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-utilidades-periodo/${fecha_inicio}/${fecha_fin}`,
       {
         method: "GET",
         headers: {

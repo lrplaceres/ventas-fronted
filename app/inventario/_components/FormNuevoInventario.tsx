@@ -50,7 +50,7 @@ function FormInventario() {
 
   useEffect(() => {
     const obtenerNegociosPropietario = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocios`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +67,7 @@ function FormInventario() {
     };
 
     const obtenerProductos = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/productos`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/productos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ function FormInventario() {
     obtenerProductos();
     if (params?.id) {
       const obtenerInventario = async (id: any) => {
-        await fetch(`${process.env.MI_API_BACKEND}/inventario/${id}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventario/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -131,7 +131,7 @@ function FormInventario() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/inventario/${params?.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventario/${params?.id}`, {
           method: "PUT",
           body: JSON.stringify(inventario),
           headers: {
@@ -155,7 +155,7 @@ function FormInventario() {
             notificacion("Se ha producido un error");
           });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/inventario`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventario`, {
           method: "POST",
           body: JSON.stringify(inventario),
           headers: {

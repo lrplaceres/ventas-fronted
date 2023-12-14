@@ -35,7 +35,7 @@ function FormProducto() {
 
   useEffect(() => {
     const obtenerNegociosPropietario = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/negocios`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocios`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ function FormProducto() {
     obtenerNegociosPropietario();
     if (params?.id) {
       const obtenerProducto = async (id: any) => {
-        await fetch(`${process.env.MI_API_BACKEND}/producto/${id}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -89,7 +89,7 @@ function FormProducto() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.MI_API_BACKEND}/producto/${params.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto/${params.id}`, {
           method: "PUT",
           body: JSON.stringify(producto),
           headers: {
@@ -116,7 +116,7 @@ function FormProducto() {
             notificacion("Se ha producido un error");
           });
       } else {
-        fetch(`${process.env.MI_API_BACKEND}/producto`, {
+        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto`, {
           method: "POST",
           body: JSON.stringify(producto),
           headers: {

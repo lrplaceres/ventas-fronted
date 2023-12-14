@@ -38,7 +38,7 @@ function Page() {
     }
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/users-cambiar-contrasenna`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-cambiar-contrasenna`, {
         method: "PUT",
         body: JSON.stringify(contrasenna),
         headers: {

@@ -40,7 +40,7 @@ function FormVenta() {
 
   useEffect(() => {
     const obtenerDistribuciones = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/distribuciones-venta-punto`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta-punto`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +73,7 @@ function FormVenta() {
     e.preventDefault();
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/venta`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/venta`, {
         method: "POST",
         body: JSON.stringify(venta),
         headers: {

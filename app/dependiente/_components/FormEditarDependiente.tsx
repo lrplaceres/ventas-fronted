@@ -40,7 +40,7 @@ function FormUsuario() {
 
   useEffect(() => {
     const obtenerPuntos = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/puntos`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ function FormUsuario() {
     };
 
     const obtenerDependiente = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/dependiente/${params?.id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente/${params?.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +108,7 @@ function FormUsuario() {
     };
 
     try {
-      fetch(`${process.env.MI_API_BACKEND}/dependiente/${params?.id}`, {
+      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente/${params?.id}`, {
         method: "PUT",
         body: JSON.stringify(data),
         headers: {

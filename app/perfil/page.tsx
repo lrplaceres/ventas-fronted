@@ -20,7 +20,7 @@ function Perfil() {
 
   useEffect(() => {
     const obtenerUsuario = async () => {
-      await fetch(`${process.env.MI_API_BACKEND}/users/me`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
