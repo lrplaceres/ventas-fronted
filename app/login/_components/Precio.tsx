@@ -29,7 +29,7 @@ function Precio() {
                       Plan básico
                     </Typography>
                     <Typography variant="h4" color="error">
-                      $500
+                      $XXX
                     </Typography>
                     <Typography variant="body2" height={70}>
                       Pago en MN. Plan de suscripción mensual.
@@ -51,7 +51,7 @@ function Precio() {
                       Plan pro
                     </Typography>
                     <Typography variant="h4" color="error">
-                      $1350
+                      $XXXX
                     </Typography>
                     <Typography variant="body2" height={70}>
                       Pago en MN. Plan de suscripción trimestral. Incluye dos
@@ -74,7 +74,7 @@ function Precio() {
                       Plan premium
                     </Typography>
                     <Typography variant="h4" color="error">
-                      $5040
+                      $XXXX
                     </Typography>
                     <Typography variant="body2" height={70}>
                       Pago en MN. Plan de suscripción anual. Incluye número
