@@ -14,7 +14,7 @@ declare module "next-auth" {
 }
 
 export const authConfig = {
-  debug: true,
+  debug: false,
   providers: [
     Credentials({
       credentials: { username: { label: "Username", type: "text" }, password: { label: "Password", type: "password" }, csrf: { type: "hidden" } },
@@ -74,6 +74,7 @@ export const authConfig = {
     signIn: '/login',
     error: '/error/server',
   },
+  
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
