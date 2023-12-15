@@ -29,9 +29,9 @@ export default async function SignIn() {
       >
         
           <Avatar sx={{mb:3, backgroundColor: "secondary.main"}}>
-            <LockIcon />
-          </Avatar>
-        
+          <LockIcon />
+        </Avatar>
+
 
         <form method="post" action="/api/auth/callback/credentials">
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
