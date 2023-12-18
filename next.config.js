@@ -7,7 +7,7 @@ const nextConfig = {
     },
   },
   env: {
-    PUBLIC_MI_API_FRONTEND: "http://127.0.0.1:3000",
+    MI_API_FRONTEND: "http://127.0.0.1:3000",
     NEXT_PUBLIC_MI_API_BACKEND: "http://127.0.0.1:8000",
 
     NEXTAUTH_URL: "http://localhost:3000",
