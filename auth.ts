@@ -15,6 +15,7 @@ declare module "next-auth" {
 
 export const authConfig = {
   debug: false,
+  trustHost: true,
   providers: [
     Credentials({
       credentials: { username: { label: "Username", type: "text" }, password: { label: "Password", type: "password" }, csrf: { type: "hidden" } },
