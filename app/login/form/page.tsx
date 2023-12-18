@@ -7,7 +7,7 @@ import LockIcon from "@mui/icons-material/Lock";
 
 export default async function SignIn() {
   const csrfToken = await fetch(
-    `${process.env.NEXT_PUBLIC_MI_API_FRONTEND}/api/auth/csrf`,
+    `${process.env.MI_API_FRONTEND}/api/auth/csrf`,
     {
       headers: headers(),
     }
