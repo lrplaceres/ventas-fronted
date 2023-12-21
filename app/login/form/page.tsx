@@ -2,18 +2,25 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { Avatar } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 
 export default async function SignIn() {
-  const csrfToken = await fetch(
-    `${process.env.MI_API_FRONTEND}/api/auth/csrf`,
+  /*const csrfToken = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/auth/csrf`,
     {
       headers: headers(),
     }
   )
     .then((res) => res.json())
-    .then((csrfTokenObject) => csrfTokenObject?.csrfToken);
+    .then((csrfTokenObject) => csrfTokenObject?.csrfToken)
+    .catch(error => {console.log(error), console.log(process.env.NEXTAUTH_URL)});
+    */
+    const csrfToken = cookies() //Might be empty before the first submit
+    .getAll()
+    .find( cookie => cookie.name == "authjs.csrf-token")?.value
+    .split('|')[0]; 
 
   return (
     <>
