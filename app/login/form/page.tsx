@@ -7,6 +7,7 @@ import { Avatar } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 
 export default async function SignIn() {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   /*const csrfToken = await fetch(
     `${process.env.NEXTAUTH_URL}/api/auth/csrf`,
     {

@@ -36,7 +36,10 @@ export const authConfig = {
               return data;
             })
           }
-          );
+          )
+          .catch(error =>{
+            console.log(error)
+          });
 
       },
     }),
