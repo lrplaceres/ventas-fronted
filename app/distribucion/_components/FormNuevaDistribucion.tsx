@@ -17,11 +17,18 @@ import { FormEvent, useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+
+interface Distribucion {
+  inventario_id: number | string;
+  cantidad: number;
+  fecha: Date | Dayjs | null;
+  punto_id: number | string;
+}
 
 function FormDistribucion() {
   const router = useRouter();
@@ -30,9 +37,9 @@ function FormDistribucion() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [distribucion, setDistribucion] = useState<any>({
+  const [distribucion, setDistribucion] = useState<Distribucion>({
     inventario_id: "",
-    cantidad: "",
+    cantidad: 0,
     fecha: new Date(),
     punto_id: "",
   });
@@ -45,13 +52,16 @@ function FormDistribucion() {
 
   useEffect(() => {
     const obtenerInventarios = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-a-distribuir`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      })
+      await fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-a-distribuir`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           setInventarios(data);
@@ -60,12 +70,12 @@ function FormDistribucion() {
           notificacion("Se ha producido un error");
         });
     };
-    
+
     obtenerInventarios();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setDistribucion({ ...distribucion, [name]: value });
   };
 
@@ -74,16 +84,17 @@ function FormDistribucion() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-
-
   const obtenerPuntosNegocio = async (id: number) => {
-    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos-negocio/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
+    await fetch(
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos-negocio/${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setPuntos(data);
@@ -102,12 +113,12 @@ function FormDistribucion() {
         body: JSON.stringify(distribucion),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {
           if (response.ok) {
-            response.json().then((data) => {
+            response.json().then((data: any) => {
               notificacion(`Se ha creado el distribución`, "info");
               setTimeout(() => router.push("/distribucion"), 300);
             });
@@ -137,7 +148,7 @@ function FormDistribucion() {
             disablePortal
             id="combo-box-demo"
             options={inventarios}
-            getOptionLabel={(option:any) =>
+            getOptionLabel={(option: any) =>
               `${option.nombre} ► $${option.costo} ► \ud83d\udcc5${option.fecha}`
             }
             sx={{ mb: 1 }}
@@ -159,6 +170,7 @@ function FormDistribucion() {
             renderInput={(params) => (
               <TextField {...params} label="Inventario" required />
             )}
+            disabled={inventarios.length > 0 ? false : true}
           />
 
           <FormControl fullWidth sx={{ mb: 1 }}>
@@ -173,7 +185,7 @@ function FormDistribucion() {
               required
               inputProps={{ readOnly: puntos.length ? false : true }}
             >
-              {puntos.map((punto:any, index) => (
+              {puntos.map((punto: any, index) => (
                 <MenuItem key={index.toString()} value={punto.id}>
                   {punto.nombre}
                 </MenuItem>

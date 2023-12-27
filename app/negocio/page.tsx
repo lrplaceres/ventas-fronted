@@ -7,7 +7,6 @@ import {
   GridColumnGroupingModel,
   esES,
 } from "@mui/x-data-grid";
-import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -19,6 +18,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import BotonInsertar from "./_components/BotonInsertar";
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -31,6 +33,19 @@ const columnGroupingModel: GridColumnGroupingModel = [
     ],
   },
 ];
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
 
 function Page() {
   const columns: GridColDef[] = [
@@ -91,7 +106,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -112,14 +127,12 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-
-
   const eliminarNegocio = async (id: any) => {
     await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     }).then(function (response) {
       if (response.ok) {
@@ -137,15 +150,8 @@ function Page() {
   return (
     <>
       <Container maxWidth="md">
-        <Button
-          variant="contained"
-          color="inherit"
-          sx={{ mt: 1, mb: 1 }}
-          startIcon={<AddBusinessIcon />}
-          onClick={() => router.push("/negocio/nuevo")}
-        >
-          Insertar Negocio
-        </Button>
+
+        <BotonInsertar />       
 
         <Box sx={{height: "83vh", width:"100%"}}>
           <DataGrid
@@ -158,6 +164,8 @@ function Page() {
             sx={{
               border: 0,
             }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>
 

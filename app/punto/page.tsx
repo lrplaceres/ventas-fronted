@@ -7,6 +7,7 @@ import {
   GridRowSelectionModel,
   GridColumnGroupingModel,
   GridActionsCellItem,
+  GridToolbarContainer,
 } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,6 +21,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BotonInsertar from "./_components/BotonInsertar";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -32,6 +34,19 @@ const columnGroupingModel: GridColumnGroupingModel = [
     ],
   },
 ];
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
 
 function Page() {
   const columns: GridColDef[] = [
@@ -97,7 +112,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -123,13 +138,13 @@ function Page() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
         if (response.ok) {
           notificacion(`El Punto ha sido eliminado`, "info");
-          setPuntos(puntos.filter((punto:any) => punto.id != id));
+          setPuntos(puntos.filter((punto: any) => punto.id != id));
           handleClose();
         } else {
           response.json().then((data) => {
@@ -157,13 +172,15 @@ function Page() {
             columnGroupingModel={columnGroupingModel}
             onRowSelectionModelChange={(ids) => {
               const selectedRowsData = ids.map((id) =>
-                puntos.find((row:any) => row.id === id)
+                puntos.find((row: any) => row.id === id)
               );
               console.log(selectedRowsData);
             }}
             sx={{
               border: 0,
             }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>
 

@@ -1,17 +1,35 @@
 "use client";
-import { Box, Button, TextField, Typography, Container } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
+  Switch,
+  FormControlLabel,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import { DateTimePicker } from "@mui/x-date-pickers";
+
+interface Venta {
+  distribucion_id: string;
+  cantidad: number;
+  precio: number;
+  fecha: Date | Dayjs | null;
+  punto_id: number | string;
+  pago_diferido: boolean;
+  descripcion: string;
+}
 
 function FormVenta() {
   const router = useRouter();
@@ -22,12 +40,14 @@ function FormVenta() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [venta, setVenta] = useState<any>({
+  const [venta, setVenta] = useState<Venta>({
     distribucion_id: "",
-    cantidad: "",
-    precio: "",
+    cantidad: 0,
+    precio: 0,
     fecha: new Date(),
     punto_id: "",
+    pago_diferido: false,
+    descripcion: "",
   });
 
   const [distribuciones, setDistribuciones] = useState([]);
@@ -40,13 +60,16 @@ function FormVenta() {
 
   useEffect(() => {
     const obtenerDistribuciones = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      })
+      await fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           setDistribuciones(data);
@@ -55,21 +78,23 @@ function FormVenta() {
           notificacion("Se ha producido un error");
         });
     };
-    
+
     obtenerDistribuciones();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setVenta({ ...venta, [name]: value });
+  };
+
+  const handleChangeSlider = ({ target: { name, checked } }: any) => {
+    setVenta({ ...venta, [name]: checked });
   };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-
-
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -80,7 +105,7 @@ function FormVenta() {
         body: JSON.stringify(venta),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {
@@ -111,11 +136,36 @@ function FormVenta() {
             INSERTAR VENTA
           </Typography>
 
+          <FormControlLabel
+            control={
+              <Switch
+                name="pago_diferido"
+                onChange={handleChangeSlider}
+                checked={venta.pago_diferido}
+              />
+            }
+            label="Pago diferido"
+            sx={{ mb: 1 }}
+          />
+
+          <TextField
+            id="descripcion"
+            name="descripcion"
+            label="Descripción del pago"
+            value={venta.descripcion}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1, display: venta.pago_diferido ? "block" : "none" }}
+            required={venta.pago_diferido ? true : false}
+            multiline
+            rows={2}
+          />
+
           <Autocomplete
             disablePortal
             id="combo-box-demo"
             options={distribuciones}
-            getOptionLabel={(option:any) =>
+            getOptionLabel={(option: any) =>
               `${option.nombre_producto} ► ${option.nombre_punto} ► \ud83d\udcc5${option.fecha}`
             }
             sx={{ mb: 1 }}
@@ -138,8 +188,8 @@ function FormVenta() {
                   ...venta,
                   distribucion_id: "",
                   punto_id: "",
-                  precio: "",
-                  cantidad: "",
+                  precio: 0,
+                  cantidad: 0,
                 });
                 setDistribucionEdit([]);
                 setMaximaCantidad(0);

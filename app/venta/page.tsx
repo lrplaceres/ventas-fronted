@@ -21,6 +21,48 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, Container } from "@mui/material";
+import { darken, lighten, styled } from '@mui/material/styles';
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
+
+const getBackgroundColor = (color: string, mode: string) =>
+  mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7);
+
+const getHoverBackgroundColor = (color: string, mode: string) =>
+  mode === 'dark' ? darken(color, 0.6) : lighten(color, 0.6);
+
+const getSelectedBackgroundColor = (color: string, mode: string) =>
+  mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.5);
+
+const getSelectedHoverBackgroundColor = (color: string, mode: string) =>
+  mode === 'dark' ? darken(color, 0.4) : lighten(color, 0.4);
+
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({ 
+  '& .pago-diferido--true': {
+    backgroundColor: getBackgroundColor(
+      theme.palette.error.main,
+      theme.palette.mode,
+    ),
+    '&:hover': {
+      backgroundColor: getHoverBackgroundColor(
+        theme.palette.error.main,
+        theme.palette.mode,
+      ),
+    },
+    '&.Mui-selected': {
+      backgroundColor: getSelectedBackgroundColor(
+        theme.palette.error.main,
+        theme.palette.mode,
+      ),
+      '&:hover': {
+        backgroundColor: getSelectedHoverBackgroundColor(
+          theme.palette.error.main,
+          theme.palette.mode,
+        ),
+      },
+    },
+  },
+}));
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -28,12 +70,26 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
+
 function Page() {
   const columns: GridColDef[] = [
     {
       field: "nombre_producto",
       headerName: "Nombre",
       width: 160,
+      type: "string",
       renderCell: (params) => (
         <Link href={`/venta/${params.row.id}`} className="decoration-none">
           {params.value}
@@ -52,7 +108,7 @@ function Page() {
         return currencyFormatterCount.format(value);
       },
     },
-    { field: "nombre_punto", headerName: "Punto", width: 120 },
+    { field: "nombre_punto",type: "string", headerName: "Punto", width: 120 },
     {
       field: "precio",
       headerName: "Precio",
@@ -65,7 +121,7 @@ function Page() {
         return currencyFormatter.format(value);
       },
     },
-    { field: "fecha", headerName: "Fecha", width: 140 },
+    { field: "fecha", headerName: "Fecha", width: 180 },
     {
       field: "monto",
       headerName: "Monto",
@@ -78,7 +134,7 @@ function Page() {
         return currencyFormatter.format(value);
       },
     },
-    { field: "dependiente", headerName: "Dependiente", width: 150 },
+    { field: "dependiente",type: "string", headerName: "Dependiente", width: 150 },
     {
       field: "actions",
       type: "actions",
@@ -96,6 +152,8 @@ function Page() {
         />,
       ],
     },
+    { field: "pago_diferido", type: "boolean", headerName: "Pago diferido", width: 80 },
+    { field: "descripcion",type: "string", headerName: "Descripción", width: 180 }
   ];
 
   const columnGroupingModel: GridColumnGroupingModel = [
@@ -125,6 +183,8 @@ function Page() {
     useState<GridColumnVisibilityModel>({
       monto: false,
       dependiente: false,
+      pago_diferido: false,
+      descripcion: false,
     });
 
   const [open, setOpen] = useState(false);
@@ -145,7 +205,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -172,7 +232,7 @@ function Page() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -201,7 +261,7 @@ function Page() {
         </div>
 
         <Box sx={{height: "83vh", width:"100%"}}>
-          <DataGrid
+          <StyledDataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={ventas}
             columns={columns}
@@ -215,6 +275,9 @@ function Page() {
             sx={{
               border: 0,
             }}
+            getRowClassName={(params) => `pago-diferido--${params.row.pago_diferido}`}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>
 

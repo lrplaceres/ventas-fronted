@@ -8,7 +8,7 @@ import { auth } from "auth";
 import { Providers } from "./components/providers";
 
 export const metadata: Metadata = {
-  title: "SIMPLE_TPV",
+  title: "SIMPLE",
   description: "Simple TPV POS",
 };
 

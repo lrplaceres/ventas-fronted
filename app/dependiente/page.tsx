@@ -7,6 +7,7 @@ import {
   GridColDef,
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
+  GridToolbarExport,
   esES,
 } from "@mui/x-data-grid";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
@@ -24,6 +25,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { GridToolbarContainer } from "@mui/x-data-grid";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -36,6 +38,19 @@ const columnGroupingModel: GridColumnGroupingModel = [
     ],
   },
 ];
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
 
 function Page() {
   const columns: GridColDef[] = [
@@ -102,7 +117,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -128,7 +143,7 @@ function Page() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -145,7 +160,7 @@ function Page() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -168,7 +183,7 @@ function Page() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -206,6 +221,8 @@ function Page() {
             sx={{
               border: 0,
             }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>        
       </Container>

@@ -9,6 +9,8 @@ import {
   MenuItem,
   Select,
   Container,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -16,6 +18,18 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+interface Usuario {
+  usuario: string;
+  password: string;
+  repite: string;
+  nombre: string;
+  email: string | null;
+  activo: boolean;
+  punto_id: number | string;
+}
 
 function FormUsuario() {
   const router = useRouter();
@@ -24,7 +38,7 @@ function FormUsuario() {
 
   const { data: session, update } = useSession();
 
-  const [usuario, setUsuario] = useState({    
+  const [usuario, setUsuario] = useState<Usuario>({
     usuario: "",
     password: "",
     repite: "",
@@ -34,16 +48,19 @@ function FormUsuario() {
     punto_id: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword: any = () => setShowPassword((show) => !show);
+
   const [puntos, setPuntos] = useState([]);
 
   useEffect(() => {
-
     const obtenerPuntos = async () => {
       await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -54,12 +71,12 @@ function FormUsuario() {
           notificacion("Se ha producido un error");
         });
     };
-    
+
     obtenerPuntos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setUsuario({ ...usuario, [name]: value });
   };
 
@@ -67,8 +84,6 @@ function FormUsuario() {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-
-
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -91,13 +106,16 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
-              notificacion(`Se ha creado el dependiente ${data.usuario}`, "info");
+              notificacion(
+                `Se ha creado el dependiente ${data.usuario}`,
+                "info"
+              );
               setTimeout(() => router.push("/dependiente"), 300);
             });
           } else {
@@ -140,8 +158,21 @@ function FormUsuario() {
             value={usuario.password}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             id="repite"
@@ -151,8 +182,21 @@ function FormUsuario() {
             value={usuario.repite}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <FormControl fullWidth sx={{ mb: 1 }}>
@@ -166,7 +210,7 @@ function FormUsuario() {
               onChange={handleChange}
               required
             >
-              {puntos.map((punto:any, index) => (
+              {puntos.map((punto: any, index) => (
                 <MenuItem key={index.toString()} value={punto.id}>
                   {punto.nombre}
                 </MenuItem>

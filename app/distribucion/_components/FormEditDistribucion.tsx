@@ -17,11 +17,20 @@ import { FormEvent, useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+
+interface Distribucion {
+  inventario_id: number | string,
+    cantidad: number,
+    fecha: Date | Dayjs | null,
+    punto_id: number | string,
+    cantidad_inventario: 0,
+    cantidad_distribuida: 0,
+}
 
 function FormDistribucion() {
   const router = useRouter();
@@ -32,13 +41,13 @@ function FormDistribucion() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [distribucion, setDistribucion] = useState<any>({
+  const [distribucion, setDistribucion] = useState<Distribucion>({
     inventario_id: "",
-    cantidad: "",
+    cantidad: 0,
     fecha: new Date(),
     punto_id: "",
-    cantidad_inventario: "",
-    cantidad_distribuida: "",
+    cantidad_inventario: 0,
+    cantidad_distribuida: 0,
   });
 
   const [inventarios, setInventarios] = useState([]);
@@ -53,7 +62,7 @@ function FormDistribucion() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -70,7 +79,7 @@ function FormDistribucion() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -111,7 +120,7 @@ function FormDistribucion() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -134,7 +143,7 @@ function FormDistribucion() {
         body: JSON.stringify(distribucion),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {

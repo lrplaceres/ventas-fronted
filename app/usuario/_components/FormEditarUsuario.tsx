@@ -15,15 +15,17 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { useSession } from "next-auth/react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
+interface Usuario {
+  usuario: number | string;
+  rol: string;
+  nombre: string;
+  email: string | null;
+  activo: boolean;
+}
 
 function FormUsuario() {
   const router = useRouter();
@@ -34,7 +36,7 @@ function FormUsuario() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [usuario, setUsuario] = useState({
+  const [usuario, setUsuario] = useState<Usuario>({
     usuario: "",
     rol: "propietario",
     nombre: "",
@@ -43,33 +45,32 @@ function FormUsuario() {
   });
 
   useEffect(() => {
-    
-      const obtenerUsuario = async (id: any) => {
-        await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/user/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
+    const obtenerUsuario = async (id: any) => {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/user/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUsuario(data);
         })
-          .then((response) => response.json())
-          .then((data) => {
-            setUsuario(data);
-          })
-          .catch(function (error) {
-            notificacion("Se ha producido un error");
-          });
-      };
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
 
-      obtenerUsuario(params?.id);
+    obtenerUsuario(params?.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setUsuario({ ...usuario, [name]: value });
   };
 
-  const handleChangeSlider = ({ target: { name, checked } } : any) => {
+  const handleChangeSlider = ({ target: { name, checked } }: any) => {
     setUsuario({ ...usuario, [name]: checked });
   };
 
@@ -77,8 +78,6 @@ function FormUsuario() {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-
-
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -95,7 +94,7 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {
@@ -156,7 +155,6 @@ function FormUsuario() {
               onChange={handleChange}
               required
             >
-              <MenuItem value={"dependiente"}>Dependiente</MenuItem>
               <MenuItem value={"propietario"}>Propietario</MenuItem>
               <MenuItem value={"superadmin"}>Superadmin</MenuItem>
             </Select>
@@ -202,9 +200,7 @@ function FormUsuario() {
               Aceptar
             </Button>
           </Box>
-
         </form>
-
       </Container>
     </>
   );

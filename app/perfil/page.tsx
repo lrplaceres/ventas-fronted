@@ -6,10 +6,17 @@ import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import Container from "@mui/material/Container";
 
+interface Usuario {
+  usuario: number | string;
+  nombre: string;
+  email: string | null;
+  rol: string;
+}
+
 function Perfil() {
   const { data: session, update } = useSession();
 
-  const [usuario, setUsuario] = useState({
+  const [usuario, setUsuario] = useState<Usuario>({
     usuario: "",
     nombre: "",
     email: "",
@@ -24,7 +31,7 @@ function Perfil() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())

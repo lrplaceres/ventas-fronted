@@ -19,6 +19,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BotonInsertar from "./_components/BotonInsertar";
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -27,6 +29,19 @@ const columnGroupingModel: GridColumnGroupingModel = [
     children: [{ field: "nombre" }, { field: "negocio_nombre" }],
   },
 ];
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
 
 function Page() {
   const columns: GridColDef[] = [
@@ -86,7 +101,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -112,7 +127,7 @@ function Page() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -147,6 +162,8 @@ function Page() {
             sx={{
               border: 0,
             }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>
 

@@ -20,6 +20,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import { useParams } from "next/navigation";
 
+interface Usuario {
+  nombre: string;
+  email: string | null;
+  activo: boolean;
+  punto_id: number | string;
+}
+
 function FormUsuario() {
   const router = useRouter();
 
@@ -29,7 +36,7 @@ function FormUsuario() {
 
   const { data: session, update } = useSession();
 
-  const [usuario, setUsuario] = useState({
+  const [usuario, setUsuario] = useState<Usuario>({
     nombre: "",
     email: "",
     activo: true,
@@ -44,7 +51,7 @@ function FormUsuario() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -57,13 +64,16 @@ function FormUsuario() {
     };
 
     const obtenerDependiente = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente/${params?.id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      })
+      await fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente/${params?.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then(function (response) {
           if (response.ok) {
             var result = response.json();
@@ -108,14 +118,17 @@ function FormUsuario() {
     };
 
     try {
-      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente/${params?.id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      })
+      fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/dependiente/${params?.id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then(function (response) {
           if (response.ok) {
             response.json().then((data) => {
@@ -155,7 +168,7 @@ function FormUsuario() {
               onChange={handleChange}
               required
             >
-              {puntos.map((punto:any, index) => (
+              {puntos.map((punto: any, index) => (
                 <MenuItem key={index.toString()} value={punto.id}>
                   {punto.nombre}
                 </MenuItem>

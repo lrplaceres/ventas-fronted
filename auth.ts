@@ -5,7 +5,6 @@ import Credentials from "next-auth/providers/credentials";
 declare module "next-auth" {
   interface Session {
     access_token?: string,
-    token_type?: string,
     rol?: string,
     user: {
       name?: string;
@@ -56,7 +55,6 @@ export const authConfig = {
       if (user) {
         token.rol = user.rol;
         token.access_token = user.access_token;
-        token.token_type = user.token_type;
       }
       return token;
     },
@@ -64,13 +62,12 @@ export const authConfig = {
       // Send properties to the client, like an access_token from a provider.
       session.rol = token.rol;
       session.access_token = token.access_token;
-      session.token_type = token.token_type;
       return session;
     },
   },
   session: {
     strategy: "jwt",
-    maxAge: 20 * 60 * 60, // 20 horas
+    maxAge: 17532 * 60 * 60, // 17532 horas = 2 años
     //async encode() {},
     //async decode() {},
   },

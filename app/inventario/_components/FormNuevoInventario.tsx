@@ -54,7 +54,7 @@ function FormInventario() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -71,7 +71,7 @@ function FormInventario() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -91,7 +91,7 @@ function FormInventario() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then((response) => response.json())
@@ -136,7 +136,7 @@ function FormInventario() {
           body: JSON.stringify(inventario),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then(function (response) {
@@ -160,7 +160,7 @@ function FormInventario() {
           body: JSON.stringify(inventario),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then(function (response) {

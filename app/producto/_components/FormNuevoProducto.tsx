@@ -17,6 +17,11 @@ import { FormEvent, useEffect, useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 
+interface Producto {
+  nombre: string;
+  negocio_id: number | string;
+}
+
 function FormProducto() {
   const router = useRouter();
 
@@ -26,7 +31,7 @@ function FormProducto() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [producto, setProducto] = useState({
+  const [producto, setProducto] = useState<Producto>({
     nombre: "",
     negocio_id: "",
   });
@@ -39,7 +44,7 @@ function FormProducto() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -54,13 +59,16 @@ function FormProducto() {
     obtenerNegociosPropietario();
     if (params?.id) {
       const obtenerProducto = async (id: any) => {
-        await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
-        })
+        await fetch(
+          `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+          }
+        )
           .then((response) => response.json())
           .then((data) => {
             setProducto(data);
@@ -69,13 +77,13 @@ function FormProducto() {
             notificacion("Se ha producido un error");
           });
       };
-      
+
       obtenerProducto(params?.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setProducto({ ...producto, [name]: value });
   };
 
@@ -89,14 +97,17 @@ function FormProducto() {
 
     try {
       if (params?.id) {
-        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto/${params.id}`, {
-          method: "PUT",
-          body: JSON.stringify(producto),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
-        })
+        fetch(
+          `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/producto/${params.id}`,
+          {
+            method: "PUT",
+            body: JSON.stringify(producto),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+          }
+        )
           .then(function (response) {
             if (response.ok) {
               response.json().then((data) => {
@@ -121,7 +132,7 @@ function FormProducto() {
           body: JSON.stringify(producto),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then(function (response) {
@@ -179,7 +190,7 @@ function FormProducto() {
               required
             >
               {negocios.length > 0 &&
-                negocios.map((producto:any, index) => (
+                negocios.map((producto: any, index) => (
                   <MenuItem key={index.toString()} value={producto.id}>
                     {producto.nombre}
                   </MenuItem>
@@ -207,10 +218,7 @@ function FormProducto() {
               Aceptar
             </Button>
           </Box>
-
         </form>
-
-        
       </Container>
     </>
   );

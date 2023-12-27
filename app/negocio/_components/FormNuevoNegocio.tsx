@@ -11,9 +11,18 @@ import { useSession } from "next-auth/react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+
+interface Negocio {
+  nombre: string;
+  direccion: string;
+  informacion: string;
+  fecha_licencia: Date | Dayjs | null;
+  activo: boolean;
+  propietario_id: number | string;
+}
 
 function FormNegocio() {
   const router = useRouter();
@@ -24,7 +33,7 @@ function FormNegocio() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [negocio, setNegocio] = useState<any>({
+  const [negocio, setNegocio] = useState<Negocio>({
     nombre: "",
     direccion: "",
     informacion: "",
@@ -39,13 +48,16 @@ function FormNegocio() {
 
   useEffect(() => {
     const obtenerPropietarios = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-propietarios`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      })
+      await fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-propietarios`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           setPropietarios(data);
@@ -54,7 +66,7 @@ function FormNegocio() {
           notificacion("Se ha producido un error");
         });
     };
-    
+
     obtenerPropietarios();
     if (params?.id) {
       obtenerNegocio(params.id);
@@ -64,16 +76,16 @@ function FormNegocio() {
 
   useEffect(() => {
     setPropietarioEdit(
-      propietarios.filter((v:any) => v.id == negocio.propietario_id)[0]
+      propietarios.filter((v: any) => v.id == negocio.propietario_id)[0]
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propietarios]);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setNegocio({ ...negocio, [name]: value });
   };
 
-  const handleChangeSlider = ({ target: { name, checked } } : any) => {
+  const handleChangeSlider = ({ target: { name, checked } }: any) => {
     setNegocio({ ...negocio, [name]: checked });
   };
 
@@ -87,7 +99,7 @@ function FormNegocio() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -99,21 +111,22 @@ function FormNegocio() {
       });
   };
 
-
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
       if (params?.id) {
-        fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio/${params?.id}`, {
-          method: "PUT",
-          body: JSON.stringify(negocio),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
-          },
-        })
+        fetch(
+          `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocio/${params?.id}`,
+          {
+            method: "PUT",
+            body: JSON.stringify(negocio),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+          }
+        )
           .then(function (response) {
             if (response.ok) {
               notificacion(
@@ -136,7 +149,7 @@ function FormNegocio() {
           body: JSON.stringify(negocio),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then(function (response) {
@@ -162,8 +175,6 @@ function FormNegocio() {
       return notificacion(error);
     }
   };
-
-
 
   return (
     <>
@@ -226,7 +237,9 @@ function FormNegocio() {
             disablePortal
             id="combo-box-demo"
             options={propietarios}
-            getOptionLabel={(option:any) => `${option.nombre} ► ${option.usuario}`}
+            getOptionLabel={(option: any) =>
+              `${option.nombre} ► ${option.usuario}`
+            }
             sx={{ mb: 1 }}
             value={params?.id ? propietarioEdit : propietarios[0]}
             onChange={(event: any, newValue: any | null) => {
@@ -274,10 +287,8 @@ function FormNegocio() {
             >
               Aceptar
             </Button>
-            </Box>
-
+          </Box>
         </form>
-
       </Container>
     </>
   );

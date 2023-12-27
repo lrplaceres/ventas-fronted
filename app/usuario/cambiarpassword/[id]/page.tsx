@@ -4,10 +4,12 @@ import TextField from "@mui/material/TextField";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
-import { Box, Button, Typography, Container } from "@mui/material";
+import { Box, Button, Typography, Container, InputAdornment, IconButton } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import { useParams } from "next/navigation";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 function Page() {
   const router = useRouter();
@@ -22,6 +24,10 @@ function Page() {
     contrasenna_nueva: "",
     repite_contrasenna_nueva: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword : any = () => setShowPassword((show) => !show);
 
   const handleChange = ({ target: { name, value } } : any) => {
     setContrasenna({ ...contrasenna, [name]: value });
@@ -45,7 +51,7 @@ function Page() {
         body: JSON.stringify(contrasenna),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {
@@ -84,8 +90,21 @@ function Page() {
             value={contrasenna.contrasenna_nueva}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             id="repite_contrasenna_nueva"
@@ -95,8 +114,21 @@ function Page() {
             value={contrasenna.repite_contrasenna_nueva}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <Box sx={{ textAlign: "center" }}>

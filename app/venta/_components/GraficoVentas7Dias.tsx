@@ -1,5 +1,4 @@
 import ReactEcharts from "echarts-for-react";
-import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
@@ -21,7 +20,7 @@ function GraficoVentas7Dias() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         }
       )

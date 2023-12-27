@@ -25,6 +25,7 @@ import { useSession } from "next-auth/react";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import OpcionesUsuario from "./OpcionesUsuario";
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 export default function DenseAppBar() {
   const { data: session, update } = useSession();
@@ -72,7 +73,7 @@ export default function DenseAppBar() {
             sx={{ flexGrow: 1, cursor: "pointer" }}
             onClick={() => router.push("/")}
           >
-            SIMPLE_TPV
+            SIMPLE
           </Typography>
           {session && <OpcionesUsuario />}
         </Toolbar>
@@ -189,6 +190,57 @@ export default function DenseAppBar() {
                     <ListItemText primary={"Dependientes"} />
                   </ListItemButton>
                 </ListItem>
+
+                <Divider />
+
+                <ListItem
+                  disablePadding
+                  onClick={() => router.push("/inventario/existencia")}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SummarizeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Existencia almacén"} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem
+                  disablePadding
+                  onClick={() => router.push("/distribucion/existenciaxpunto")}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SummarizeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Existencia en punto"} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem
+                  disablePadding
+                  onClick={() => router.push("/venta/ventaxperiodo")}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SummarizeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Ventas por período"} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem
+                  disablePadding
+                  onClick={() => router.push("/venta/utilidadesxperiodo")}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SummarizeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Utilidades por período"} />
+                  </ListItemButton>
+                </ListItem>
+
               </>
             )}
 
@@ -247,7 +299,6 @@ export default function DenseAppBar() {
                 </ListItemButton>
               </ListItem>
             )}
-            
           </List>
         </Box>
       </Drawer>

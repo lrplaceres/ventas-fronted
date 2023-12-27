@@ -14,8 +14,11 @@ import {
   GridColDef,
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
+  GridSlotsComponentsProps,
+  GridToolbarContainer,
 } from "@mui/x-data-grid";
 import { Box, Container } from "@mui/material";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -127,10 +130,37 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
+declare module "@mui/x-data-grid" {
+  interface FooterPropsOverrides {
+    utilidad: number;
+  }
+}
+
+export function CustomFooterStatusComponent(
+  props: NonNullable<GridSlotsComponentsProps["footer"]>
+) {
+  return <Box sx={{ p: 1, display: "flex" }}>Utilidad Total {props.utilidad}</Box>;
+}
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
+
 function Page() {
   const { data: session, update } = useSession();
 
   const [ventas, setVentas] = useState([]);
+
+  const [utilidad, setUtilidad] = useState<number>(0);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -169,13 +199,19 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       }
     )
       .then((response) => response.json())
       .then((data) => {
         setVentas(data);
+
+        let sum = 0;
+        data.map((d: any) => {
+          sum += d.utilidad;
+        });
+        setUtilidad(sum);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -184,68 +220,76 @@ function Page() {
 
   return (
     <>
-    <Container maxWidth="md">      
-      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
-        <div style={{ flexGrow: 1 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha inicio"
-              onChange={(newvalue:any) => {
-                obtenerVentasPeriodo(
-                  newvalue?.format("YYYY-MM-DD"),
-                  fechas.fecha_fin
-                );
-                setFechas({
-                  ...fechas,
-                  fecha_inicio: newvalue.format("YYYY-MM-DD"),
-                });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date()).subtract(7, "day")}
-              sx={{ mb: 1 }}
-            />
-          </LocalizationProvider>
+      <Container maxWidth="md">
+        <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
+          <div style={{ flexGrow: 1 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha inicio"
+                onChange={(newvalue: any) => {
+                  obtenerVentasPeriodo(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_inicio: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                defaultValue={dayjs(new Date()).subtract(7, "day")}
+                sx={{ mb: 1 }}
+              />
+            </LocalizationProvider>
 
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha fin"
-              onChange={(newvalue:any) => {
-                obtenerVentasPeriodo(
-                  fechas.fecha_inicio,
-                  newvalue?.format("YYYY-MM-DD")
-                );
-                setFechas({
-                  ...fechas,
-                  fecha_fin: newvalue.format("YYYY-MM-DD"),
-                });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date())}
-            />
-          </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha fin"
+                onChange={(newvalue: any) => {
+                  obtenerVentasPeriodo(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_fin: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                defaultValue={dayjs(new Date())}
+              />
+            </LocalizationProvider>
+          </div>
+
+          <VistasMenu />
         </div>
 
-        <VistasMenu />
-      </div>
-
-      <Box sx={{height: "69vh", width:"100%"}}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={ventas}
-          columns={columns}
-          checkboxSelection
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) =>
-            setColumnVisibilityModel(newModel)
-          }
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 0,
-          }}
-        />
-      </Box>
-    </Container>
+        <Box sx={{ height: "69vh", width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={ventas}
+            columns={columns}
+            checkboxSelection
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={(newModel) =>
+              setColumnVisibilityModel(newModel)
+            }
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 0,
+            }}
+            slots={{
+              footer: CustomFooterStatusComponent,
+              toolbar: CustomToolbar,
+            }}
+            slotProps={{
+              footer: { utilidad },
+            }}
+            rowHeight={40}
+          />
+        </Box>
+      </Container>
     </>
   );
 }

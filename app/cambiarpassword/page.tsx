@@ -4,9 +4,24 @@ import TextField from "@mui/material/TextField";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
-import { Box, Button, Typography, Container } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Container,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+interface Contrasenna {
+  contrasenna_nueva: string;
+  repite_contrasenna_nueva: string;
+  contrasenna_actual: string;
+}
 
 function Page() {
   const router = useRouter();
@@ -15,13 +30,17 @@ function Page() {
 
   const { data: session, update } = useSession();
 
-  const [contrasenna, setContrasenna] = useState({
+  const [contrasenna, setContrasenna] = useState<Contrasenna>({
     contrasenna_nueva: "",
     repite_contrasenna_nueva: "",
     contrasenna_actual: "",
   });
 
-  const handleChange = ({ target: { name, value }}: any) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword: any = () => setShowPassword((show) => !show);
+
+  const handleChange = ({ target: { name, value } }: any) => {
     setContrasenna({ ...contrasenna, [name]: value });
   };
 
@@ -38,14 +57,17 @@ function Page() {
     }
 
     try {
-      fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-cambiar-contrasenna`, {
-        method: "PUT",
-        body: JSON.stringify(contrasenna),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      })
+      fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/users-cambiar-contrasenna`,
+        {
+          method: "PUT",
+          body: JSON.stringify(contrasenna),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then(function (response) {
           if (response.ok) {
             notificacion(`Se ha cambiado la contraseña`, "info");
@@ -81,8 +103,21 @@ function Page() {
             value={contrasenna.contrasenna_actual}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             id="contrasenna_nueva"
@@ -92,8 +127,21 @@ function Page() {
             value={contrasenna.contrasenna_nueva}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             id="repite_contrasenna_nueva"
@@ -103,8 +151,21 @@ function Page() {
             value={contrasenna.repite_contrasenna_nueva}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <Box sx={{ textAlign: "center" }}>

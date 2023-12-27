@@ -8,7 +8,7 @@ function Producto() {
     <>
       <Box id="#producto">
         <Typography variant="h4" color="primary" textAlign="center">
-          ¿Por qué elegir SIMPLE_TPV?
+          ¿Por qué elegir SIMPLE?
         </Typography>
 
         <Box sx={{ flexGrow: 1 }}>

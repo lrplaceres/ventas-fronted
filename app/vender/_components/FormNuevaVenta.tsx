@@ -6,12 +6,20 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { FormEvent, useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import { DateTimePicker } from "@mui/x-date-pickers";
+
+interface Venta {
+  distribucion_id: number | string;
+  cantidad: number;
+  precio: number;
+  fecha: Date | Dayjs | null;
+  punto_id: number | string;
+}
 
 function FormVenta() {
   const router = useRouter();
@@ -22,10 +30,10 @@ function FormVenta() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [venta, setVenta] = useState<any>({
+  const [venta, setVenta] = useState<Venta>({
     distribucion_id: "",
-    cantidad: "",
-    precio: "",
+    cantidad: 0,
+    precio: 0,
     fecha: new Date(),
     punto_id: "",
   });
@@ -40,13 +48,16 @@ function FormVenta() {
 
   useEffect(() => {
     const obtenerDistribuciones = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta-punto`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
-        },
-      })
+      await fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta-punto`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           setDistribuciones(data);
@@ -60,7 +71,7 @@ function FormVenta() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setVenta({ ...venta, [name]: value });
   };
 
@@ -68,7 +79,7 @@ function FormVenta() {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
- 
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -78,7 +89,7 @@ function FormVenta() {
         body: JSON.stringify(venta),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {
@@ -136,8 +147,8 @@ function FormVenta() {
                   ...venta,
                   distribucion_id: "",
                   punto_id: "",
-                  precio: "",
-                  cantidad: "",
+                  precio: 0,
+                  cantidad: 0,
                 });
                 setDistribucionEdit([]);
                 setMaximaCantidad(0);

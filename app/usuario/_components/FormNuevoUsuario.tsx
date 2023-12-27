@@ -9,6 +9,8 @@ import {
   MenuItem,
   Select,
   Container,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -16,6 +18,18 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+interface Usuario {
+  usuario: number | string;
+  password: string;
+  repite: string;
+  rol: "propietario" | "superadmin";
+  nombre: string;
+  email: string | null;
+  activo: boolean;
+}
 
 function FormUsuario() {
   const router = useRouter();
@@ -24,7 +38,7 @@ function FormUsuario() {
 
   const { data: session, update } = useSession();
 
-  const [usuario, setUsuario] = useState({
+  const [usuario, setUsuario] = useState<Usuario>({
     usuario: "",
     password: "",
     repite: "",
@@ -34,7 +48,11 @@ function FormUsuario() {
     activo: true,
   });
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword: any = () => setShowPassword((show) => !show);
+
+  const handleChange = ({ target: { name, value } }: any) => {
     setUsuario({ ...usuario, [name]: value });
   };
 
@@ -64,7 +82,7 @@ function FormUsuario() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then(function (response) {
@@ -113,8 +131,21 @@ function FormUsuario() {
             value={usuario.password}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             id="repite"
@@ -124,8 +155,21 @@ function FormUsuario() {
             value={usuario.repite}
             onChange={handleChange}
             sx={{ mb: 1 }}
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <FormControl fullWidth sx={{ mb: 1 }}>

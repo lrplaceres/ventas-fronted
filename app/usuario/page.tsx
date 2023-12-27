@@ -7,7 +7,6 @@ import {
   GridColumnGroupingModel,
   esES,
 } from "@mui/x-data-grid";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -22,6 +21,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import BotonInsertar from "./_components/BotonInsertar";
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -30,6 +32,19 @@ const columnGroupingModel: GridColumnGroupingModel = [
     children: [{ field: "usuario" }, { field: "rol" }],
   },
 ];
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
 
 function Page() {
   const columns: GridColDef[] = [
@@ -118,7 +133,7 @@ function Page() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -135,7 +150,7 @@ function Page() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -158,7 +173,7 @@ function Page() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -181,7 +196,7 @@ function Page() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -203,15 +218,8 @@ function Page() {
   return (
     <>
       <Container maxWidth="md">
-        <Button
-          variant="contained"
-          color="inherit"
-          sx={{ mt: 1, mb: 1 }}
-          startIcon={<PersonAddAlt1Icon />}
-          onClick={() => router.push("/usuario/nuevo")}
-        >
-          Insertar Usuario
-        </Button>
+        
+        <BotonInsertar />
 
         <Box sx={{height: "83vh", width:"100%"}}>
           <DataGrid
@@ -224,6 +232,8 @@ function Page() {
             sx={{
               border: 0,
             }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>
 

@@ -17,6 +17,12 @@ import { FormEvent, useEffect, useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 
+interface Punto {
+  nombre: string;
+  direccion: string;
+  negocio_id: number | string;
+}
+
 function FormPunto() {
   const router = useRouter();
 
@@ -24,9 +30,9 @@ function FormPunto() {
 
   const { data: session, update } = useSession();
 
-  const { enqueueSnackbar } = useSnackbar();  
+  const { enqueueSnackbar } = useSnackbar();
 
-  const [punto, setPunto] = useState({
+  const [punto, setPunto] = useState<Punto>({
     nombre: "",
     direccion: "",
     negocio_id: "",
@@ -40,7 +46,7 @@ function FormPunto() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -59,7 +65,7 @@ function FormPunto() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then(function (response) {
@@ -82,7 +88,7 @@ function FormPunto() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = ({ target: { name, value } } : any) => {
+  const handleChange = ({ target: { name, value } }: any) => {
     setPunto({ ...punto, [name]: value });
   };
 
@@ -90,7 +96,7 @@ function FormPunto() {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-  
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -101,7 +107,7 @@ function FormPunto() {
           body: JSON.stringify(punto),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then(function (response) {
@@ -125,7 +131,7 @@ function FormPunto() {
           body: JSON.stringify(punto),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${session?.token_type} ${session?.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         })
           .then(function (response) {
@@ -148,7 +154,6 @@ function FormPunto() {
       return notificacion(error);
     }
   };
-
 
   return (
     <>
@@ -192,7 +197,7 @@ function FormPunto() {
               required
             >
               {negocios.length > 0 &&
-                negocios.map((negocio:any, index) => (
+                negocios.map((negocio: any, index) => (
                   <MenuItem key={index.toString()} value={negocio.id}>
                     {negocio.nombre}
                   </MenuItem>
@@ -221,7 +226,6 @@ function FormPunto() {
             </Button>
           </Box>
         </form>
-        
       </Container>
     </>
   );

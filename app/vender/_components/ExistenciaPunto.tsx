@@ -9,7 +9,7 @@ import {
   GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -60,7 +60,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -78,6 +78,7 @@ function Page() {
  
   return (
     <>
+    <Container maxWidth="md">      
       <Box sx={{ height: "87vh", width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
@@ -91,6 +92,7 @@ function Page() {
           }}
         />
       </Box>
+    </Container>
     </>
   );
 }

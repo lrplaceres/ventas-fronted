@@ -5,6 +5,8 @@ import {
   GridColDef,
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
+  GridToolbarContainer,
+  GridToolbarExport,
   esES,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -41,6 +43,19 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
+
 function Page() {
   const columns: GridColDef[] = [
     {
@@ -68,7 +83,7 @@ function Page() {
     { field: "negocio_id", headerName: "Negocio", width: 140 },
     {
       field: "costo",
-      headerName: "$ Costo",
+      headerName: "$.Costo",
       width: 120,
       type: "number",
       valueFormatter: ({ value }) => {
@@ -80,7 +95,7 @@ function Page() {
     },
     {
       field: "precio_venta",
-      headerName: "$ Venta",
+      headerName: "$.Venta",
       width: 120,
       type: "number",
       valueFormatter: ({ value }) => {
@@ -120,6 +135,7 @@ function Page() {
     useState<GridColumnVisibilityModel>({
       fecha: false,
       dependiente: false,
+      negocio_id: false,
     });
 
   const [open, setOpen] = useState(false);
@@ -140,7 +156,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -159,16 +175,14 @@ function Page() {
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
-  };
-
-  
+  }; 
 
   const eliminarInventario = async (id: number) => {
     await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventario/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -212,6 +226,8 @@ function Page() {
             sx={{
               border: 0,
             }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>
 

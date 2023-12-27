@@ -36,7 +36,7 @@ export default function DrawerAppBar(props:any) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        SIMPLE_TPV
+        SIMPLE
       </Typography>
       <Divider />
       <List>
@@ -91,7 +91,7 @@ export default function DrawerAppBar(props:any) {
             component="div"
             sx={{ flexGrow: 1}}
           >
-            SIMPLE_TPV
+            SIMPLE
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             <Button

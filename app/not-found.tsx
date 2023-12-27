@@ -38,7 +38,7 @@ export default function RecipeReviewCard() {
                 <MoreVertIcon />
               </IconButton>
             }
-            title="SIMPLE_TPV"
+            title="SIMPLE"
             subheader={new Date().toDateString()}
           />
           <CardMedia

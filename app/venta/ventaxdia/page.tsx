@@ -13,8 +13,10 @@ import {
   esES,
   GridColDef,
   GridColumnGroupingModel,
+  GridToolbarExport,
 } from "@mui/x-data-grid";
 import { Box, Container } from "@mui/material";
+import { GridToolbarContainer } from "@mui/x-data-grid";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -47,11 +49,23 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
+
 function Page() {
   const { data: session, update } = useSession();
 
   const [ventas, setVentas] = useState([]);
- 
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -66,13 +80,16 @@ function Page() {
   }, []);
 
   const obtenerVentas = async (fecha: any) => {
-    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-dia/${fecha}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
-      },
-    })
+    await fetch(
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-dia/${fecha}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setVentas(data);
@@ -84,38 +101,40 @@ function Page() {
 
   return (
     <>
-    <Container maxWidth="md">      
-      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
-        <div style={{ flexGrow: 1 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha"
-              onChange={(newvalue) => {
-                obtenerVentas(newvalue?.format("YYYY-MM-DD"));
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date())}
-            />
-          </LocalizationProvider>
+      <Container maxWidth="md">
+        <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
+          <div style={{ flexGrow: 1 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha"
+                onChange={(newvalue) => {
+                  obtenerVentas(newvalue?.format("YYYY-MM-DD"));
+                }}
+                format="YYYY-MM-DD"
+                defaultValue={dayjs(new Date())}
+              />
+            </LocalizationProvider>
+          </div>
+
+          <VistasMenu />
         </div>
 
-        <VistasMenu />
-      </div>
-
-      <Box sx={{height: "78vh", width:"100%"}}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={ventas}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 0,
-          }}
-        />
-      </Box>
-    </Container>
+        <Box sx={{ height: "78vh", width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={ventas}
+            columns={columns}
+            checkboxSelection
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 0,
+            }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
+          />
+        </Box>
+      </Container>
     </>
   );
 }

@@ -5,6 +5,7 @@ import {
   GridColDef,
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
+  GridToolbarContainer,
   esES,
 } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, Container } from "@mui/material";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -41,6 +43,19 @@ const columnGroupingModel: GridColumnGroupingModel = [
     ],
   },
 ];
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
 
 function Page() {
   const columns: GridColDef[] = [
@@ -72,7 +87,7 @@ function Page() {
     { field: "punto_id", headerName: "Punto", width: 120 },
     {
       field: "costo",
-      headerName: "Costo",
+      headerName: "$.Costo",
       width: 120,
       type: "number",
       valueFormatter: ({ value }) => {
@@ -134,7 +149,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -160,7 +175,7 @@ function Page() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${session?.token_type} ${session?.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then(function (response) {
@@ -202,6 +217,8 @@ function Page() {
             sx={{
               border: 0,
             }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
           />
         </Box>
 

@@ -10,7 +10,9 @@ import {
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
 import VistasMenuDistribucion from "../_components/VistasMenuDistribucion";
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -30,6 +32,19 @@ const columns: GridColDef[] = [
   },
   { field: "nombre_punto", headerName: "Punto", width: 120 },
 ];
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
 
 const columnGroupingModel: GridColumnGroupingModel = [
   {
@@ -61,7 +76,7 @@ function Page() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${session?.token_type} ${session?.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -80,6 +95,7 @@ function Page() {
 
   return (
     <>
+    <Container maxWidth="md">      
       <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
         <div style={{ flexGrow: 1 }}>          
         </div>
@@ -98,8 +114,11 @@ function Page() {
           sx={{
             border: 0,
           }}
+          rowHeight={40}
+          slots={{ toolbar: CustomToolbar }}
         />
       </Box>
+    </Container>
     </>
   );
 }

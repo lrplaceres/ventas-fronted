@@ -6,6 +6,7 @@ import GraficoVentas7Dias from "./venta/_components/GraficoVentas7Dias";
 import GraficoInversion7Dias from "./inventario/_components/GraficoInversion7dias";
 import Container from '@mui/material/Container'
 import Existencia from "./vender/_components/ExistenciaPunto";
+import UsoGeneral from "./components/UsoGeneral";
 
 export default function Home() {
   const { data: session, update } = useSession();
@@ -24,7 +25,7 @@ export default function Home() {
       </Container>
 
       {session?.rol == "superadmin" && (
-        <>mostrar gráficas y estadísticas del uso de la app</>
+        <UsoGeneral />
       )}
 
       {session?.rol == "dependiente" && (
