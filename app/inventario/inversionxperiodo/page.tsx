@@ -12,6 +12,7 @@ import {
   esES,
   GridColDef,
   GridColumnGroupingModel,
+  GridSlotsComponentsProps,
 } from "@mui/x-data-grid";
 import VistasMenuInventario from "../_components/VistasMenuInventario";
 import { Box, Container } from "@mui/material";
@@ -19,9 +20,9 @@ import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
+  style: "currency",
+  currency: "USD",
+});
 
 const columns: GridColDef[] = [
   { field: "fecha", headerName: "Fecha", width: 140 },
@@ -43,12 +44,21 @@ const columnGroupingModel: GridColumnGroupingModel = [
   {
     groupId: "Listado de inversiones por período",
     description: "",
-    children: [
-      { field: "fecha" },
-      { field: "monto" },
-    ],
+    children: [{ field: "fecha" }, { field: "monto" }],
   },
 ];
+
+declare module "@mui/x-data-grid" {
+  interface FooterPropsOverrides {
+    monto: number;
+  }
+}
+
+export function CustomFooterStatusComponent(
+  props: NonNullable<GridSlotsComponentsProps["footer"]>
+) {
+  return <Box sx={{ p: 1, display: "flex" }}>Inversión Total {props.monto?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Box>;
+}
 
 function CustomToolbar() {
   return (
@@ -68,12 +78,14 @@ function Page() {
 
   const [inversiones, setInversiones] = useState([]);
 
+  const [monto, setMonto] = useState<number>(0);
+
   const { enqueueSnackbar } = useSnackbar();
 
   const [fechas, setFechas] = useState({
     fecha_inicio: dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
     fecha_fin: dayjs(new Date()).format("YYYY-MM-DD"),
-  })
+  });
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
@@ -85,21 +97,33 @@ function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const obtenerInversionesPeriodo = async (fecha_inicio: any,fecha_fin: any) => {
-    if(fecha_inicio > fecha_fin){
-      setInversiones([])
-      return notificacion("La fecha fin debe ser mayor que la fecha inicio")
+  const obtenerInversionesPeriodo = async (
+    fecha_inicio: any,
+    fecha_fin: any
+  ) => {
+    if (fecha_inicio > fecha_fin) {
+      setInversiones([]);
+      return notificacion("La fecha fin debe ser mayor que la fecha inicio");
     }
-    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-costos-brutos/${fecha_inicio}/${fecha_fin}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.access_token}`,
-      },
-    })
+    await fetch(
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-costos-brutos/${fecha_inicio}/${fecha_fin}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setInversiones(data);
+
+        let sum = 0;
+        data.map((d: any) => {
+          sum += d.monto;
+        });
+        setMonto(sum);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -108,54 +132,72 @@ function Page() {
 
   return (
     <>
-    <Container maxWidth="md">      
-      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
-        <div style={{ flexGrow: 1 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha inicio"
-              onChange={(newvalue:any) => {
-                obtenerInversionesPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
-                setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date()).subtract(7, "day")}              
-              sx={{mb: 1}}
-            />
-          </LocalizationProvider>
+      <Container maxWidth="md">
+        <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
+          <div style={{ flexGrow: 1 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha inicio"
+                onChange={(newvalue: any) => {
+                  obtenerInversionesPeriodo(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_inicio: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                defaultValue={dayjs(new Date()).subtract(7, "day")}
+                sx={{ mb: 1 }}
+              />
+            </LocalizationProvider>
 
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha fin"
-              onChange={(newvalue:any) => {
-                obtenerInversionesPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
-                setFechas({ ...fechas, fecha_fin: newvalue.format("YYYY-MM-DD") });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date())}
-            />
-          </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha fin"
+                onChange={(newvalue: any) => {
+                  obtenerInversionesPeriodo(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_fin: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                defaultValue={dayjs(new Date())}
+              />
+            </LocalizationProvider>
+          </div>
+
+          <VistasMenuInventario />
         </div>
 
-        <VistasMenuInventario />
-      </div>
-
-      <Box sx={{height: "69vh", width:"100%"}}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={inversiones}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 0,
-          }}
-          rowHeight={40}
-          slots={{ toolbar: CustomToolbar }}
-        />
-      </Box>
-    </Container>
+        <Box sx={{ height: "69vh", width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={inversiones}
+            columns={columns}
+            checkboxSelection
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 0,
+            }}
+            rowHeight={40}
+            slots={{
+              toolbar: CustomToolbar,
+              footer: CustomFooterStatusComponent,
+            }}
+            slotProps={{
+              footer: { monto },
+            }}
+          />
+        </Box>
+      </Container>
     </>
   );
 }

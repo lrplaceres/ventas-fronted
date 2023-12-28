@@ -12,6 +12,7 @@ import {
   esES,
   GridColDef,
   GridColumnGroupingModel,
+  GridSlotsComponentsProps,
 } from "@mui/x-data-grid";
 import VistasMenuVenta from "../_components/VistasMenuVenta";
 import { Box, Container } from "@mui/material";
@@ -47,6 +48,20 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
+declare module "@mui/x-data-grid" {
+  interface FooterPropsOverrides {
+    monto: number;
+  }
+}
+
+export function CustomFooterStatusComponent(
+  props: NonNullable<GridSlotsComponentsProps["footer"]>
+) {
+  return (
+    <Box sx={{ p: 1, display: "flex" }}>Inversión Total {props.monto?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Box>
+  );
+}
+
 function CustomToolbar() {
   return (
     <GridToolbarContainer>
@@ -64,6 +79,8 @@ function Page() {
   const { data: session, update } = useSession();
 
   const [ventas, setVentas] = useState([]);
+
+  const [monto, setMonto] = useState<number>(0);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -100,6 +117,12 @@ function Page() {
       .then((response) => response.json())
       .then((data) => {
         setVentas(data);
+
+        let sum = 0;
+        data.map((d: any) => {
+          sum += d.monto;
+        });
+        setMonto(sum);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -114,7 +137,7 @@ function Page() {
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
               <DatePicker
                 label="Fecha inicio"
-                onChange={(newvalue:any) => {
+                onChange={(newvalue: any) => {
                   obtenerVentasPeriodo(
                     newvalue?.format("YYYY-MM-DD"),
                     fechas.fecha_fin
@@ -133,7 +156,7 @@ function Page() {
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
               <DatePicker
                 label="Fecha fin"
-                onChange={(newvalue:any) => {
+                onChange={(newvalue: any) => {
                   obtenerVentasPeriodo(
                     fechas.fecha_inicio,
                     newvalue?.format("YYYY-MM-DD")
@@ -164,7 +187,13 @@ function Page() {
               border: 0,
             }}
             rowHeight={40}
-            slots={{ toolbar: CustomToolbar }}
+            slots={{
+              toolbar: CustomToolbar,
+              footer: CustomFooterStatusComponent,
+            }}
+            slotProps={{
+              footer: { monto },
+            }}
           />
         </Box>
       </Container>

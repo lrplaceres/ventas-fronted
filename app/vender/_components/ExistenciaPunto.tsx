@@ -90,6 +90,7 @@ function Page() {
           sx={{
             border: 0,
           }}
+          rowHeight={40}
         />
       </Box>
     </Container>

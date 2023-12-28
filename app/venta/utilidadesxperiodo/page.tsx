@@ -139,7 +139,7 @@ declare module "@mui/x-data-grid" {
 export function CustomFooterStatusComponent(
   props: NonNullable<GridSlotsComponentsProps["footer"]>
 ) {
-  return <Box sx={{ p: 1, display: "flex" }}>Utilidad Total {props.utilidad}</Box>;
+  return <Box sx={{ p: 1, display: "flex" }}>Utilidad Total {props.utilidad?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Box>;
 }
 
 function CustomToolbar() {
