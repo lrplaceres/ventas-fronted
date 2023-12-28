@@ -193,7 +193,7 @@ function Page() {
           <BotonInsertar />
         </div>
 
-        <Box sx={{ height: "82vh", width: "100%" }}>
+        <Box sx={{ height: "85vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={ventas}

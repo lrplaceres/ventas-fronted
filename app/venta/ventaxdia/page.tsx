@@ -15,8 +15,14 @@ import {
   GridColumnGroupingModel,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import { GridToolbarContainer } from "@mui/x-data-grid";
+import IconButton from "@mui/material/IconButton";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -67,7 +73,19 @@ function Page() {
 
   const [ventas, setVentas] = useState([]);
 
+  const [fecha, setFecha] = useState<any>(dayjs(new Date()).format("YYYY-MM-DD"));
+
   const { enqueueSnackbar } = useSnackbar();
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
@@ -104,22 +122,19 @@ function Page() {
       <Container maxWidth="md">
         <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
           <div style={{ flexGrow: 1 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-              <DatePicker
-                label="Fecha"
-                onChange={(newvalue) => {
-                  obtenerVentas(newvalue?.format("YYYY-MM-DD"));
-                }}
-                format="YYYY-MM-DD"
-                defaultValue={dayjs(new Date())}
-              />
-            </LocalizationProvider>
+            <IconButton
+              aria-label="filtericon"
+              color="inherit"
+              onClick={handleClickOpen}
+            >
+              <FilterAltIcon />
+            </IconButton>
           </div>
 
           <VistasMenu />
         </div>
 
-        <Box sx={{ height: "78vh", width: "100%" }}>
+        <Box sx={{ height: "85vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={ventas}
@@ -134,6 +149,36 @@ function Page() {
             slots={{ toolbar: CustomToolbar }}
           />
         </Box>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Filtrar información"}
+          </DialogTitle>
+          <DialogContent>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha"
+                onChange={(newvalue) => {
+                  obtenerVentas(newvalue?.format("YYYY-MM-DD"));
+                  setFecha(newvalue?.format("YYYY-MM-DD"));
+                }}
+                format="YYYY-MM-DD"
+                value={dayjs(fecha)}
+                sx={{mt: 1}}
+              />
+            </LocalizationProvider>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );

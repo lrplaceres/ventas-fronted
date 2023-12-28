@@ -151,7 +151,7 @@ function Page() {
       <Container maxWidth="md">
         <BotonInsertar />
 
-        <Box sx={{height: "83vh", width:"100%"}}>
+        <Box sx={{height: "85vh", width:"100%"}}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={productos}

@@ -1,6 +1,6 @@
 "use client";
 import BotonInsertar from "./_components/BotonInsertar";
-import { Box, Button, Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -10,21 +10,14 @@ import {
   GridToolbarExport,
   esES,
 } from "@mui/x-data-grid";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
-import DeleteIcon from "@mui/icons-material/Delete";
 import PasswordIcon from "@mui/icons-material/Password";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 
 const columnGroupingModel: GridColumnGroupingModel = [
@@ -206,7 +199,7 @@ function Page() {
       <Container maxWidth="md">
         <BotonInsertar />
 
-        <Box sx={{height: "83vh", width:"100%"}}>
+        <Box sx={{height: "85vh", width:"100%"}}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={dependientes}

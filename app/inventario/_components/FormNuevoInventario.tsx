@@ -17,11 +17,21 @@ import { FormEvent, useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/es";
 import Autocomplete from "@mui/material/Autocomplete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
+
+interface Inventario {
+  producto_id: number | string,
+    cantidad: number,
+    um: "LB" | "KG" | "Unidad" | "Quintal" | "Caja",
+    costo: number,
+    precio_venta: number,
+    fecha: Date | Dayjs | null,
+    negocio_id: number | string,
+}
 
 function FormInventario() {
   const router = useRouter();
@@ -32,12 +42,12 @@ function FormInventario() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [inventario, setInventario] = useState<any>({
+  const [inventario, setInventario] = useState<Inventario>({
     producto_id: "",
-    cantidad: "",
-    um: "unidad",
-    costo: "",
-    precio_venta: "",
+    cantidad: 0,
+    um: "Unidad",
+    costo: 0,
+    precio_venta: 0,
     fecha: new Date(),
     negocio_id: "",
   });
@@ -244,11 +254,11 @@ function FormInventario() {
               onChange={handleChange}
               required
             >
-              <MenuItem value={"libra"}>LB</MenuItem>
-              <MenuItem value={"kilogramo"}>KG</MenuItem>
-              <MenuItem value={"unidad"}>Unidad</MenuItem>
-              <MenuItem value={"quintal"}>Quintal</MenuItem>
-              <MenuItem value={"caja"}>Caja</MenuItem>
+              <MenuItem value={"LB"}>LB</MenuItem>
+              <MenuItem value={"KG"}>KG</MenuItem>
+              <MenuItem value={"Unidad"}>Unidad</MenuItem>
+              <MenuItem value={"Quintal"}>Quintal</MenuItem>
+              <MenuItem value={"Caja"}>Caja</MenuItem>
             </Select>
           </FormControl>
 

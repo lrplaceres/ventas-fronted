@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/es";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import {
@@ -15,9 +15,15 @@ import {
   GridSlotsComponentsProps,
 } from "@mui/x-data-grid";
 import VistasMenuInventario from "../_components/VistasMenuInventario";
-import { Box, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
+import IconButton from "@mui/material/IconButton";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -57,7 +63,15 @@ declare module "@mui/x-data-grid" {
 export function CustomFooterStatusComponent(
   props: NonNullable<GridSlotsComponentsProps["footer"]>
 ) {
-  return <Box sx={{ p: 1, display: "flex" }}>Inversión Total {props.monto?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Box>;
+  return (
+    <Box sx={{ p: 1, display: "flex" }}>
+      Inversión Total{" "}
+      {props.monto?.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      })}
+    </Box>
+  );
 }
 
 function CustomToolbar() {
@@ -86,6 +100,16 @@ function Page() {
     fecha_inicio: dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
     fecha_fin: dayjs(new Date()).format("YYYY-MM-DD"),
   });
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
@@ -135,48 +159,19 @@ function Page() {
       <Container maxWidth="md">
         <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
           <div style={{ flexGrow: 1 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-              <DatePicker
-                label="Fecha inicio"
-                onChange={(newvalue: any) => {
-                  obtenerInversionesPeriodo(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  setFechas({
-                    ...fechas,
-                    fecha_inicio: newvalue.format("YYYY-MM-DD"),
-                  });
-                }}
-                format="YYYY-MM-DD"
-                defaultValue={dayjs(new Date()).subtract(7, "day")}
-                sx={{ mb: 1 }}
-              />
-            </LocalizationProvider>
-
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-              <DatePicker
-                label="Fecha fin"
-                onChange={(newvalue: any) => {
-                  obtenerInversionesPeriodo(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  setFechas({
-                    ...fechas,
-                    fecha_fin: newvalue.format("YYYY-MM-DD"),
-                  });
-                }}
-                format="YYYY-MM-DD"
-                defaultValue={dayjs(new Date())}
-              />
-            </LocalizationProvider>
+            <IconButton
+              aria-label="filtericon"
+              color="inherit"
+              onClick={handleClickOpen}
+            >
+              <FilterAltIcon />
+            </IconButton>
           </div>
 
           <VistasMenuInventario />
         </div>
 
-        <Box sx={{ height: "69vh", width: "100%" }}>
+        <Box sx={{ height: "85vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={inversiones}
@@ -197,6 +192,61 @@ function Page() {
             }}
           />
         </Box>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Filtrar información"}
+          </DialogTitle>
+          <DialogContent>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha inicio"
+                onChange={(newvalue: any) => {
+                  obtenerInversionesPeriodo(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_inicio: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                value={dayjs(fechas.fecha_inicio)}
+                sx={{ mb: 1, mt: 1 }}
+              />
+            </LocalizationProvider>
+            <br />
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha fin"
+                onChange={(newvalue: any) => {
+                  obtenerInversionesPeriodo(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_fin: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                value={dayjs(fechas.fecha_fin)}
+                sx={{ mb: 1, mt: 1 }}
+              />
+            </LocalizationProvider>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );

@@ -127,7 +127,7 @@ function Page() {
         <VistasMenuInventario />
       </div>
 
-      <Box sx={{height: "81vh", width:"100%"}}>
+      <Box sx={{height: "85vh", width:"100%"}}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={existencia}

@@ -79,7 +79,7 @@ function Page() {
   return (
     <>
     <Container maxWidth="md">      
-      <Box sx={{ height: "87vh", width: "100%" }}>
+      <Box sx={{ height: "93vh", width: "100%" }}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={existencia}

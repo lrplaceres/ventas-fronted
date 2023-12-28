@@ -14,9 +14,15 @@ import {
   GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
-import { Box, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
+import IconButton from "@mui/material/IconButton";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -72,7 +78,17 @@ function Page() {
   const [fechas, setFechas] = useState({
     fecha_inicio: dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
     fecha_fin: dayjs(new Date()).format("YYYY-MM-DD"),
-  })
+  });
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
@@ -84,18 +100,21 @@ function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const obtenerVentasPeriodo = async (fecha_inicio: any,fecha_fin: any) => {
-    if(fecha_inicio > fecha_fin){
-      setVentas([])
-      return notificacion("La fecha fin debe ser mayor que la fecha inicio")
+  const obtenerVentasPeriodo = async (fecha_inicio: any, fecha_fin: any) => {
+    if (fecha_inicio > fecha_fin) {
+      setVentas([]);
+      return notificacion("La fecha fin debe ser mayor que la fecha inicio");
     }
-    await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-periodo/${fecha_inicio}/${fecha_fin}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.access_token}`,
-      },
-    })
+    await fetch(
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-periodo/${fecha_inicio}/${fecha_fin}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setVentas(data);
@@ -107,55 +126,92 @@ function Page() {
 
   return (
     <>
-    <Container maxWidth="md">
-      
-      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
-        <div style={{ flexGrow: 1 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha inicio"
-              onChange={(newvalue:any) => {
-                obtenerVentasPeriodo(newvalue?.format("YYYY-MM-DD"), fechas.fecha_fin);
-                setFechas({ ...fechas, fecha_inicio: newvalue.format("YYYY-MM-DD") });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date()).subtract(7, "day")}              
-              sx={{mb: 1}}
-            />
-          </LocalizationProvider>
+      <Container maxWidth="md">
+        <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
+          <div style={{ flexGrow: 1 }}>
+            <IconButton
+              aria-label="filtericon"
+              color="inherit"
+              onClick={handleClickOpen}
+            >
+              <FilterAltIcon />
+            </IconButton>
+          </div>
 
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              label="Fecha fin"
-              onChange={(newvalue:any) => {
-                obtenerVentasPeriodo(fechas.fecha_inicio, newvalue?.format("YYYY-MM-DD"));
-                setFechas({ ...fechas, fecha_fin: newvalue.format("YYYY-MM-DD") });
-              }}
-              format="YYYY-MM-DD"
-              defaultValue={dayjs(new Date())}
-            />
-          </LocalizationProvider>
+          <VistasMenu />
         </div>
 
-        <VistasMenu />
-      </div>
+        <Box sx={{ height: "85vh", width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={ventas}
+            columns={columns}
+            checkboxSelection
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 0,
+            }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
+          />
+        </Box>
 
-      <Box sx={{height: "69vh", width:"100%"}}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={ventas}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 0,
-          }}
-          rowHeight={40}
-          slots={{ toolbar: CustomToolbar }}
-        />
-      </Box>
-    </Container>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Filtrar información"}
+          </DialogTitle>
+          <DialogContent>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha inicio"
+                onChange={(newvalue: any) => {
+                  obtenerVentasPeriodo(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_inicio: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                value={dayjs(fechas.fecha_inicio)}
+                sx={{ mb: 1, mt: 1 }}
+              />
+            </LocalizationProvider>
+            <br />
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha fin"
+                onChange={(newvalue: any) => {
+                  obtenerVentasPeriodo(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_fin: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                value={dayjs(fechas.fecha_fin)}
+                sx={{ mb: 1, mt: 1 }}
+              />
+            </LocalizationProvider>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

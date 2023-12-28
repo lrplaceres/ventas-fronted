@@ -260,7 +260,7 @@ function Page() {
           <VistasMenuVenta />
         </div>
 
-        <Box sx={{height: "83vh", width:"100%"}}>
+        <Box sx={{height: "85vh", width:"100%"}}>
           <StyledDataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={ventas}

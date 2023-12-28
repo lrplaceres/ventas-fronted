@@ -13,7 +13,13 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Box, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 
 interface ContadorUsuarios {
   cantidad_usuarios: number;
@@ -100,6 +106,16 @@ function Page() {
     fecha_inicio: dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
     fecha_fin: dayjs(new Date()).format("YYYY-MM-DD"),
   });
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -330,90 +346,13 @@ function Page() {
       <Container maxWidth="md">
         <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
           <div style={{ flexGrow: 1 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-              <DatePicker
-                label="Fecha inicio"
-                onChange={(newvalue: any) => {
-                  obtenerContadorUsuario(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  obtenerContadorNegocios(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  obtenerContadorPuntos(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  obtenerContadorProductos(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  obtenerContadorInventarios(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  obtenerContadorDistribuciones(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  obtenerContadorVentas(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  setFechas({
-                    ...fechas,
-                    fecha_inicio: newvalue.format("YYYY-MM-DD"),
-                  });
-                }}
-                format="YYYY-MM-DD"
-                defaultValue={dayjs(new Date()).subtract(7, "day")}
-                sx={{ mb: 1 }}
-              />
-            </LocalizationProvider>
-
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-              <DatePicker
-                label="Fecha fin"
-                onChange={(newvalue: any) => {
-                  obtenerContadorUsuario(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  obtenerContadorNegocios(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  obtenerContadorPuntos(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  obtenerContadorProductos(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  obtenerContadorInventarios(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  obtenerContadorDistribuciones(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  obtenerContadorVentas(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  setFechas({
-                    ...fechas,
-                    fecha_fin: newvalue.format("YYYY-MM-DD"),
-                  });
-                }}
-                format="YYYY-MM-DD"
-                defaultValue={dayjs(new Date())}
-              />
-            </LocalizationProvider>
+            <IconButton
+              aria-label="filtericon"
+              color="inherit"
+              onClick={handleClickOpen}
+            >
+              <FilterAltIcon />
+            </IconButton>
           </div>
         </div>
 
@@ -484,6 +423,109 @@ function Page() {
             </Grid>
           </Grid>
         </Box>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Filtrar información"}
+          </DialogTitle>
+          <DialogContent>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha inicio"
+                onChange={(newvalue: any) => {
+                  obtenerContadorUsuario(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  obtenerContadorNegocios(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  obtenerContadorPuntos(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  obtenerContadorProductos(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  obtenerContadorInventarios(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  obtenerContadorDistribuciones(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  obtenerContadorVentas(
+                    newvalue?.format("YYYY-MM-DD"),
+                    fechas.fecha_fin
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_inicio: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                value={dayjs(fechas.fecha_inicio)}
+                sx={{ mb: 1, mt: 1 }}
+              />
+            </LocalizationProvider>
+            <br />
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+              <DatePicker
+                label="Fecha fin"
+                onChange={(newvalue: any) => {
+                  obtenerContadorUsuario(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  obtenerContadorNegocios(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  obtenerContadorPuntos(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  obtenerContadorProductos(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  obtenerContadorInventarios(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  obtenerContadorDistribuciones(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  obtenerContadorVentas(
+                    fechas.fecha_inicio,
+                    newvalue?.format("YYYY-MM-DD")
+                  );
+                  setFechas({
+                    ...fechas,
+                    fecha_fin: newvalue.format("YYYY-MM-DD"),
+                  });
+                }}
+                format="YYYY-MM-DD"
+                value={dayjs(fechas.fecha_fin)}
+                sx={{ mb: 1, mt: 1 }}
+              />
+            </LocalizationProvider>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );
