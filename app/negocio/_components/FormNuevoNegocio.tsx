@@ -259,11 +259,7 @@ function FormNegocio() {
               }}
               format="YYYY-MM-DD"
               sx={{ mb: 1 }}
-              value={dayjs(
-                dayjs(negocio.fecha_licencia)
-                  .add(1, "month")
-                  .format("YYYY-MM-DD")
-              )}
+              value={dayjs(negocio.fecha_licencia)}
             />
           </LocalizationProvider>
 

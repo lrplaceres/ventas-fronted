@@ -30,6 +30,7 @@ const columnGroupingModel: GridColumnGroupingModel = [
       { field: "nombre" },
       { field: "direccion" },
       { field: "informacion" },
+      { field: "fecha_licencia" },
     ],
   },
 ];
@@ -51,6 +52,7 @@ function Page() {
   const columns: GridColDef[] = [
     {
       field: "nombre",
+      type: "string",
       headerName: "Nombre",
       width: 150,
       renderCell: (params) => (
@@ -59,8 +61,20 @@ function Page() {
         </Link>
       ),
     },
-    { field: "direccion", headerName: "Dirección", width: 150 },
-    { field: "informacion", headerName: "Información", width: 150 },
+    {
+      field: "fecha_licencia",
+      type: "date",
+      headerName: "Licencia",
+      width: 120,
+      valueGetter: ({ value }) => value && new Date(value),
+    },
+    { field: "direccion", type: "string", headerName: "Dirección", width: 150 },
+    {
+      field: "informacion",
+      type: "string",
+      headerName: "Información",
+      width: 150,
+    },
     {
       field: "actions",
       type: "actions",
@@ -68,7 +82,7 @@ function Page() {
       getActions: (params) => [
         <GridActionsCellItem
           key={`a${params.row.id}`}
-          icon={<DeleteIcon color="error"/>}
+          icon={<DeleteIcon color="error" />}
           label="Eliminar"
           onClick={() => {
             handleClickOpen();
@@ -137,7 +151,7 @@ function Page() {
     }).then(function (response) {
       if (response.ok) {
         notificacion(`El Negocio ha sido eliminado`, "info");
-        setNegocios(negocios.filter((negocio:any) => negocio.id != id));
+        setNegocios(negocios.filter((negocio: any) => negocio.id != id));
         handleClose();
       } else {
         response.json().then((data) => {
@@ -150,10 +164,9 @@ function Page() {
   return (
     <>
       <Container maxWidth="md">
+        <BotonInsertar />
 
-        <BotonInsertar />       
-
-        <Box sx={{height: "85vh", width:"100%"}}>
+        <Box sx={{ height: "85vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={negocios}
