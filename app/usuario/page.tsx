@@ -54,7 +54,7 @@ function Page() {
       width: 150,
       renderCell: (params) => (
         <Link href={`/usuario/${params.row.id}`} className="decoration-none">
-          {params.row.activo ? params.value : <del>{params.value}</del>}
+          {params.row.activo ? params.value : <p style={{color: "#9e9e9e"}}>{params.value}</p>}
         </Link>
       ),
     },
