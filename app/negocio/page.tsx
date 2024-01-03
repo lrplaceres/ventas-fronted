@@ -28,8 +28,6 @@ const columnGroupingModel: GridColumnGroupingModel = [
     description: "",
     children: [
       { field: "nombre" },
-      { field: "direccion" },
-      { field: "informacion" },
       { field: "fecha_licencia" },
     ],
   },
@@ -163,10 +161,10 @@ function Page() {
 
   return (
     <>
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <BotonInsertar />
 
-        <Box sx={{ height: "85vh", width: "100%" }}>
+        <Box sx={{ height: "88vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={negocios}

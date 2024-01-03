@@ -37,9 +37,6 @@ const columnGroupingModel: GridColumnGroupingModel = [
     children: [
       { field: "producto_id" },
       { field: "cantidad" },
-      { field: "punto_id" },
-      { field: "costo" },
-      { field: "fecha" },
     ],
   },
 ];
@@ -196,13 +193,13 @@ function Page() {
 
   return (
     <>
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <div style={{ display: "flex" }}>
           <BotonInsertar />
           <VistasMenuDistribucion />
         </div>
 
-        <Box sx={{height: "85vh", width:"100%"}}>
+        <Box sx={{ height: "88vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={distribucion}

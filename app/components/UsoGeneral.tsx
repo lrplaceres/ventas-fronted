@@ -343,8 +343,8 @@ function Page() {
 
   return (
     <>
-      <Container maxWidth="md">
-        <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
+      <Container maxWidth="lg">
+        <div style={{ display: "flex", marginTop: 10, marginBottom: 5 }}>
           <div style={{ flexGrow: 1 }}>
             <IconButton
               aria-label="filtericon"

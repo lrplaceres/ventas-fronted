@@ -1,7 +1,7 @@
 import React from "react";
-import Dashboard from "@/public/Dashboard.png";
-import lista_puntos from "@/public/lista_puntos.png";
-import ventas_brutas from "@/public/ventas_brutas.png";
+import Dashboard from "@/public/inicio.png";
+import lista_puntos from "@/public/puntos.png";
+import ventas_brutas from "@/public/ventas.png";
 import Image from "next/image";
 import { Box, Grid, Typography } from "@mui/material";
 

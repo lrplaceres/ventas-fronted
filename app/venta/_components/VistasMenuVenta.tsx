@@ -48,9 +48,9 @@ export default function VistasMenuVenta() {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={() => router.push("/venta/ventaxdia")}>
-          Ventas por fecha
-        </MenuItem>
+        <MenuItem onClick={() => router.push("/venta/cuadre")}>
+          Cuadre
+        </MenuItem>       
         <MenuItem onClick={() => router.push("/venta/ventaxperiodo")}>
           Ventas por período
         </MenuItem>

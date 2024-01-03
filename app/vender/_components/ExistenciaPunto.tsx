@@ -8,8 +8,14 @@ import {
   esES,
   GridColDef,
   GridColumnGroupingModel,
+  GridColumnVisibilityModel,
 } from "@mui/x-data-grid";
 import { Box, Container } from "@mui/material";
+
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -27,7 +33,20 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "nombre_punto", headerName: "Punto", width: 120 },
+  { field: "nombre_punto", type:"string", headerName: "Punto", width: 120 },
+  {
+    field: "precio_venta",
+    type: "number",
+    headerName: "Precio",
+    width: 120,
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatter.format(value);
+    },
+  },
+  { field: "um", type:"string", headerName: "UM", width: 90 },
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
@@ -37,7 +56,7 @@ const columnGroupingModel: GridColumnGroupingModel = [
     children: [
       { field: "nombre_producto" },
       { field: "existencia" },
-      { field: "cantidad" },
+      { field: "nombre_punto" },
     ],
   },
 ];
@@ -49,6 +68,11 @@ function Page() {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const [columnVisibilityModel, setColumnVisibilityModel] =
+    useState<GridColumnVisibilityModel>({
+      nombre_punto: false,
+    });
+
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
@@ -56,13 +80,16 @@ function Page() {
 
   useEffect(() => {
     const obtenerExistencia = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta-punto`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      })
+      await fetch(
+        `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta-punto-existencia`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           setExistencia(data);
@@ -75,25 +102,26 @@ function Page() {
     obtenerExistencia();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
- 
+
   return (
     <>
-    <Container maxWidth="md">      
-      <Box sx={{ height: "93vh", width: "100%" }}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={existencia}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 0,
-          }}
-          rowHeight={40}
-        />
-      </Box>
-    </Container>
+      <Container maxWidth="lg">
+        <Box sx={{ height: "93vh", width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={existencia}
+            columns={columns}
+            checkboxSelection
+            columnVisibilityModel={columnVisibilityModel}
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 0,
+            }}
+            rowHeight={40}
+          />
+        </Box>
+      </Container>
     </>
   );
 }

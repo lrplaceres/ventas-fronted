@@ -21,43 +21,39 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, Container } from "@mui/material";
-import { darken, lighten, styled } from '@mui/material/styles';
+import { darken, lighten, styled } from "@mui/material/styles";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
+import { grey } from "@mui/material/colors";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 
 const getBackgroundColor = (color: string, mode: string) =>
-  mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7);
+  mode === "dark" ? darken(color, 0.7) : lighten(color, 0.7);
 
 const getHoverBackgroundColor = (color: string, mode: string) =>
-  mode === 'dark' ? darken(color, 0.6) : lighten(color, 0.6);
+  mode === "dark" ? darken(color, 0.6) : lighten(color, 0.6);
 
 const getSelectedBackgroundColor = (color: string, mode: string) =>
-  mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.5);
+  mode === "dark" ? darken(color, 0.5) : lighten(color, 0.5);
 
 const getSelectedHoverBackgroundColor = (color: string, mode: string) =>
-  mode === 'dark' ? darken(color, 0.4) : lighten(color, 0.4);
+  mode === "dark" ? darken(color, 0.4) : lighten(color, 0.4);
 
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({ 
-  '& .pago-diferido--true': {
-    backgroundColor: getBackgroundColor(
-      theme.palette.error.main,
-      theme.palette.mode,
-    ),
-    '&:hover': {
-      backgroundColor: getHoverBackgroundColor(
-        theme.palette.error.main,
-        theme.palette.mode,
-      ),
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  "& .pago-diferido--true": {
+    backgroundColor: getBackgroundColor(grey[400], theme.palette.mode),
+    "&:hover": {
+      backgroundColor: getHoverBackgroundColor(grey[500], theme.palette.mode),
     },
-    '&.Mui-selected': {
+    "&.Mui-selected": {
       backgroundColor: getSelectedBackgroundColor(
-        theme.palette.error.main,
-        theme.palette.mode,
+        grey[600],
+        theme.palette.mode
       ),
-      '&:hover': {
+      "&:hover": {
         backgroundColor: getSelectedHoverBackgroundColor(
-          theme.palette.error.main,
-          theme.palette.mode,
+          grey[700],
+          theme.palette.mode
         ),
       },
     },
@@ -90,11 +86,27 @@ function Page() {
       headerName: "Nombre",
       width: 160,
       type: "string",
-      renderCell: (params) => (
-        <Link href={`/venta/${params.row.id}`} className="decoration-none">
-          {params.value}
-        </Link>
-      ),
+      renderCell: (params) => {
+        if (params.row.pago_electronico) {
+          return (
+            <>
+              <CreditCardIcon />{" "}
+              <Link
+                href={`/venta/${params.row.id}`}
+                className="decoration-none"
+              >
+                {params.value}
+              </Link>
+            </>
+          );
+        } else {
+          return (
+            <Link href={`/venta/${params.row.id}`} className="decoration-none">
+              {params.value}
+            </Link>
+          );
+        }
+      },
     },
     {
       field: "cantidad",
@@ -108,7 +120,7 @@ function Page() {
         return currencyFormatterCount.format(value);
       },
     },
-    { field: "nombre_punto",type: "string", headerName: "Punto", width: 120 },
+    { field: "nombre_punto", type: "string", headerName: "Punto", width: 120 },
     {
       field: "precio",
       headerName: "Precio",
@@ -134,15 +146,20 @@ function Page() {
         return currencyFormatter.format(value);
       },
     },
-    { field: "dependiente",type: "string", headerName: "Dependiente", width: 150 },
+    {
+      field: "dependiente",
+      type: "string",
+      headerName: "Dependiente",
+      width: 150,
+    },
     {
       field: "actions",
       type: "actions",
       width: 80,
-      getActions: (params:any) => [
+      getActions: (params: any) => [
         <GridActionsCellItem
           key={`a${params.row.id}`}
-          icon={<DeleteIcon color="error"/>}
+          icon={<DeleteIcon color="error" />}
           label="Eliminar"
           onClick={() => {
             handleClickOpen();
@@ -152,8 +169,24 @@ function Page() {
         />,
       ],
     },
-    { field: "pago_diferido", type: "boolean", headerName: "Pago diferido", width: 80 },
-    { field: "descripcion",type: "string", headerName: "Descripción", width: 180 }
+    {
+      field: "pago_electronico",
+      type: "boolean",
+      headerName: "Pago electrónico",
+      width: 80,
+    },
+    {
+      field: "pago_diferido",
+      type: "boolean",
+      headerName: "Pago diferido",
+      width: 80,
+    },
+    {
+      field: "descripcion",
+      type: "string",
+      headerName: "Descripción",
+      width: 180,
+    },
   ];
 
   const columnGroupingModel: GridColumnGroupingModel = [
@@ -163,12 +196,8 @@ function Page() {
       children: [
         { field: "nombre_producto" },
         { field: "cantidad" },
-        { field: "nombre_punto" },
-        { field: "precio" },
-        { field: "fecha" },
-        { field: "monto" },
       ],
-    },   
+    },
   ];
 
   const router = useRouter();
@@ -183,6 +212,7 @@ function Page() {
     useState<GridColumnVisibilityModel>({
       monto: false,
       dependiente: false,
+      pago_electronico: false,
       pago_diferido: false,
       descripcion: false,
     });
@@ -226,7 +256,6 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
-
   const eliminarVenta = async (id: number) => {
     await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/venta/${id}`, {
       method: "DELETE",
@@ -238,7 +267,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`La venta se ha sido eliminado`, "info");
-          setVentas(ventas.filter((venta:any) => venta.id != id));
+          setVentas(ventas.filter((venta: any) => venta.id != id));
           handleClose();
         } else {
           response.json().then((data) => {
@@ -246,21 +275,21 @@ function Page() {
           });
         }
       })
-      .catch(function (error:any) {
+      .catch(function (error: any) {
         notificacion("Se ha producido un error");
       });
   };
 
   return (
     <>
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <div style={{ display: "flex" }}>
           <BotonInsertar />
 
           <VistasMenuVenta />
         </div>
 
-        <Box sx={{height: "85vh", width:"100%"}}>
+        <Box sx={{ height: "88vh", width: "100%" }}>
           <StyledDataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={ventas}
@@ -275,7 +304,9 @@ function Page() {
             sx={{
               border: 0,
             }}
-            getRowClassName={(params) => `pago-diferido--${params.row.pago_diferido}`}
+            getRowClassName={(params) =>
+              `pago-diferido--${params.row.pago_diferido}`
+            }
             rowHeight={40}
             slots={{ toolbar: CustomToolbar }}
           />

@@ -1,5 +1,14 @@
 "use client";
-import { Box, Button, TextField, Typography, Container } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
+  FormControlLabel,
+  Switch,
+  InputAdornment,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
@@ -13,12 +22,21 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import { DateTimePicker } from "@mui/x-date-pickers";
 
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
 interface Venta {
   distribucion_id: number | string;
   cantidad: number;
   precio: number;
   fecha: Date | Dayjs | null;
   punto_id: number | string;
+  pago_electronico: boolean;
+  no_operacion: string;
+  pago_diferido: boolean;
+  descripcion: string;
 }
 
 function FormVenta() {
@@ -36,6 +54,10 @@ function FormVenta() {
     precio: 0,
     fecha: new Date(),
     punto_id: "",
+    pago_electronico: false,
+    no_operacion: "",
+    pago_diferido: false,
+    descripcion: "",
   });
 
   const [distribuciones, setDistribuciones] = useState([]);
@@ -73,6 +95,10 @@ function FormVenta() {
 
   const handleChange = ({ target: { name, value } }: any) => {
     setVenta({ ...venta, [name]: value });
+  };
+
+  const handleChangeSlider = ({ target: { name, checked } }: any) => {
+    setVenta({ ...venta, [name]: checked });
   };
 
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
@@ -119,6 +145,53 @@ function FormVenta() {
           <Typography variant="h6" color="primary" align="center">
             INSERTAR VENTA
           </Typography>
+
+          <FormControlLabel
+            control={
+              <Switch
+                name="pago_electronico"
+                onChange={handleChangeSlider}
+                checked={venta.pago_electronico}
+              />
+            }
+            label="Pago electrónico"
+            sx={{ mb: 1 }}
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
+                name="pago_diferido"
+                onChange={handleChangeSlider}
+                checked={venta.pago_diferido}
+              />
+            }
+            label="Pago diferido"
+            sx={{ mb: 1 }}
+          />
+
+          <TextField
+            id="no_operacion"
+            name="no_operacion"
+            label="No. operación"
+            value={venta.no_operacion}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1, display: venta.pago_electronico ? "block" : "none" }}
+          />
+
+          <TextField
+            id="descripcion"
+            name="descripcion"
+            label="Descripción del pago"
+            value={venta.descripcion}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1, display: venta.pago_diferido ? "block" : "none" }}
+            required={venta.pago_diferido ? true : false}
+            multiline
+            rows={2}
+          />
 
           <Autocomplete
             disablePortal
@@ -188,6 +261,9 @@ function FormVenta() {
             sx={{ mb: 1 }}
             type="number"
             required
+            InputProps={{
+              endAdornment: <InputAdornment position="end">{currencyFormatter.format(venta.cantidad * venta.precio)}</InputAdornment>,
+            }}
           />
 
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">

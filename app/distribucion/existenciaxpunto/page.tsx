@@ -10,9 +10,28 @@ import {
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
 import VistasMenuDistribucion from "../_components/VistasMenuDistribucion";
-import { Box, Container } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
@@ -30,7 +49,20 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
+  {
+    field: "precio_venta",
+    headerName: "Precio",
+    width: 120,
+    type: "number",
+    valueFormatter: ({ value }) => {
+      if (!value) {
+        return value;
+      }
+      return currencyFormatter.format(value);
+    },
+  },
   { field: "nombre_punto", headerName: "Punto", width: 120 },
+  { field: "um", headerName: "UM", width: 120 },
 ];
 
 function CustomToolbar() {
@@ -50,18 +82,20 @@ const columnGroupingModel: GridColumnGroupingModel = [
   {
     groupId: "Existencia en punto",
     description: "",
-    children: [
-      { field: "nombre_producto" },
-      { field: "existencia" },
-      { field: "cantidad" },
-    ],
+    children: [{ field: "nombre_producto" }, { field: "existencia" }],
   },
 ];
+
+interface Filtro {
+  punto: number | string;
+}
 
 function Page() {
   const { data: session, update } = useSession();
 
   const [existencia, setExistencia] = useState([]);
+
+  const [puntos, setPuntos] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -70,9 +104,19 @@ function Page() {
     enqueueSnackbar(mensaje, { variant });
   };
 
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
-    const obtenerExistencia = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta`, {
+    const obtenerPuntos = async () => {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/puntos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -81,44 +125,108 @@ function Page() {
       })
         .then((response) => response.json())
         .then((data) => {
-          setExistencia(data);
+          setPuntos(data);
         })
         .catch(function (error) {
           notificacion("Se ha producido un error");
         });
     };
 
-   obtenerExistencia();
-   // eslint-disable-next-line react-hooks/exhaustive-deps
+    obtenerPuntos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const obtenerExistencia = async (punto: any) => {
+    await fetch(
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta-resumen/${punto}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setExistencia(data);
+      })
+      .catch(function (error) {
+        notificacion("Se ha producido un error");
+      });
+  };
 
   return (
     <>
-    <Container maxWidth="md">      
-      <div style={{ display: "flex", marginTop: 10, marginBottom: 10 }}>
-        <div style={{ flexGrow: 1 }}>          
+      <Container maxWidth="lg">
+        <div style={{ display: "flex", marginTop: 10, marginBottom: 5 }}>
+          <div style={{ flexGrow: 1 }}>
+            <IconButton
+              aria-label="filtericon"
+              color="inherit"
+              onClick={handleClickOpen}
+            >
+              <FilterAltIcon />
+            </IconButton>
+          </div>
+
+          <VistasMenuDistribucion />
         </div>
 
-        <VistasMenuDistribucion />
-      </div>
+        <Box sx={{ height: "87vh", width: "100%" }}>
+          <DataGrid
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            rows={existencia}
+            columns={columns}
+            checkboxSelection
+            experimentalFeatures={{ columnGrouping: true }}
+            columnGroupingModel={columnGroupingModel}
+            sx={{
+              border: 0,
+            }}
+            rowHeight={40}
+            slots={{ toolbar: CustomToolbar }}
+          />
+        </Box>
 
-      <Box sx={{height: "85vh", width:"100%"}}>
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-          rows={existencia}
-          columns={columns}
-          checkboxSelection
-          experimentalFeatures={{ columnGrouping: true }}
-          columnGroupingModel={columnGroupingModel}
-          sx={{
-            border: 0,
-          }}
-          rowHeight={40}
-          slots={{ toolbar: CustomToolbar }}
-        />
-      </Box>
-    </Container>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Filtrar información"}
+          </DialogTitle>
+          <DialogContent>
+            <FormControl fullWidth sx={{mt:1}}>
+              <InputLabel>Punto</InputLabel>
+              <Select
+                id="punto"
+                name="punto"
+                label="Punto"
+                onChange={(e)=>{
+                  obtenerExistencia(e.target.value);
+                }}
+                sx={{ mb: 1 }}
+                required
+              >
+                {puntos.length > 0 &&
+                  puntos.map((punto: any, index) => (
+                    <MenuItem key={index.toString()} value={punto.id}>
+                      {punto.nombre}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </>
   );
 }

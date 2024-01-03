@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { KeyboardEvent, MouseEvent, useState } from "react";
 import {
+  CssBaseline,
   Divider,
   Drawer,
   List,
@@ -25,7 +26,9 @@ import { useSession } from "next-auth/react";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import OpcionesUsuario from "./OpcionesUsuario";
-import SummarizeIcon from '@mui/icons-material/Summarize';
+import SummarizeIcon from "@mui/icons-material/Summarize";
+import { lightBlue } from "@mui/material/colors";
+import HomeIcon from "@mui/icons-material/Home";
 
 export default function DenseAppBar() {
   const { data: session, update } = useSession();
@@ -55,7 +58,9 @@ export default function DenseAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <CssBaseline />
+      <CssBaseline />
+      <AppBar position="relative" sx={{ backgroundColor: lightBlue[900] }}>
         <Toolbar variant="dense">
           <IconButton
             onClick={toggleDrawer("left", true)}
@@ -91,19 +96,34 @@ export default function DenseAppBar() {
           onKeyDown={toggleDrawer("left", false)}
         >
           <List>
+            <ListItem disablePadding onClick={() => router.push("/")}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <HomeIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Inicio"} />
+              </ListItemButton>
+            </ListItem>
+
+            <Divider />
+
             {session?.rol == "propietario" && (
               <>
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/punto")}
                   sx={{
-                    backgroundColor:
-                      pathname?.split("/")[1] == "punto" ? "#bbdefb" : "",
+                    backgroundColor: pathname == "/punto" ? lightBlue[900] : "",
+                    color: pathname == "/punto" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <StorefrontIcon />
+                      <StorefrontIcon
+                        sx={{
+                          color: pathname == "/punto" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Puntos"} />
                   </ListItemButton>
@@ -114,12 +134,17 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/producto")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "producto" ? "#bbdefb" : "",
+                      pathname == "/producto" ? lightBlue[900] : "",
+                    color: pathname == "/producto" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <MenuBookIcon />
+                      <MenuBookIcon
+                        sx={{
+                          color: pathname == "/producto" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Productos"} />
                   </ListItemButton>
@@ -130,12 +155,17 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/inventario")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "inventario" ? "#bbdefb" : "",
+                      pathname == "/inventario" ? lightBlue[900] : "",
+                    color: pathname == "/inventario" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <InventoryIcon />
+                      <InventoryIcon
+                        sx={{
+                          color: pathname == "/inventario" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Inventario"} />
                   </ListItemButton>
@@ -146,14 +176,17 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/distribucion")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "distribucion"
-                        ? "#bbdefb"
-                        : "",
+                      pathname == "/distribucion" ? lightBlue[900] : "",
+                    color: pathname == "/distribucion" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <LocalShippingIcon />
+                      <LocalShippingIcon
+                        sx={{
+                          color: pathname == "/distribucion" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Distribución"} />
                   </ListItemButton>
@@ -163,15 +196,19 @@ export default function DenseAppBar() {
                   disablePadding
                   onClick={() => router.push("/venta")}
                   sx={{
-                    backgroundColor:
-                      pathname?.split("/")[1] == "venta" ? "#bbdefb" : "",
+                    backgroundColor: pathname == "/venta" ? lightBlue[900] : "",
+                    color: pathname == "/venta" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <ShoppingCartIcon />
+                      <ShoppingCartIcon
+                        sx={{
+                          color: pathname == "/venta" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
-                    <ListItemText primary={"Venta"} />
+                    <ListItemText primary={"Ventas"} />
                   </ListItemButton>
                 </ListItem>
 
@@ -180,12 +217,17 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/dependiente")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "dependiente" ? "#bbdefb" : "",
+                      pathname == "/dependiente" ? lightBlue[900] : "",
+                    color: pathname == "/dependiente" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <PeopleIcon />
+                      <PeopleIcon
+                        sx={{
+                          color: pathname == "/dependiente" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Dependientes"} />
                   </ListItemButton>
@@ -196,10 +238,22 @@ export default function DenseAppBar() {
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/inventario/existencia")}
+                  sx={{
+                    backgroundColor:
+                      pathname == "/inventario/existencia"
+                        ? lightBlue[900]
+                        : "",
+                    color: pathname == "/inventario/existencia" ? "white" : "",
+                  }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <SummarizeIcon />
+                      <SummarizeIcon
+                        sx={{
+                          color:
+                            pathname == "/inventario/existencia" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Existencia almacén"} />
                   </ListItemButton>
@@ -208,10 +262,27 @@ export default function DenseAppBar() {
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/distribucion/existenciaxpunto")}
+                  sx={{
+                    backgroundColor:
+                      pathname == "/distribucion/existenciaxpunto"
+                        ? lightBlue[900]
+                        : "",
+                    color:
+                      pathname == "/distribucion/existenciaxpunto"
+                        ? "white"
+                        : "",
+                  }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <SummarizeIcon />
+                      <SummarizeIcon
+                        sx={{
+                          color:
+                            pathname == "/distribucion/existenciaxpunto"
+                              ? "white"
+                              : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Existencia en punto"} />
                   </ListItemButton>
@@ -220,10 +291,20 @@ export default function DenseAppBar() {
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/venta/ventaxperiodo")}
+                  sx={{
+                    backgroundColor:
+                      pathname == "/venta/ventaxperiodo" ? lightBlue[900] : "",
+                    color: pathname == "/venta/ventaxperiodo" ? "white" : "",
+                  }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <SummarizeIcon />
+                      <SummarizeIcon
+                        sx={{
+                          color:
+                            pathname == "/venta/ventaxperiodo" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Ventas por período"} />
                   </ListItemButton>
@@ -232,15 +313,50 @@ export default function DenseAppBar() {
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/venta/utilidadesxperiodo")}
+                  sx={{
+                    backgroundColor:
+                      pathname == "/venta/utilidadesxperiodo"
+                        ? lightBlue[900]
+                        : "",
+                    color:
+                      pathname == "/venta/utilidadesxperiodo" ? "white" : "",
+                  }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <SummarizeIcon />
+                      <SummarizeIcon
+                        sx={{
+                          color:
+                            pathname == "/venta/utilidadesxperiodo"
+                              ? "white"
+                              : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Utilidades por período"} />
                   </ListItemButton>
                 </ListItem>
 
+                <ListItem
+                  disablePadding
+                  onClick={() => router.push("/venta/cuadre")}
+                  sx={{
+                    backgroundColor:
+                      pathname == "/venta/cuadre" ? lightBlue[900] : "",
+                    color: pathname == "/venta/cuadre" ? "white" : "",
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SummarizeIcon
+                        sx={{
+                          color: pathname == "/venta/cuadre" ? "white" : "",
+                        }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={"Cuadre"} />
+                  </ListItemButton>
+                </ListItem>
               </>
             )}
 
@@ -251,30 +367,38 @@ export default function DenseAppBar() {
                   onClick={() => router.push("/negocio")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "negocio" ? "#bbdefb" : "",
+                      pathname == "/negocio" ? lightBlue[900] : "",
+                    color: pathname == "/negocio" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <StorefrontIcon />
+                      <StorefrontIcon
+                        sx={{
+                          color: pathname == "/negocio" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Negocio"} />
                   </ListItemButton>
                 </ListItem>
-
-                <Divider />
 
                 <ListItem
                   disablePadding
                   onClick={() => router.push("/usuario")}
                   sx={{
                     backgroundColor:
-                      pathname?.split("/")[1] == "usuario" ? "#bbdefb" : "",
+                      pathname == "/usuario" ? lightBlue[900] : "",
+                    color: pathname == "/usuario" ? "white" : "",
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <PersonIcon />
+                      <PersonIcon
+                        sx={{
+                          color: pathname == "/usuario" ? "white" : "",
+                        }}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={"Usuario"} />
                   </ListItemButton>
@@ -283,21 +407,47 @@ export default function DenseAppBar() {
             )}
 
             {session?.rol == "dependiente" && (
+              <>
               <ListItem
                 disablePadding
                 onClick={() => router.push("/vender")}
                 sx={{
-                  backgroundColor:
-                    pathname?.split("/")[1] == "vender" ? "#bbdefb" : "",
+                  backgroundColor: pathname == "/vender" ? lightBlue[900] : "",
+                  color: pathname == "/vender" ? "white" : "",
                 }}
               >
                 <ListItemButton>
                   <ListItemIcon>
-                    <PersonIcon />
+                    <PersonIcon
+                      sx={{
+                        color: pathname == "/vender" ? "white" : "",
+                      }}
+                    />
                   </ListItemIcon>
                   <ListItemText primary={"Ventas"} />
                 </ListItemButton>
               </ListItem>
+
+              <ListItem
+                disablePadding
+                onClick={() => router.push("/vender/cuadre")}
+                sx={{
+                  backgroundColor: pathname == "/vender/cuadre" ? lightBlue[900] : "",
+                  color: pathname == "/vender/cuadre" ? "white" : "",
+                }}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <SummarizeIcon
+                      sx={{
+                        color: pathname == "/vender/cuadre" ? "white" : "",
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={"Cuadre"} />
+                </ListItemButton>
+              </ListItem>
+              </>
             )}
           </List>
         </Box>

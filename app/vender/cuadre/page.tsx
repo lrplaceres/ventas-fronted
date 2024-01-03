@@ -1,7 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import VistasMenu from "../_components/VistasMenuVenta";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -26,116 +25,19 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
+interface Filtro {
+  punto: number | string;
+}
+
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
-
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
-
-const columns: GridColDef[] = [
-  { field: "nombre_producto", headerName: "Producto", width: 160 },
-  {
-    field: "cantidad",
-    headerName: "Cant",
-    width: 120,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatterCount.format(value);
-    },
-  },
-  {
-    field: "utilidad",
-    headerName: "Utilidad",
-    width: 120,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  { field: "nombre_punto", headerName: "Punto", width: 120 },
-  {
-    field: "precio_costo",
-    headerName: "Costo",
-    width: 120,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  {
-    field: "monto",
-    headerName: "Monto",
-    width: 120,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  {
-    field: "precio_inventario",
-    headerName: "Precio Inv",
-    width: 140,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  {
-    field: "utilidad_esperada",
-    headerName: "U. Esperada",
-    width: 140,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-  {
-    field: "diferencia_utilidad",
-    headerName: "Dif",
-    width: 120,
-    type: "number",
-    valueFormatter: ({ value }) => {
-      if (!value) {
-        return value;
-      }
-      return currencyFormatter.format(value);
-    },
-  },
-];
-
-const columnGroupingModel: GridColumnGroupingModel = [
-  {
-    groupId: "Utilidades por período",
-    description: "",
-    children: [
-      { field: "nombre_producto" },
-      { field: "cantidad" },
-    ],
-  },
-];
 
 declare module "@mui/x-data-grid" {
   interface FooterPropsOverrides {
-    utilidad: number;
+    montoTotal: number;
   }
 }
 
@@ -144,8 +46,8 @@ export function CustomFooterStatusComponent(
 ) {
   return (
     <Box sx={{ p: 1, display: "flex" }}>
-      Utilidad Total{" "}
-      {props.utilidad?.toLocaleString("en-US", {
+      Monto Total{" "}
+      {props.montoTotal?.toLocaleString("en-US", {
         style: "currency",
         currency: "USD",
       })}
@@ -167,25 +69,93 @@ function CustomToolbar() {
 }
 
 function Page() {
-  const { data: session, update } = useSession();
+  const columns: GridColDef[] = [
+    {
+      field: "nombre_producto",
+      headerName: "Nombre",
+      width: 160,
+      type: "string",
+    },
+    {
+      field: "existencia",
+      headerName: "Cant",
+      width: 120,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatterCount.format(value);
+      },
+    },
+    { field: "nombre_punto", type: "string", headerName: "Punto", width: 120 },
+    {
+      field: "precio_venta",
+      headerName: "Precio",
+      width: 120,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatter.format(value);
+      },
+    },
+    {
+      field: "cantidad_vendida",
+      headerName: "Cant V.",
+      width: 120,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatterCount.format(value);
+      },
+    },
+    {
+      field: "monto",
+      headerName: "Monto",
+      width: 120,
+      type: "number",
+      valueFormatter: ({ value }) => {
+        if (!value) {
+          return value;
+        }
+        return currencyFormatter.format(value);
+      },
+    },
+    { field: "um", type: "string", headerName: "UM", width: 120 },
+  ];
 
-  const [ventas, setVentas] = useState([]);
-
-  const [utilidad, setUtilidad] = useState<number>(0);
-
-  const { enqueueSnackbar } = useSnackbar();
+  const columnGroupingModel: GridColumnGroupingModel = [
+    {
+      groupId: "Cuadre del punto",
+      description: "",
+      children: [{ field: "nombre_producto" }, { field: "existencia" }],
+    },
+  ];
 
   const [columnVisibilityModel, setColumnVisibilityModel] =
     useState<GridColumnVisibilityModel>({
-      diferencia_utilidad: false,
-      monto: false,
-      precio_inventario: false,
-      utilidad_esperada: false,
-      precio_costo: false,
+      nombre_punto: false,
+      um: false,
     });
 
+  const { data: session, update } = useSession();
+
+  const [filtro, setFiltro] = useState<Filtro>({
+    punto: "",
+  });
+
+  const [cuadre, setCuadre] = useState([]);
+
+  const [montoTotal, setMontoTotal] = useState<number>(0);
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const [fechas, setFechas] = useState({
-    fecha_inicio: dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
+    fecha_inicio: dayjs(new Date()).format("YYYY-MM-DD"),
     fecha_fin: dayjs(new Date()).format("YYYY-MM-DD"),
   });
 
@@ -199,23 +169,21 @@ function Page() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    obtenerCuadre();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const notificacion = (mensaje: string, variant: VariantType = "error") => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
 
-  useEffect(() => {
-    obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const obtenerCuadre = async () => {
+    handleClose();
 
-  const obtenerVentasPeriodo = async (fecha_inicio: any, fecha_fin: any) => {
-    if (fecha_inicio > fecha_fin) {
-      setVentas([]);
-      return notificacion("La fecha fin debe ser mayor que la fecha inicio");
-    }
     await fetch(
-      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-utilidades-periodo/${fecha_inicio}/${fecha_fin}`,
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/distribuciones-venta-cuadre-dependiente/${fechas.fecha_inicio}/${fechas.fecha_fin}/${filtro.punto}`,
       {
         method: "GET",
         headers: {
@@ -226,13 +194,13 @@ function Page() {
     )
       .then((response) => response.json())
       .then((data) => {
-        setVentas(data);
+        setCuadre(data);
 
         let sum = 0;
         data.map((d: any) => {
-          sum += d.utilidad;
+          sum += d.monto;
         });
-        setUtilidad(sum);
+        setMontoTotal(sum);
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -252,14 +220,12 @@ function Page() {
               <FilterAltIcon />
             </IconButton>
           </div>
-
-          <VistasMenu />
         </div>
 
-        <Box sx={{ height: "87vh", width: "100%" }}>
+        <Box sx={{ height: "88vh", width: "100%" }}>
           <DataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-            rows={ventas}
+            rows={cuadre}
             columns={columns}
             checkboxSelection
             columnVisibilityModel={columnVisibilityModel}
@@ -271,14 +237,14 @@ function Page() {
             sx={{
               border: 0,
             }}
+            rowHeight={40}
             slots={{
               footer: CustomFooterStatusComponent,
               toolbar: CustomToolbar,
             }}
             slotProps={{
-              footer: { utilidad },
+              footer: { montoTotal },
             }}
-            rowHeight={40}
           />
         </Box>
 
@@ -296,10 +262,6 @@ function Page() {
               <DatePicker
                 label="Fecha inicio"
                 onChange={(newvalue: any) => {
-                  obtenerVentasPeriodo(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
                   setFechas({
                     ...fechas,
                     fecha_inicio: newvalue.format("YYYY-MM-DD"),
@@ -315,10 +277,6 @@ function Page() {
               <DatePicker
                 label="Fecha fin"
                 onChange={(newvalue: any) => {
-                  obtenerVentasPeriodo(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
                   setFechas({
                     ...fechas,
                     fecha_fin: newvalue.format("YYYY-MM-DD"),
@@ -331,8 +289,8 @@ function Page() {
             </LocalizationProvider>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} autoFocus>
-              Cerrar
+            <Button onClick={obtenerCuadre} autoFocus>
+              Buscar
             </Button>
           </DialogActions>
         </Dialog>
@@ -341,7 +299,7 @@ function Page() {
   );
 }
 
-function PageUtilidadesxperiodo() {
+function Cuadre() {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -352,4 +310,4 @@ function PageUtilidadesxperiodo() {
   );
 }
 
-export default PageUtilidadesxperiodo;
+export default Cuadre;

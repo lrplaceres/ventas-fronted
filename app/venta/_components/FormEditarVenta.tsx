@@ -1,5 +1,13 @@
 "use client";
-import { Box, Button, TextField, Typography, Container, FormControlLabel, Switch } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
@@ -18,6 +26,8 @@ interface Venta {
   precio: number;
   fecha: Date | Dayjs | null;
   punto_id: number | string;
+  pago_electronico: boolean;
+  no_operacion: string;
   pago_diferido: boolean;
   descripcion: string | null;
   nombre_producto: string;
@@ -41,6 +51,8 @@ function FormVenta() {
     nombre_producto: "",
     descripcion: "",
     pago_diferido: false,
+    pago_electronico: false,
+    no_operacion: "",
   });
 
   useEffect(() => {
@@ -121,6 +133,18 @@ function FormVenta() {
           <FormControlLabel
             control={
               <Switch
+                name="pago_electronico"
+                onChange={handleChangeSlider}
+                checked={venta.pago_electronico}
+              />
+            }
+            label="Pago electrónico"
+            sx={{ mb: 1 }}
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
                 name="pago_diferido"
                 onChange={handleChangeSlider}
                 checked={venta.pago_diferido}
@@ -128,6 +152,16 @@ function FormVenta() {
             }
             label="Pago diferido"
             sx={{ mb: 1 }}
+          />
+
+          <TextField
+            id="no_operacion"
+            name="no_operacion"
+            label="No. operación"
+            value={venta.no_operacion}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 1, display: venta.pago_electronico ? "block" : "none" }}
           />
 
           <TextField

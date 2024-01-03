@@ -149,6 +149,12 @@ function FormUsuario() {
             onChange={handleChange}
             sx={{ mb: 1 }}
             required
+            inputProps={{
+              pattern: "^[a-z0-9]+$",
+              minLength: 3,
+              maxLength: 24,
+            }}
+            helperText ="Sólo se permiten letras y números. Letras minúsculas. Entre 3 y 24 carácteres."
           />
           <TextField
             id="password"

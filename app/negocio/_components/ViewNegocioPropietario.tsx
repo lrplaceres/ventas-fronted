@@ -57,8 +57,8 @@ function ViewKiokoPropietario() {
         </Alert>
       ) : (
         <>
-          <Typography variant="h6" color="primary" align="center">
-            Mis negocios
+          <Typography variant="h5" color="primary" align="center">
+            MIS NEGOCIOS
           </Typography>
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}

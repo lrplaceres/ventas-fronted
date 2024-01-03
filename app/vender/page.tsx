@@ -19,11 +19,48 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, Container } from "@mui/material";
+import { darken, lighten, styled } from "@mui/material/styles";
+import { grey } from "@mui/material/colors";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+
+const getBackgroundColor = (color: string, mode: string) =>
+  mode === "dark" ? darken(color, 0.7) : lighten(color, 0.7);
+
+const getHoverBackgroundColor = (color: string, mode: string) =>
+  mode === "dark" ? darken(color, 0.6) : lighten(color, 0.6);
+
+const getSelectedBackgroundColor = (color: string, mode: string) =>
+  mode === "dark" ? darken(color, 0.5) : lighten(color, 0.5);
+
+const getSelectedHoverBackgroundColor = (color: string, mode: string) =>
+  mode === "dark" ? darken(color, 0.4) : lighten(color, 0.4);
+
+  const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+    "& .pago-diferido--true": {
+      backgroundColor: getBackgroundColor(grey[400], theme.palette.mode),
+      "&:hover": {
+        backgroundColor: getHoverBackgroundColor(grey[500], theme.palette.mode),
+      },
+      "&.Mui-selected": {
+        backgroundColor: getSelectedBackgroundColor(
+          grey[600],
+          theme.palette.mode
+        ),
+        "&:hover": {
+          backgroundColor: getSelectedHoverBackgroundColor(
+            grey[700],
+            theme.palette.mode
+          ),
+        },
+      },
+    },
+  }));
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 function Page() {
@@ -32,6 +69,12 @@ function Page() {
       field: "nombre_producto",
       headerName: "Nombre",
       width: 160,
+      type: "string",
+      renderCell: (params) => {
+        if (params.row.pago_electronico) {
+          return <><CreditCardIcon />{params.value}</>
+        }
+      }
     },
     {
       field: "cantidad",
@@ -45,7 +88,7 @@ function Page() {
         return currencyFormatterCount.format(value);
       },
     },
-    { field: "nombre_punto", headerName: "Punto", width: 120 },
+    { field: "nombre_punto",type:"string", headerName: "Punto", width: 120 },
     {
       field: "precio",
       headerName: "Precio",
@@ -71,7 +114,12 @@ function Page() {
       },
     },
     { field: "fecha", headerName: "Fecha", width: 140 },
-    { field: "dependiente", headerName: "Dependiente", width: 150 },
+    {
+      field: "dependiente",
+      type: "string",
+      headerName: "Dependiente",
+      width: 150,
+    },
     {
       field: "actions",
       type: "actions",
@@ -89,6 +137,24 @@ function Page() {
         />,
       ],
     },
+    {
+      field: "pago_electronico",
+      type: "boolean",
+      headerName: "Pago electrónico",
+      width: 80,
+    },
+    {
+      field: "pago_diferido",
+      type: "boolean",
+      headerName: "Pago diferido",
+      width: 80,
+    },
+    {
+      field: "descripcion",
+      type: "string",
+      headerName: "Descripción",
+      width: 180,
+    },
   ];
 
   const columnGroupingModel: GridColumnGroupingModel = [
@@ -99,9 +165,6 @@ function Page() {
         { field: "nombre_producto" },
         { field: "cantidad" },
         { field: "nombre_punto" },
-        { field: "precio" },
-        { field: "fecha" },
-        { field: "monto" },
       ],
     },
   ];
@@ -119,6 +182,9 @@ function Page() {
       nombre_punto: false,
       dependiente: false,
       fecha: false,
+      pago_electronico: false,
+      pago_diferido: false,
+      descripcion: false,
     });
 
   const [open, setOpen] = useState(false);
@@ -150,7 +216,7 @@ function Page() {
           notificacion("Se ha producido un error");
         });
     };
-    
+
     obtenerVentas();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -159,8 +225,6 @@ function Page() {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(mensaje, { variant });
   };
-
-
 
   const eliminarVenta = async (id: number) => {
     await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/venta/${id}`, {
@@ -173,7 +237,7 @@ function Page() {
       .then(function (response) {
         if (response.ok) {
           notificacion(`La venta se ha sido eliminado`, "info");
-          setVentas(ventas.filter((venta:any) => venta.id != id));
+          setVentas(ventas.filter((venta: any) => venta.id != id));
           handleClose();
         } else {
           response.json().then((data) => {
@@ -188,13 +252,13 @@ function Page() {
 
   return (
     <>
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <div style={{ display: "flex" }}>
           <BotonInsertar />
         </div>
 
-        <Box sx={{ height: "85vh", width: "100%" }}>
-          <DataGrid
+        <Box sx={{ height: "88vh", width: "100%" }}>
+          <StyledDataGrid
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             rows={ventas}
             columns={columns}
@@ -208,6 +272,9 @@ function Page() {
             sx={{
               border: 0,
             }}
+            getRowClassName={(params) =>
+              `pago-diferido--${params.row.pago_diferido}`
+            }
             rowHeight={40}
           />
         </Box>
