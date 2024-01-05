@@ -35,29 +35,17 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
-declare module "@mui/x-data-grid" {
-  interface FooterPropsOverrides {
-    montoTotal: number;
+declare module '@mui/x-data-grid' {
+  interface ToolbarPropsOverrides {
+    someCustomString: string;
+    someCustomNumber: string;
   }
 }
 
-export function CustomFooterStatusComponent(
-  props: NonNullable<GridSlotsComponentsProps["footer"]>
-) {
-  return (
-    <Box sx={{ p: 1, display: "flex" }}>
-      Monto Total{" "}
-      {props.montoTotal?.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-      })}
-    </Box>
-  );
-}
-
-function CustomToolbar() {
+function CustomToolbar(props: NonNullable<GridSlotsComponentsProps['toolbar']>) {
   return (
     <GridToolbarContainer>
+    {`${props.someCustomString} ${props.someCustomNumber}`}
       <GridToolbarExport
         printOptions={{
           hideFooter: true,
@@ -150,7 +138,7 @@ function Page() {
 
   const [cuadre, setCuadre] = useState([]);
 
-  const [montoTotal, setMontoTotal] = useState<number>(0);
+  const [montoTotal, setMontoTotal] = useState<string>("0.00");
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -200,7 +188,7 @@ function Page() {
         data.map((d: any) => {
           sum += d.monto;
         });
-        setMontoTotal(sum);
+        setMontoTotal(currencyFormatter.format(sum));
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -239,11 +227,14 @@ function Page() {
             }}
             rowHeight={40}
             slots={{
-              footer: CustomFooterStatusComponent,
               toolbar: CustomToolbar,
             }}
             slotProps={{
-              footer: { montoTotal },
+              toolbar: {
+                // props required by CustomGridToolbar
+                someCustomString: 'Monto Total',
+                someCustomNumber: montoTotal,
+              },
             }}
           />
         </Box>

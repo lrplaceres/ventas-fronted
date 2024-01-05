@@ -54,29 +54,17 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
-declare module "@mui/x-data-grid" {
-  interface FooterPropsOverrides {
-    monto: number;
+declare module '@mui/x-data-grid' {
+  interface ToolbarPropsOverrides {
+    someCustomString: string;
+    someCustomNumber: string;
   }
 }
 
-export function CustomFooterStatusComponent(
-  props: NonNullable<GridSlotsComponentsProps["footer"]>
-) {
-  return (
-    <Box sx={{ p: 1, display: "flex" }}>
-      Inversión Total{" "}
-      {props.monto?.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-      })}
-    </Box>
-  );
-}
-
-function CustomToolbar() {
+function CustomToolbar(props: NonNullable<GridSlotsComponentsProps['toolbar']>) {
   return (
     <GridToolbarContainer>
+      {`${props.someCustomString} ${props.someCustomNumber}`}
       <GridToolbarExport
         printOptions={{
           hideFooter: true,
@@ -92,7 +80,7 @@ function Page() {
 
   const [ventas, setVentas] = useState([]);
 
-  const [monto, setMonto] = useState<number>(0);
+  const [monto, setMonto] = useState<string>("0.00");
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -144,7 +132,7 @@ function Page() {
         data.map((d: any) => {
           sum += d.monto;
         });
-        setMonto(sum);
+        setMonto(currencyFormatter.format(sum));
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -182,10 +170,13 @@ function Page() {
             rowHeight={40}
             slots={{
               toolbar: CustomToolbar,
-              footer: CustomFooterStatusComponent,
             }}
             slotProps={{
-              footer: { monto },
+              toolbar: {
+                // props required by CustomGridToolbar
+                someCustomString: 'Inversión Total',
+                someCustomNumber: monto,
+              },
             }}
           />
         </Box>

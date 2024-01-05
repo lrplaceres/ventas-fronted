@@ -133,29 +133,17 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
-declare module "@mui/x-data-grid" {
-  interface FooterPropsOverrides {
-    utilidad: number;
+declare module '@mui/x-data-grid' {
+  interface ToolbarPropsOverrides {
+    someCustomString: string;
+    someCustomNumber: string;
   }
 }
 
-export function CustomFooterStatusComponent(
-  props: NonNullable<GridSlotsComponentsProps["footer"]>
-) {
-  return (
-    <Box sx={{ p: 1, display: "flex" }}>
-      Utilidad Total{" "}
-      {props.utilidad?.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-      })}
-    </Box>
-  );
-}
-
-function CustomToolbar() {
+function CustomToolbar(props: NonNullable<GridSlotsComponentsProps['toolbar']>) {
   return (
     <GridToolbarContainer>
+      {`${props.someCustomString} ${props.someCustomNumber}`}
       <GridToolbarExport
         printOptions={{
           hideFooter: true,
@@ -171,7 +159,7 @@ function Page() {
 
   const [ventas, setVentas] = useState([]);
 
-  const [utilidad, setUtilidad] = useState<number>(0);
+  const [utilidad, setUtilidad] = useState<string>("0.00");
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -232,7 +220,7 @@ function Page() {
         data.map((d: any) => {
           sum += d.utilidad;
         });
-        setUtilidad(sum);
+        setUtilidad(currencyFormatter.format(sum));
       })
       .catch(function (error) {
         notificacion("Se ha producido un error");
@@ -272,11 +260,14 @@ function Page() {
               border: 0,
             }}
             slots={{
-              footer: CustomFooterStatusComponent,
               toolbar: CustomToolbar,
             }}
             slotProps={{
-              footer: { utilidad },
+              toolbar: {
+                // props required by CustomGridToolbar
+                someCustomString: 'Utilidad Total',
+                someCustomNumber: utilidad,
+              },
             }}
             rowHeight={40}
           />
