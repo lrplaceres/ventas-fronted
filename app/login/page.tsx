@@ -148,7 +148,6 @@ export default function DrawerAppBar(props:any) {
         <Toolbar />
         <Producto />
 
-        <Vistas />
 
         <Precio />
 
