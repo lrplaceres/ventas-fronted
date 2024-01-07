@@ -178,7 +178,7 @@ function Page() {
     {
       field: "pago_diferido",
       type: "boolean",
-      headerName: "Pago diferido",
+      headerName: "Diferido",
       width: 80,
     },
     {

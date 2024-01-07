@@ -174,7 +174,7 @@ function Page() {
             slotProps={{
               toolbar: {
                 // props required by CustomGridToolbar
-                someCustomString: 'Inversión Total',
+                someCustomString: 'Monto Total',
                 someCustomNumber: monto,
               },
             }}

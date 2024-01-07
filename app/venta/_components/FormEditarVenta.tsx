@@ -7,6 +7,7 @@ import {
   Container,
   FormControlLabel,
   Switch,
+  InputAdornment,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -19,6 +20,11 @@ import "dayjs/locale/es";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoneIcon from "@mui/icons-material/Done";
 import { DateTimePicker } from "@mui/x-date-pickers";
+
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
 interface Venta {
   distribucion_id: string;
@@ -208,6 +214,9 @@ function FormVenta() {
             sx={{ mb: 1 }}
             type="number"
             required
+            InputProps={{
+              endAdornment: <InputAdornment position="end">{currencyFormatter.format(venta.cantidad * venta.precio)}</InputAdornment>,
+            }}
           />
 
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
