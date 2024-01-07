@@ -242,7 +242,7 @@ function Page() {
               color="inherit"
               onClick={handleClickOpen}
             >
-              <FilterAltIcon />
+              <FilterAltIcon sx={{color: "red"}}/>
             </IconButton>
           </div>
 
