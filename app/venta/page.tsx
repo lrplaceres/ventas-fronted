@@ -133,7 +133,13 @@ function Page() {
         return currencyFormatter.format(value);
       },
     },
-    { field: "fecha", headerName: "Fecha", width: 180 },
+    {
+      field: "fecha",
+      type: "dateTime",
+      headerName: "Fecha",
+      width: 180,
+      valueGetter: ({ value }) => value && new Date(value),
+    },
     {
       field: "monto",
       headerName: "Monto",
@@ -193,10 +199,7 @@ function Page() {
     {
       groupId: "Listado de ventas",
       description: "",
-      children: [
-        { field: "nombre_producto" },
-        { field: "cantidad" },
-      ],
+      children: [{ field: "nombre_producto" }, { field: "cantidad" }],
     },
   ];
 
