@@ -214,6 +214,26 @@ export default function DenseAppBar() {
 
                 <ListItem
                   disablePadding
+                  onClick={() => router.push("/factura")}
+                  sx={{
+                    backgroundColor: pathname == "/factura" ? lightBlue[900] : "",
+                    color: pathname == "/factura" ? "white" : "",
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <ShoppingCartIcon
+                        sx={{
+                          color: pathname == "/factura" ? "white" : "",
+                        }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={"Factura"} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem
+                  disablePadding
                   onClick={() => router.push("/dependiente")}
                   sx={{
                     backgroundColor:
@@ -357,6 +377,7 @@ export default function DenseAppBar() {
                     <ListItemText primary={"Cuadre"} />
                   </ListItemButton>
                 </ListItem>
+                
               </>
             )}
 
