@@ -29,6 +29,7 @@ import OpcionesUsuario from "./OpcionesUsuario";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import { lightBlue } from "@mui/material/colors";
 import HomeIcon from "@mui/icons-material/Home";
+import SellIcon from '@mui/icons-material/Sell';
 
 export default function DenseAppBar() {
   const { data: session, update } = useSession();
@@ -222,13 +223,13 @@ export default function DenseAppBar() {
                 >
                   <ListItemButton>
                     <ListItemIcon>
-                      <ShoppingCartIcon
+                      <SellIcon
                         sx={{
                           color: pathname == "/factura" ? "white" : "",
                         }}
                       />
                     </ListItemIcon>
-                    <ListItemText primary={"Factura"} />
+                    <ListItemText primary={"Facturas"} />
                   </ListItemButton>
                 </ListItem>
 

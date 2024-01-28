@@ -64,6 +64,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+
 const currencyFormatterCount = new Intl.NumberFormat("en-US");
 
 function CustomToolbar() {
