@@ -258,6 +258,30 @@ export default function DenseAppBar() {
 
                 <ListItem
                   disablePadding
+                  onClick={() => router.push("/inventario/tarjetaalmacen")}
+                  sx={{
+                    backgroundColor:
+                      pathname == "/inventario/tarjetaalmacen"
+                        ? lightBlue[900]
+                        : "",
+                    color: pathname == "/inventario/tarjetaalmacen" ? "white" : "",
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SummarizeIcon
+                        sx={{
+                          color:
+                            pathname == "/inventario/tarjetaalmacen" ? "white" : "",
+                        }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={"Tarjeta por producto"} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem
+                  disablePadding
                   onClick={() => router.push("/inventario/existencia")}
                   sx={{
                     backgroundColor:

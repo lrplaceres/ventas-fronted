@@ -95,7 +95,7 @@ function Page() {
 
   useEffect(() => {
     const obtenerExistencia = async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-a-distribuir`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/inventarios-almacen`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
