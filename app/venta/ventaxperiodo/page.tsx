@@ -14,7 +14,7 @@ import {
   GridColDef,
   GridColumnGroupingModel,
 } from "@mui/x-data-grid";
-import { Box, Button, Container } from "@mui/material";
+import { Box, Button, Container, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
@@ -74,9 +74,12 @@ function Page() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [fechas, setFechas] = useState({
+  const [negocios, setNegocios] = useState([]);
+
+  const [filtros, setFiltros] = useState({
     fecha_inicio: dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
     fecha_fin: dayjs(new Date()).format("YYYY-MM-DD"),
+    negocio: ""
   });
 
   const [open, setOpen] = useState(false);
@@ -95,17 +98,41 @@ function Page() {
   };
 
   useEffect(() => {
-    obtenerVentasPeriodo(fechas.fecha_inicio, fechas.fecha_fin);
+    const obtenerNegociosPropietario = async () => {
+      await fetch(`${process.env.NEXT_PUBLIC_MI_API_BACKEND}/negocios`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setNegocios(data);
+        })
+        .catch(function (error) {
+          notificacion("Se ha producido un error");
+        });
+    };
+
+    obtenerNegociosPropietario();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const obtenerVentasPeriodo = async (fecha_inicio: any, fecha_fin: any) => {
+  const obtenerVentasPeriodo = async (fecha_inicio: any, fecha_fin: any, negocio: any) => {
+    handleClose();
+    
+    if (!filtros.negocio) {
+      return notificacion("Seleccione un Negocio");
+    }
+
     if (fecha_inicio > fecha_fin) {
       setVentas([]);
       return notificacion("La fecha fin debe ser mayor que la fecha inicio");
     }
     await fetch(
-      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-periodo/${fecha_inicio}/${fecha_fin}`,
+      `${process.env.NEXT_PUBLIC_MI_API_BACKEND}/ventas-periodo/${fecha_inicio}/${fecha_fin}/${negocio}`,
       {
         method: "GET",
         headers: {
@@ -133,7 +160,7 @@ function Page() {
               color="inherit"
               onClick={handleClickOpen}
             >
-              <FilterAltIcon />
+              <FilterAltIcon sx={{color: "red"}}/>
             </IconButton>
           </div>
 
@@ -166,21 +193,42 @@ function Page() {
             {"Filtrar información"}
           </DialogTitle>
           <DialogContent>
+          <FormControl fullWidth sx={{mt: 1}}>
+            <InputLabel>Negocio</InputLabel>
+            <Select
+              id="negocio_id"
+              name="negocio_id"
+              value={filtros.negocio}
+              label="Negocio"
+              onChange={({target}: any) => {
+                setFiltros({
+                  ...filtros,
+                  negocio: target.value,
+                });
+              }}
+              sx={{ mb: 1 }}
+              required
+            >
+              {negocios.length > 0 &&
+                negocios.map((negocio: any, index) => (
+                  <MenuItem key={index.toString()} value={negocio.id}>
+                    {negocio.nombre}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
               <DatePicker
                 label="Fecha inicio"
-                onChange={(newvalue: any) => {
-                  obtenerVentasPeriodo(
-                    newvalue?.format("YYYY-MM-DD"),
-                    fechas.fecha_fin
-                  );
-                  setFechas({
-                    ...fechas,
+                onChange={(newvalue: any) => {                 
+                  setFiltros({
+                    ...filtros,
                     fecha_inicio: newvalue.format("YYYY-MM-DD"),
                   });
                 }}
                 format="YYYY-MM-DD"
-                value={dayjs(fechas.fecha_inicio)}
+                value={dayjs(filtros.fecha_inicio)}
                 sx={{ mb: 1, mt: 1 }}
               />
             </LocalizationProvider>
@@ -189,24 +237,26 @@ function Page() {
               <DatePicker
                 label="Fecha fin"
                 onChange={(newvalue: any) => {
-                  obtenerVentasPeriodo(
-                    fechas.fecha_inicio,
-                    newvalue?.format("YYYY-MM-DD")
-                  );
-                  setFechas({
-                    ...fechas,
+                  setFiltros({
+                    ...filtros,
                     fecha_fin: newvalue.format("YYYY-MM-DD"),
                   });
                 }}
                 format="YYYY-MM-DD"
-                value={dayjs(fechas.fecha_fin)}
+                value={dayjs(filtros.fecha_fin)}
                 sx={{ mb: 1, mt: 1 }}
               />
             </LocalizationProvider>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} autoFocus>
-              Cerrar
+            <Button onClick={()=> {
+              obtenerVentasPeriodo(
+                filtros.fecha_inicio,
+                filtros.fecha_fin,
+                filtros.negocio
+              )
+            }} autoFocus>
+              BUSCAR
             </Button>
           </DialogActions>
         </Dialog>

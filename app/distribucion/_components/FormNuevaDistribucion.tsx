@@ -183,9 +183,9 @@ function FormDistribucion() {
               value={distribucion.punto_id}
               onChange={handleChange}
               required
-              inputProps={{ readOnly: puntos.length ? false : true }}
+              inputProps={{ readOnly: puntos.length > 0 ? false : true }}
             >
-              {puntos.map((punto: any, index) => (
+              { puntos.length > 0 && puntos.map((punto: any, index) => (
                 <MenuItem key={index.toString()} value={punto.id}>
                   {punto.nombre}
                 </MenuItem>

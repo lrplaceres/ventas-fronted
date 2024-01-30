@@ -36,7 +36,6 @@ const columns: GridColDef[] = [
       return currencyFormatterCount.format(value);
     },
   },
-  { field: "fecha", headerName: "Fecha", width: 140 },
   {
     field: "costo",
     headerName: "$.Costo",
