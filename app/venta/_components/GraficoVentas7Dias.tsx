@@ -37,7 +37,7 @@ function GraficoVentas7Dias() {
     };
 
     obtenerVentasPeriodo(
-      dayjs(new Date()).subtract(7, "day").format("YYYY-MM-DD"),
+      dayjs(new Date()).subtract(14, "day").format("YYYY-MM-DD"),
       dayjs(new Date()).format("YYYY-MM-DD")
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,7 +45,7 @@ function GraficoVentas7Dias() {
 
   const option = {
     title: {
-      text: 'Ventas últimos 7 días',
+      text: 'Ventas últimos 14 días',
       left: 'center'
     },
     xAxis: {
