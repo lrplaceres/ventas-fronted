@@ -10,7 +10,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 export default async function SignIn() {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-  /*const csrfToken = await fetch(
+  const csrfToken = await fetch(
     `${process.env.NEXTAUTH_URL}/api/auth/csrf`,
     {
       headers: headers(),
@@ -19,11 +19,11 @@ export default async function SignIn() {
     .then((res) => res.json())
     .then((csrfTokenObject) => csrfTokenObject?.csrfToken)
     .catch(error => {console.log(error), console.log(process.env.NEXTAUTH_URL)});
-    */
-    const csrfToken = cookies() //Might be empty before the first submit
+    
+    /*const csrfToken = cookies() //Might be empty before the first submit
     .getAll()
     .find( cookie => cookie.name == "authjs.csrf-token")?.value
-    .split('|')[0]; 
+    .split('|')[0]; */
 
   return (
     <>
